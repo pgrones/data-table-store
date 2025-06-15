@@ -1,38 +1,12 @@
-type Subscriber<TState extends object> = (s: TState) => void;
-type Unsubscribe = () => boolean;
-
-type ValueOrUpdater<
-  TState extends object,
-  TKey extends KeysWithArrayValues<TState>
-> =
-  | ArrayValue<TState, TKey>
-  | TState[TKey]
-  | ((value: TState[TKey]) => ArrayValue<TState, TKey> | TState[TKey]);
-
-type KeysWithArrayValues<T> = {
-  [K in keyof T]: T[K] extends unknown[] ? K : never;
-}[keyof T];
-
-type ArrayValue<T, K extends KeysWithArrayValues<T>> = T[K] extends unknown[]
-  ? T[K][number]
-  : never;
-
-const isArrayUpdater = <
-  TState extends object,
-  TKey extends KeysWithArrayValues<TState>
->(
-  value: ValueOrUpdater<TState, TKey>
-): value is (
-  value: TState[TKey]
-) => ArrayValue<TState, TKey> | TState[TKey] => {
-  return typeof value === "function";
-};
-
-const isUpdater = <TState extends object, TKey extends keyof TState>(
-  value: TState[TKey] | ((value: TState[TKey]) => TState[TKey])
-): value is (value: TState[TKey]) => TState[TKey] => {
-  return typeof value === "function";
-};
+import {
+  isUpdater,
+  type ArrayValue,
+  type KeysWithArrayValues,
+  type Subscriber,
+  type Unsubscribe,
+  type ValueOrUpdater,
+  type ValueOrArrayUpdaters,
+} from "./store.types";
 
 export class Store<TState extends object> {
   protected state: TState;
@@ -52,40 +26,38 @@ export class Store<TState extends object> {
 
   protected set<TKey extends keyof TState>(
     key: TKey,
-    valueOrUpdater: TState[TKey] | ((value: TState[TKey]) => TState[TKey])
+    valueOrUpdater: ValueOrUpdater<TState[TKey], TState[TKey]>
   ) {
-    this.apply({
-      [key]: isUpdater(valueOrUpdater)
-        ? valueOrUpdater(this.state[key])
-        : valueOrUpdater,
-    } as unknown as Partial<TState>);
-  }
-
-  protected add<TKey extends KeysWithArrayValues<TState>>(
-    key: TKey,
-    valueOrUpdater:
-      | ArrayValue<TState, TKey>
-      | TState[TKey]
-      | ((value: TState[TKey]) => ArrayValue<TState, TKey> | TState[TKey])
-  ) {
-    const addedValues = isArrayUpdater(valueOrUpdater)
+    const value = isUpdater(valueOrUpdater)
       ? valueOrUpdater(this.state[key])
       : valueOrUpdater;
 
-    this.apply({
-      [key]: [
-        ...(this.state[key] as unknown[]),
-        ...(Array.isArray(addedValues) ? addedValues : [addedValues]),
-      ],
-    } as unknown as Partial<TState>);
+    this.apply({ [key]: value } as unknown as Partial<TState>);
   }
 
-  protected remove<TKey extends KeysWithArrayValues<TState>>(
+  protected addListItem<TKey extends KeysWithArrayValues<TState>>(
     key: TKey,
-    valueOrUpdater:
-      | number
-      | number[]
-      | ((value: TState[TKey]) => number | number[])
+    valueOrUpdater: ValueOrArrayUpdaters<TState[TKey], ArrayValue<TState, TKey>>
+  ) {
+    let addedValues = isUpdater(valueOrUpdater)
+      ? valueOrUpdater(this.state[key])
+      : valueOrUpdater;
+
+    addedValues = Array.isArray(addedValues)
+      ? addedValues
+      : ([addedValues] as ArrayValue<TState, TKey>[]);
+
+    this.apply({
+      [key]: [
+        ...(this.state[key] as ArrayValue<TState, TKey>[]),
+        ...addedValues,
+      ],
+    } as Partial<TState>);
+  }
+
+  protected removeListItem<TKey extends KeysWithArrayValues<TState>>(
+    key: TKey,
+    valueOrUpdater: ValueOrArrayUpdaters<TState[TKey], number>
   ) {
     let removedIndices =
       typeof valueOrUpdater === "function"
@@ -96,13 +68,11 @@ export class Store<TState extends object> {
       ? removedIndices
       : [removedIndices];
 
-    const newState = (this.state[key] as unknown[]).filter(
+    const newState = (this.state[key] as ArrayValue<TState, TKey>[]).filter(
       (_, index) => !removedIndices.includes(index)
     );
 
-    this.apply({
-      [key]: newState,
-    } as unknown as Partial<TState>);
+    this.apply({ [key]: newState } as Partial<TState>);
   }
 
   protected apply(changes: Partial<TState>) {

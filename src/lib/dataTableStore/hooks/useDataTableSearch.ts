@@ -1,26 +1,20 @@
-import { useCallback } from "react";
 import { useDataTable } from "../../dataTable/dataTable.context";
 import { useSelector } from "../../store/store.hooks";
 import type { DataTableState } from "../dataTableStore.types";
 
+const selector = (state: DataTableState) => state.searching.searchValue;
+
 export const useDataTableSearch = () => {
   const store = useDataTable();
-
-  const selector = useCallback(
-    (state: DataTableState) => state.searching.searchValue,
-    []
-  );
 
   return useSelector(store, selector);
 };
 
+const debounceSelector = (state: DataTableState) =>
+  state.searching.debouncedSearchValue;
+
 export const useDataTableDebouncedSearch = () => {
   const store = useDataTable();
 
-  const selector = useCallback(
-    (state: DataTableState) => state.searching.debouncedSearchValue,
-    []
-  );
-
-  return useSelector(store, selector);
+  return useSelector(store, debounceSelector);
 };

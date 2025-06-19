@@ -3,8 +3,8 @@
     opacity: 0;
     transition: opacity 200ms ease;
     color: var(--mantine-primary-color-filled);
-    width: 1.5em;
-    height: 1.5em;
+    width: 1.3em;
+    height: 1.3em;
   }
 
   &[data-sorted] {

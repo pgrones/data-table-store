@@ -1,12 +1,17 @@
-import { useCallback } from "react";
 import { useDataTable } from "../../dataTable/dataTable.context";
 import { useSelector } from "../../store/store.hooks";
-import type { DataTableState } from "../dataTableStore.types";
+import { createDataTableSelector } from "./selector";
+
+const selector = createDataTableSelector(
+  [(state) => state.paging, (state) => state.totalEntities],
+  (paging, totalEntities) => ({
+    ...paging,
+    totalPages: Math.ceil(totalEntities / paging.pageSize),
+  })
+);
 
 export const useDataTablePaging = () => {
   const store = useDataTable();
-
-  const selector = useCallback((state: DataTableState) => state.paging, []);
 
   return useSelector(store, selector);
 };

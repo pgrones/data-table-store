@@ -14,31 +14,38 @@ export const EditableTable = () => {
         placeholder="Search..."
       />
 
-      <Table style={{ gridColumn: "span 2" }}>
-        <Table.Thead>
-          <Table.Tr>
-            <DataTable.ToggleSelectionAll />
-            <DataTable.SortableTh columnKey="id">ID</DataTable.SortableTh>
-            <DataTable.SortableTh columnKey="firstName">
-              First Name
-            </DataTable.SortableTh>
-            <DataTable.SortableTh columnKey="lastName">
-              Last Name
-            </DataTable.SortableTh>
-            <DataTable.SortableTh columnKey="birthday">
-              Birthday
-            </DataTable.SortableTh>
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>
-          {/* <Table.Tr key={element.name}>
-            <ToggleSelection />
-            <Table.Td>{element.name}</Table.Td>
-            <Table.Td>{element.symbol}</Table.Td>
-            <Table.Td>{element.mass}</Table.Td>
-          </Table.Tr> */}
-        </Table.Tbody>
-      </Table>
+      <Table.ScrollContainer minWidth="1000" style={{ gridColumn: "span 2" }}>
+        <Table>
+          <Table.Thead>
+            <Table.Tr>
+              <DataTable.ToggleSelectionAll />
+              <DataTable.SortableTh columnKey="id">ID</DataTable.SortableTh>
+              <DataTable.SortableTh columnKey="firstName">
+                First Name
+              </DataTable.SortableTh>
+              <DataTable.SortableTh columnKey="lastName">
+                Last Name
+              </DataTable.SortableTh>
+              <DataTable.SortableTh columnKey="birthday">
+                Birthday
+              </DataTable.SortableTh>
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>
+            <DataTable.Rows>
+              {(row) => (
+                <>
+                  <DataTable.ToggleSelection row={row} />
+                  <Table.Td>{row.id}</Table.Td>
+                  <Table.Td>{row.firstName}</Table.Td>
+                  <Table.Td>{row.lastName}</Table.Td>
+                  <Table.Td>{row.birthday.toLocaleDateString()}</Table.Td>
+                </>
+              )}
+            </DataTable.Rows>
+          </Table.Tbody>
+        </Table>
+      </Table.ScrollContainer>
 
       <DataTable.Paging
         hideWithOnePage={false}

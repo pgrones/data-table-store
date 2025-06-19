@@ -1,38 +1,41 @@
 import { Store } from "../store/store";
 import type {
-  DataTableEntity,
+  DataFetcher,
+  DataTableState,
   DataTableStoreOptions,
   RowKey,
 } from "./dataTableStore.types";
-import type { DataTableState } from "./dataTableStore.types";
+import { Fetchable } from "./mixins/fetchable";
 import { Pagable } from "./mixins/pagable";
 import { Searchable } from "./mixins/searchable";
 import { Selectable } from "./mixins/selectable";
 import { Sortable } from "./mixins/sortable";
 
-export class TableStore<
-  TEntity extends DataTableEntity = DataTableEntity
-> extends Store<DataTableState<TEntity>> {
-  protected entityType!: TEntity; // phantom type anchor
+export class TableStore<TEntity extends object = object> extends Store<
+  DataTableState<TEntity>
+> {
   protected debounceTimeout: number;
+  protected fetchData: DataFetcher<TEntity>;
   private rowKeyProperties: string[];
 
-  public constructor({
-    rowKey = [],
-    debounceTimeout = 500,
-    pageSize = Infinity,
-    initialPage = 1,
-    initialSearchValue = "",
-    initialSorting = null,
-    initialSelectedRows = [],
-  }: DataTableStoreOptions<TEntity> = {}) {
+  public constructor(
+    fetchData: DataFetcher<TEntity>,
+    {
+      rowKey = [],
+      debounceTimeout = 500,
+      pageSize = Infinity,
+      initialPage = 1,
+      initialSearchValue = "",
+      initialSorting = null,
+      initialSelectedRows = [],
+    }: DataTableStoreOptions<TEntity>
+  ) {
     super({
       data: [],
       selectedRows: initialSelectedRows,
       sorting: initialSorting,
       paging: {
         currentPage: initialPage,
-        totalPages: 1,
         pageSize,
       },
       searching: {
@@ -44,6 +47,7 @@ export class TableStore<
 
     this.debounceTimeout = debounceTimeout;
     this.rowKeyProperties = Array.isArray(rowKey) ? rowKey : [rowKey];
+    this.fetchData = fetchData;
   }
 
   public getKey = (row: TEntity) => {
@@ -58,8 +62,27 @@ export class TableStore<
   };
 }
 
-export class DataTableStore<
-  TEntity extends DataTableEntity = DataTableEntity
-> extends Selectable(Searchable(Pagable(Sortable(TableStore)))) {
-  declare entityType: TEntity; // anchor generic type
+export class DataTableStore<TEntity extends object = object> extends Selectable(
+  Searchable(Pagable(Sortable(Fetchable(TableStore))))
+) {
+  constructor(
+    fetchData: DataFetcher<object>,
+    options?: DataTableStoreOptions<TEntity>
+  ) {
+    super(fetchData, {
+      ...options,
+      rowKey: options?.rowKey as never[],
+      initialSorting: options?.initialSorting as null,
+    });
+  }
 }
+
+export const createDataTableStore = <TEntity extends object>(
+  fetchData: DataFetcher<TEntity>,
+  options?: DataTableStoreOptions<TEntity>
+) =>
+  new DataTableStore<object>(fetchData as unknown as DataFetcher<object>, {
+    ...options,
+    rowKey: options?.rowKey as never[],
+    initialSorting: options?.initialSorting as null,
+  });

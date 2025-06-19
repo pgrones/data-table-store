@@ -1,4 +1,3 @@
-import type { DataTableEntity } from "../dataTableStore.types";
 import type { StoreBase } from "./mixin";
 
 const clamp = (value: number, min: number, max: number) =>
@@ -6,7 +5,7 @@ const clamp = (value: number, min: number, max: number) =>
 
 export const Pagable = <
   TBase extends StoreBase<TEntity>,
-  TEntity extends DataTableEntity
+  TEntity extends object
 >(
   Base: TBase
 ) =>
@@ -14,7 +13,11 @@ export const Pagable = <
     public setPage = (page: number) => {
       this.set("paging", (prev) => ({
         ...prev,
-        currentPage: clamp(page, 1, prev.totalPages),
+        currentPage: clamp(
+          page,
+          1,
+          Math.ceil(this.state.totalEntities / prev.pageSize)
+        ),
       }));
     };
   };

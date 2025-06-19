@@ -1,16 +1,14 @@
 import { Group, Table, type TableThProps } from "@mantine/core";
 import { ArrowsSort, ArrowUp } from "tabler-icons-react";
-import type { DataTableEntity } from "../../dataTableStore/dataTableStore.types";
 import { useDataTableSort } from "../../dataTableStore/hooks";
 import { useDataTable } from "../dataTable.context";
 import classes from "./sortableTh.module.css";
 
-interface SortableThProps<TEntity extends DataTableEntity>
-  extends TableThProps {
+interface SortableThProps<TEntity extends object> extends TableThProps {
   columnKey: Extract<keyof TEntity, string>;
 }
 
-export const SortableTh = <TEntity extends DataTableEntity>({
+export const SortableTh = <TEntity extends object>({
   columnKey,
   children,
   ...props

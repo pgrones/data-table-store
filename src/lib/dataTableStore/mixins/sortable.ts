@@ -1,9 +1,8 @@
-import type { DataTableEntity } from "../dataTableStore.types";
 import type { StoreBase } from "./mixin";
 
 export const Sortable = <
   TBase extends StoreBase<TEntity>,
-  TEntity extends DataTableEntity
+  TEntity extends object
 >(
   Base: TBase
 ) =>

@@ -1,4 +1,7 @@
-export type Subscriber<TState> = (state: TState) => void;
+export type Subscriber<TState> = (
+  state: TState,
+  changedProperties: string[]
+) => void;
 
 export type Unsubscribe = () => boolean;
 

@@ -3,7 +3,6 @@ import {
   useDataTableSelectionAll,
   useDataTableSelection,
 } from "../../dataTableStore/hooks";
-import type { DataTableEntity } from "../../dataTableStore/dataTableStore.types";
 import { useDataTable } from "../dataTable.context";
 
 export const ToggleSelectionAll = () => {
@@ -23,7 +22,7 @@ export const ToggleSelectionAll = () => {
   );
 };
 
-export const ToggleSelection = ({ row }: { row: DataTableEntity }) => {
+export const ToggleSelection = ({ row }: { row: object }) => {
   const dataTable = useDataTable();
   const isSelected = useDataTableSelection(row);
 

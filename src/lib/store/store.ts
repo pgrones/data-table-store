@@ -79,17 +79,18 @@ export class Store<TState> {
 
   protected apply(changes: Partial<TState>) {
     const changedState = this.getChanges(changes);
+    const changedKeys = Object.keys(changedState);
 
-    if (Object.keys(changedState).length === 0) return;
+    if (changedKeys.length === 0) return;
 
     const state = produce(this.state, (draftState) => {
-      for (const key in changedState) {
+      for (const key of changedKeys) {
         // @ts-expect-error Immer cannot handle indexed property assignments
         draftState[key] = changedState[key]!;
       }
     });
 
-    this.update(state);
+    this.update(state, changedKeys);
   }
 
   private getChanges(changes: Partial<TState>) {
@@ -107,8 +108,10 @@ export class Store<TState> {
     return changedState;
   }
 
-  private update = (state: TState) => {
+  private update = (state: TState, changedProperties: string[]) => {
     this.state = state;
-    this.subscribers.forEach((subscriber) => subscriber(state));
+    this.subscribers.forEach((subscriber) =>
+      subscriber(state, changedProperties)
+    );
   };
 }

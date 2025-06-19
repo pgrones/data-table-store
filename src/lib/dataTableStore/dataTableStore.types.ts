@@ -1,12 +1,7 @@
-type KeysWithPrimitiveValues<TEntity extends DataTableEntity> = {
-  [TKey in keyof TEntity]: TEntity[TKey] extends string | number ? TKey : never;
-}[keyof TEntity];
-
-export type DataTableEntity = Record<string, unknown>;
+type Key<TEntity extends object> = Extract<keyof TEntity, string>;
 
 export interface Paging {
   currentPage: number;
-  totalPages: number;
   pageSize: number;
 }
 
@@ -15,18 +10,11 @@ export interface Searching {
   debouncedSearchValue: string;
 }
 
-export type Key<TEntity extends DataTableEntity> = Extract<
-  KeysWithPrimitiveValues<TEntity>,
-  string
->;
-
 export type Sorting = string | `${string}_desc` | null;
 
 export type RowKey = string;
 
-export interface DataTableState<
-  TEntity extends DataTableEntity = DataTableEntity
-> {
+export interface DataTableState<TEntity extends object = object> {
   data: TEntity[];
   selectedRows: RowKey[];
   sorting: Sorting;
@@ -35,12 +23,21 @@ export interface DataTableState<
   totalEntities: number;
 }
 
-export type DataTableStoreOptions<TEntity extends DataTableEntity> = Partial<{
-  rowKey: Key<TEntity> | Key<TEntity>[];
+export type DataTableStoreOptions<TEntity extends object> = Partial<{
+  rowKey: Key<TEntity> | Array<Key<TEntity>>;
   pageSize: number;
   debounceTimeout: number;
   initialPage: number;
-  initialSorting: Sorting;
+  initialSorting: Key<TEntity> | `${Key<TEntity>}_desc` | null;
   initialSearchValue: string;
   initialSelectedRows: RowKey[];
 }>;
+
+type DataTableData<TEntity extends object> = Pick<
+  DataTableState<TEntity>,
+  "data" | "totalEntities"
+>;
+
+export type DataFetcher<TEntity extends object> = (
+  state: DataTableState<TEntity>
+) => Promise<DataTableData<TEntity>>;

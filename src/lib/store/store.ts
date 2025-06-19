@@ -1,18 +1,20 @@
+import isEqual from "fast-deep-equal";
 import {
   isUpdater,
   type ArrayValue,
   type KeysWithArrayValues,
   type Subscriber,
   type Unsubscribe,
+  type ValueOrArrayUpdater,
   type ValueOrUpdater,
-  type ValueOrArrayUpdaters,
 } from "./store.types";
+import { produce } from "immer";
 
-export class Store<TState extends object> {
+export class Store<TState> {
   protected state: TState;
   private subscribers: Set<Subscriber<TState>>;
 
-  protected constructor(state: TState) {
+  public constructor(state: TState) {
     this.state = state;
     this.subscribers = new Set();
   }
@@ -37,7 +39,7 @@ export class Store<TState extends object> {
 
   protected addListItem<TKey extends KeysWithArrayValues<TState>>(
     key: TKey,
-    valueOrUpdater: ValueOrArrayUpdaters<TState[TKey], ArrayValue<TState, TKey>>
+    valueOrUpdater: ValueOrArrayUpdater<TState[TKey], ArrayValue<TState, TKey>>
   ) {
     let addedValues = isUpdater(valueOrUpdater)
       ? valueOrUpdater(this.state[key])
@@ -57,7 +59,7 @@ export class Store<TState extends object> {
 
   protected removeListItem<TKey extends KeysWithArrayValues<TState>>(
     key: TKey,
-    valueOrUpdater: ValueOrArrayUpdaters<TState[TKey], number>
+    valueOrUpdater: ValueOrArrayUpdater<TState[TKey], number>
   ) {
     let removedIndices =
       typeof valueOrUpdater === "function"
@@ -76,21 +78,37 @@ export class Store<TState extends object> {
   }
 
   protected apply(changes: Partial<TState>) {
-    for (const key in changes) {
-      if (
-        changes[key] === undefined ||
-        Object.is(this.state[key], changes[key])
-      ) {
-        continue;
-      }
+    const changedState = this.getChanges(changes);
 
-      this.update({ ...this.state, ...changes });
-      return;
-    }
+    if (Object.keys(changedState).length === 0) return;
+
+    const state = produce(this.state, (draftState) => {
+      for (const key in changedState) {
+        // @ts-expect-error Immer cannot handle indexed property assignments
+        draftState[key] = changedState[key]!;
+      }
+    });
+
+    this.update(state);
   }
 
-  private update = (newState: TState) => {
-    this.state = newState;
-    this.subscribers.forEach((subscriber) => subscriber(newState));
+  private getChanges(changes: Partial<TState>) {
+    const changedState: Partial<TState> = {};
+
+    for (const key in changes) {
+      if (
+        changes[key] !== undefined &&
+        !isEqual(this.state[key], changes[key])
+      ) {
+        changedState[key] = changes[key];
+      }
+    }
+
+    return changedState;
+  }
+
+  private update = (state: TState) => {
+    this.state = state;
+    this.subscribers.forEach((subscriber) => subscriber(state));
   };
 }

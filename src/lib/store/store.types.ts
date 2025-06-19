@@ -1,4 +1,4 @@
-export type Subscriber<TState extends object> = (state: TState) => void;
+export type Subscriber<TState> = (state: TState) => void;
 
 export type Unsubscribe = () => boolean;
 
@@ -8,7 +8,7 @@ export type ValueOrUpdater<TPrevValue, TValue> =
   | TValue
   | Updater<TPrevValue, TValue>;
 
-export type ValueOrArrayUpdaters<TPrevValue, TValue> =
+export type ValueOrArrayUpdater<TPrevValue, TValue> =
   | TValue
   | TValue[]
   | Updater<TPrevValue, TValue>

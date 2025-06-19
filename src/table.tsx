@@ -1,80 +1,49 @@
-import { Button, Checkbox, Table } from "@mantine/core";
-import { useLogger } from "@mantine/hooks";
+import { Table } from "@mantine/core";
+import classes from "./table.module.css";
+import { createDataTableFor } from "./lib";
 import type { User } from "./app";
-import {
-  useDataTable,
-  useDataTableCell,
-  useDataTableRows,
-  useDataTableSelection,
-} from "./data-table/dataTableStore.hooks";
-import type { RowKey } from "./data-table/dataTableStore.types";
 
-export const DataTable = () => {
-  const dataTable = useDataTable();
+const DataTable = createDataTableFor<User>();
 
-  useLogger("Rerender table", []);
-
+export const EditableTable = () => {
   return (
-    <Table>
-      <Table.Thead>
-        <Table.Tr>
-          <Table.Th>
-            <Button onClick={dataTable.toggleAllRowSelections} />
-          </Table.Th>
-          <Table.Th>Id</Table.Th>
-          <Table.Th>Name</Table.Th>
-        </Table.Tr>
-      </Table.Thead>
-      <Rows />
-    </Table>
+    <div className={classes.layout}>
+      <DataTable.Search
+        style={{ gridColumn: 2 }}
+        w={250}
+        placeholder="Search..."
+      />
+
+      <Table style={{ gridColumn: "span 2" }}>
+        <Table.Thead>
+          <Table.Tr>
+            <DataTable.ToggleSelectionAll />
+            <DataTable.SortableTh columnKey="id">ID</DataTable.SortableTh>
+            <DataTable.SortableTh columnKey="firstName">
+              First Name
+            </DataTable.SortableTh>
+            <DataTable.SortableTh columnKey="lastName">
+              Last Name
+            </DataTable.SortableTh>
+            <DataTable.SortableTh columnKey="birthday">
+              Birthday
+            </DataTable.SortableTh>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {/* <Table.Tr key={element.name}>
+            <ToggleSelection />
+            <Table.Td>{element.name}</Table.Td>
+            <Table.Td>{element.symbol}</Table.Td>
+            <Table.Td>{element.mass}</Table.Td>
+          </Table.Tr> */}
+        </Table.Tbody>
+      </Table>
+
+      <DataTable.Paging
+        hideWithOnePage={false}
+        style={{ gridColumn: 2, justifySelf: "flex-end" }}
+      />
+    </div>
   );
-};
-
-const Rows = () => {
-  const { columns, rowKeys } = useDataTableRows<User>();
-
-  useLogger("Rerender rows", [columns, rowKeys]);
-
-  return (
-    <Table.Tbody>
-      {rowKeys.map((rowKey, index) => (
-        <Table.Tr key={rowKey}>
-          <Table.Td>
-            <Check rowKey={rowKey} />
-          </Table.Td>
-          {columns.map((column) => (
-            <Cell key={rowKey + column} columnName={column} rowIndex={index} />
-          ))}
-        </Table.Tr>
-      ))}
-    </Table.Tbody>
-  );
-};
-
-const Check = ({ rowKey }: { rowKey: RowKey }) => {
-  const dataTable = useDataTable();
-  const isSelected = useDataTableSelection(rowKey);
-
-  useLogger("Rerender check", [isSelected]);
-
-  return (
-    <Checkbox
-      checked={isSelected}
-      onChange={() => dataTable.toggleRowSelection(rowKey)}
-    />
-  );
-};
-
-const Cell = ({
-  columnName,
-  rowIndex,
-}: {
-  columnName: keyof User;
-  rowIndex: number;
-}) => {
-  const value = useDataTableCell(columnName, rowIndex);
-
-  useLogger("Rerender cell", [value]);
-
-  return <Table.Td>{value}</Table.Td>;
 };

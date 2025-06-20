@@ -1,6 +1,5 @@
 import { Store } from "../store/store";
 import type {
-  DataFetcher,
   DataTableState,
   DataTableStoreOptions,
   RowKey,
@@ -15,21 +14,17 @@ export class TableStore<TEntity extends object = object> extends Store<
   DataTableState<TEntity>
 > {
   protected debounceTimeout: number;
-  protected fetchData: DataFetcher<TEntity>;
   private rowKeyProperties: string[];
 
-  public constructor(
-    fetchData: DataFetcher<TEntity>,
-    {
-      rowKey = [],
-      debounceTimeout = 500,
-      pageSize = Infinity,
-      initialPage = 1,
-      initialSearchValue = "",
-      initialSorting = null,
-      initialSelectedRows = [],
-    }: DataTableStoreOptions<TEntity>
-  ) {
+  public constructor({
+    rowKey = [],
+    debounceTimeout = 500,
+    pageSize = Infinity,
+    initialPage = 1,
+    initialSearchValue = "",
+    initialSorting = null,
+    initialSelectedRows = [],
+  }: DataTableStoreOptions<TEntity>) {
     super({
       data: [],
       selectedRows: initialSelectedRows,
@@ -43,11 +38,11 @@ export class TableStore<TEntity extends object = object> extends Store<
         debouncedSearchValue: initialSearchValue,
       },
       totalEntities: 0,
+      isPending: false,
     });
 
     this.debounceTimeout = debounceTimeout;
     this.rowKeyProperties = Array.isArray(rowKey) ? rowKey : [rowKey];
-    this.fetchData = fetchData;
   }
 
   public getKey = (row: TEntity) => {
@@ -65,11 +60,8 @@ export class TableStore<TEntity extends object = object> extends Store<
 export class DataTableStore<TEntity extends object = object> extends Selectable(
   Searchable(Pagable(Sortable(Fetchable(TableStore))))
 ) {
-  constructor(
-    fetchData: DataFetcher<object>,
-    options?: DataTableStoreOptions<TEntity>
-  ) {
-    super(fetchData, {
+  constructor(options?: DataTableStoreOptions<TEntity>) {
+    super({
       ...options,
       rowKey: options?.rowKey as never[],
       initialSorting: options?.initialSorting as null,
@@ -78,10 +70,9 @@ export class DataTableStore<TEntity extends object = object> extends Selectable(
 }
 
 export const createDataTableStore = <TEntity extends object>(
-  fetchData: DataFetcher<TEntity>,
   options?: DataTableStoreOptions<TEntity>
 ) =>
-  new DataTableStore<object>(fetchData as unknown as DataFetcher<object>, {
+  new DataTableStore<object>({
     ...options,
     rowKey: options?.rowKey as never[],
     initialSorting: options?.initialSorting as null,

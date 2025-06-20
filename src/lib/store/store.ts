@@ -1,16 +1,17 @@
-import isEqual from "fast-deep-equal";
+import { produce, type Draft } from "immer";
 import {
   isUpdater,
   type ArrayValue,
+  type Changes,
   type KeysWithArrayValues,
+  type Path,
+  type PathValue,
   type Subscriber,
   type Unsubscribe,
   type ValueOrArrayUpdater,
-  type ValueOrUpdater,
 } from "./store.types";
-import { produce } from "immer";
 
-export class Store<TState> {
+export class Store<TState extends object> {
   protected state: TState;
   private subscribers: Set<Subscriber<TState>>;
 
@@ -26,15 +27,11 @@ export class Store<TState> {
     return () => this.subscribers.delete(subscriber);
   };
 
-  protected set<TKey extends keyof TState>(
-    key: TKey,
-    valueOrUpdater: ValueOrUpdater<TState[TKey], TState[TKey]>
+  protected set<TPath extends Path<TState>>(
+    path: TPath,
+    value: PathValue<TState, TPath>
   ) {
-    const value = isUpdater(valueOrUpdater)
-      ? valueOrUpdater(this.state[key])
-      : valueOrUpdater;
-
-    this.apply({ [key]: value } as unknown as Partial<TState>);
+    this.apply({ [path]: value } as unknown as Changes<TState>);
   }
 
   protected addListItem<TKey extends KeysWithArrayValues<TState>>(
@@ -54,7 +51,7 @@ export class Store<TState> {
         ...(this.state[key] as ArrayValue<TState, TKey>[]),
         ...addedValues,
       ],
-    } as Partial<TState>);
+    } as Changes<TState>);
   }
 
   protected removeListItem<TKey extends KeysWithArrayValues<TState>>(
@@ -74,41 +71,70 @@ export class Store<TState> {
       (_, index) => !removedIndices.includes(index)
     );
 
-    this.apply({ [key]: newState } as Partial<TState>);
+    this.apply({ [key]: newState } as Changes<TState>);
   }
 
-  protected apply(changes: Partial<TState>) {
-    const changedState = this.getChanges(changes);
-    const changedKeys = Object.keys(changedState);
+  protected apply(changes: Changes<TState>) {
+    const values = Object.entries(changes) as [Path<TState>, unknown][];
 
-    if (changedKeys.length === 0) return;
+    if (values.length === 0) return;
 
     const state = produce(this.state, (draftState) => {
-      for (const key of changedKeys) {
-        // @ts-expect-error Immer cannot handle indexed property assignments
-        draftState[key] = changedState[key]!;
+      for (const [path, value] of values) {
+        this.setByPath(draftState, path, value);
       }
     });
 
-    this.update(state, changedKeys);
+    this.update(
+      state,
+      values.map(([path]) => path)
+    );
   }
 
-  private getChanges(changes: Partial<TState>) {
-    const changedState: Partial<TState> = {};
+  private parsePath(path: string): (string | number)[] {
+    return path
+      .split(".")
+      .map((key) => (key.match(/^\d+$/) ? parseInt(key) : key));
+  }
 
-    for (const key in changes) {
+  private setByPath(obj: Draft<TState>, path: Path<TState>, value: unknown) {
+    const keys = this.parsePath(path);
+
+    if (!keys.length) return;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let current = obj as any;
+
+    const validateCurrent = (i?: number) => {
       if (
-        changes[key] !== undefined &&
-        !isEqual(this.state[key], changes[key])
+        (typeof current !== "object" || current === null) &&
+        !Array.isArray(current)
       ) {
-        changedState[key] = changes[key];
+        throw new Error(
+          `Cannot index non-object at ${keys.slice(0, i).join(".")}`
+        );
       }
+    };
+
+    for (let i = 0; i < keys.length - 1; i++) {
+      const key = keys[i];
+
+      validateCurrent(i);
+
+      if (!(key in current)) {
+        const defaultValue = typeof keys[i + 1] === "number" ? [] : {};
+        current[key] = defaultValue;
+      }
+
+      current = current[key];
     }
 
-    return changedState;
+    validateCurrent();
+
+    current[keys.at(-1)!] = value;
   }
 
-  private update = (state: TState, changedProperties: string[]) => {
+  private update = (state: TState, changedProperties: Path<TState>[]) => {
     this.state = state;
     this.subscribers.forEach((subscriber) =>
       subscriber(state, changedProperties)

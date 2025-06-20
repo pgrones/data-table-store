@@ -1,0 +1,5 @@
+table:global(.data-table)[data-pending] {
+  .stale {
+    opacity: 0.5;
+  }
+}

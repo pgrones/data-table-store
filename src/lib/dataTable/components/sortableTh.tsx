@@ -18,7 +18,7 @@ export const SortableTh = <TEntity extends object>({
 
   const rightAlign = props.ta === "end" || props.ta === "right";
 
-  console.log("SortableTh");
+  console.count("SortableTh");
 
   return (
     <Table.Th

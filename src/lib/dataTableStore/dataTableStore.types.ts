@@ -10,17 +10,26 @@ export interface Searching {
   debouncedSearchValue: string;
 }
 
-export type Sorting = string | `${string}_desc` | null;
+export interface Sorting {
+  columnKey: string;
+  descending: boolean;
+}
+
+export interface TypedSorting<TEntity extends object> {
+  columnKey: Extract<keyof TEntity, string>;
+  descending: boolean;
+}
 
 export type RowKey = string;
 
 export interface DataTableState<TEntity extends object = object> {
   data: TEntity[];
   selectedRows: RowKey[];
-  sorting: Sorting;
+  sorting: Sorting | null;
   paging: Paging;
   searching: Searching;
   totalEntities: number;
+  isPending: boolean;
 }
 
 export type DataTableStoreOptions<TEntity extends object> = Partial<{
@@ -28,16 +37,19 @@ export type DataTableStoreOptions<TEntity extends object> = Partial<{
   pageSize: number;
   debounceTimeout: number;
   initialPage: number;
-  initialSorting: Key<TEntity> | `${Key<TEntity>}_desc` | null;
+  initialSorting: TypedSorting<TEntity> | null;
   initialSearchValue: string;
   initialSelectedRows: RowKey[];
 }>;
 
-type DataTableData<TEntity extends object> = Pick<
+export type DataTableData<TEntity extends object> = Pick<
   DataTableState<TEntity>,
   "data" | "totalEntities"
 >;
 
-export type DataFetcher<TEntity extends object> = (
-  state: DataTableState<TEntity>
-) => Promise<DataTableData<TEntity>>;
+export interface DataTableParams<TEntity extends object> {
+  currentPage: number;
+  pageSize: number;
+  searchValue: string;
+  sorting: TypedSorting<TEntity> | null;
+}

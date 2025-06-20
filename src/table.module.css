@@ -5,4 +5,15 @@
   gap: 20px;
   height: 100vh;
   padding: 40px;
+
+  & :global(.mantine-ScrollArea-scrollbar) {
+    z-index: 10;
+  }
+}
+
+.sticky {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background-color: var(--mantine-color-body);
 }

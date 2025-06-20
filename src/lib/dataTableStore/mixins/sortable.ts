@@ -7,10 +7,23 @@ export const Sortable = <
   Base: TBase
 ) =>
   class extends Base {
-    public toggleSort = (column: string) => {
-      const states = [column, `${column}_desc`, null] as const;
-      const stateIndex = states.indexOf(this.state.sorting) + 1;
+    public toggleSort = (columnKey: string) => {
+      const states = [
+        { columnKey, descending: false },
+        { columnKey, descending: true },
+        null,
+      ];
 
-      this.set("sorting", states[stateIndex % states.length]);
+      const stateIndex =
+        states.findIndex(
+          (x) =>
+            x?.columnKey === this.state.sorting?.columnKey &&
+            x?.descending === this.state.sorting?.descending
+        ) + 1;
+
+      this.apply({
+        sorting: states[stateIndex % states.length],
+        selectedRows: [],
+      });
     };
   };

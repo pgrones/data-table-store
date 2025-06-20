@@ -19,7 +19,7 @@ export const createSelector = <T>() =>
     },
   }).withTypes<T>();
 
-export const useSelector = <TEntity, TValue>(
+export const useSelector = <TEntity extends object, TValue>(
   store: Store<TEntity>,
   selector: Selector<TEntity, TValue>,
   ...args: unknown[]

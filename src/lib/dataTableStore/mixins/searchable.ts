@@ -12,15 +12,13 @@ export const Searchable = <
     public onSearchValueChanged = (searchValue: string) => {
       if (this.timeoutId !== null) clearTimeout(this.timeoutId);
 
-      this.set("searching", {
-        searchValue,
-        debouncedSearchValue: this.state.searching.debouncedSearchValue,
-      });
+      this.set("searching.searchValue", searchValue);
 
       this.timeoutId = setTimeout(() => {
-        this.set("searching", {
-          searchValue,
-          debouncedSearchValue: searchValue,
+        this.apply({
+          "searching.debouncedSearchValue": searchValue,
+          "paging.currentPage": 1,
+          selectedRows: [],
         });
 
         this.timeoutId = null;

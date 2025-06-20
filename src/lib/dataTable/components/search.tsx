@@ -6,7 +6,7 @@ export const Search = (props: Omit<TextInputProps, "value" | "onChange">) => {
   const dataTable = useDataTable();
   const searchValue = useDataTableSearch();
 
-  console.log("Search");
+  console.count("Search");
 
   return (
     <TextInput

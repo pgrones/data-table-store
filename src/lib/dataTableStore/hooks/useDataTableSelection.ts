@@ -17,8 +17,8 @@ export const useDataTableSelection = (row: object) => {
 const allSelector = createDataTableSelector(
   [(state) => state.selectedRows, (state) => state.paging.pageSize],
   (selectedRows, pageSize) => ({
-    isSelected: !!selectedRows.length,
-    indeterminate: !!selectedRows.length && selectedRows.length === pageSize,
+    isSelected: selectedRows.length === pageSize,
+    indeterminate: !!selectedRows.length && selectedRows.length !== pageSize,
   })
 );
 

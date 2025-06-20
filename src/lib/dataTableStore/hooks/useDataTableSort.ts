@@ -5,11 +5,11 @@ import { createDataTableSelector } from "./selector";
 const selector = createDataTableSelector(
   [(state) => state.sorting, (_, key: string) => key],
   (sorting, key) => {
-    const isSorted = !!sorting?.startsWith(key);
+    const isSorted = sorting?.columnKey === key;
 
     return {
       isSorted,
-      desc: isSorted && !!sorting?.endsWith("_desc"),
+      desc: isSorted && !!sorting?.descending,
     };
   }
 );

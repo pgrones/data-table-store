@@ -1,4 +1,4 @@
-import type { DataTableState } from "../dataTableStore.types";
+import type { DataTableData } from "../dataTableStore.types";
 import type { StoreBase } from "./mixin";
 
 export const Fetchable = <
@@ -8,26 +8,11 @@ export const Fetchable = <
   Base: TBase
 ) =>
   class extends Base {
-    private keysToListenTo: string[] = [
-      "paging",
-      "searching",
-      "sorting",
-    ] satisfies (keyof DataTableState)[];
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    constructor(...args: any[]) {
-      super(...args);
-
-      this.subscribe(this.refreshData);
-      this.refreshData(this.state, this.keysToListenTo);
+    public startRefresh() {
+      if (!this.state.isPending) this.set("isPending", true);
     }
 
-    private refreshData = async (
-      state: DataTableState<TEntity>,
-      changedKeys: string[]
-    ) => {
-      if (!this.keysToListenTo.some((key) => changedKeys.includes(key))) return;
-
-      this.apply(await this.fetchData(state));
+    public refreshData = (data: DataTableData<TEntity>) => {
+      this.apply({ ...data, isPending: false });
     };
   };

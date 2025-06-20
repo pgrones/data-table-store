@@ -8,7 +8,7 @@ export const Paging = (
   const dataTable = useDataTable();
   const { currentPage, totalPages } = useDataTablePaging();
 
-  console.log("Paging");
+  console.count("Paging");
 
   return (
     <Pagination

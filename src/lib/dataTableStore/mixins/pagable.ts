@@ -11,13 +11,13 @@ export const Pagable = <
 ) =>
   class extends Base {
     public setPage = (page: number) => {
-      this.set("paging", (prev) => ({
-        ...prev,
-        currentPage: clamp(
-          page,
-          1,
-          Math.ceil(this.state.totalEntities / prev.pageSize)
-        ),
-      }));
+      const max = Math.ceil(
+        this.state.totalEntities / this.state.paging.pageSize
+      );
+
+      this.apply({
+        "paging.currentPage": clamp(page, 1, max),
+        selectedRows: [],
+      });
     };
   };

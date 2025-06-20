@@ -1,39 +1,51 @@
-import { Table, Checkbox } from "@mantine/core";
+import { Checkbox, type CheckboxProps } from "@mantine/core";
 import {
-  useDataTableSelectionAll,
   useDataTableSelection,
+  useDataTableSelectionAll,
 } from "../../dataTableStore/hooks";
 import { useDataTable } from "../dataTable.context";
 
-export const ToggleSelectionAll = () => {
+type ToggleSelectionAllProps = Omit<
+  CheckboxProps,
+  "checked" | "onChange" | "indeterminate"
+>;
+
+export const ToggleSelectionAll = (props: ToggleSelectionAllProps) => {
   const dataTable = useDataTable();
   const { isSelected, indeterminate } = useDataTableSelectionAll();
 
-  console.log("ToggleSelectionAll");
+  console.count("ToggleSelectionAll");
 
   return (
-    <Table.Th>
-      <Checkbox
-        checked={isSelected}
-        onChange={dataTable.toggleAllRowSelections}
-        indeterminate={indeterminate}
-      />
-    </Table.Th>
+    <Checkbox
+      checked={isSelected}
+      onChange={dataTable.toggleAllRowSelections}
+      indeterminate={indeterminate}
+      {...props}
+    />
   );
 };
 
-export const ToggleSelection = ({ row }: { row: object }) => {
+interface ToggleSelectionProps<TEntity extends object>
+  extends ToggleSelectionAllProps {
+  row: TEntity;
+  indeterminate?: boolean;
+}
+
+export const ToggleSelection = <TEntity extends object>({
+  row,
+  ...props
+}: ToggleSelectionProps<TEntity>) => {
   const dataTable = useDataTable();
   const isSelected = useDataTableSelection(row);
 
-  console.log("ToggleSelection");
+  // console.count("ToggleSelection");
 
   return (
-    <Table.Td>
-      <Checkbox
-        checked={isSelected}
-        onChange={() => dataTable.toggleRowSelection(row)}
-      />
-    </Table.Td>
+    <Checkbox
+      checked={isSelected}
+      onChange={() => dataTable.toggleRowSelection(row)}
+      {...props}
+    />
   );
 };

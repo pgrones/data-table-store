@@ -1,6 +1,6 @@
 import { type PaginationProps, Pagination } from "@mantine/core";
 import { useDataTablePaging } from "../../dataTableStore/hooks";
-import { useDataTable } from "../dataTable.context";
+import { useDataTable } from "../index";
 
 export const Paging = (
   props: Omit<PaginationProps, "value" | "onChange" | "total">

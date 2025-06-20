@@ -1,6 +1,6 @@
 import { type TextInputProps, TextInput } from "@mantine/core";
 import { useDataTableSearch } from "../../dataTableStore/hooks";
-import { useDataTable } from "../dataTable.context";
+import { useDataTable } from "../index";
 
 export const Search = (props: Omit<TextInputProps, "value" | "onChange">) => {
   const dataTable = useDataTable();

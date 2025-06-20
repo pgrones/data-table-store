@@ -1,10 +1,7 @@
 import { Table } from "@mantine/core";
 import { memo, useDeferredValue } from "react";
-import {
-  useDataTableData,
-  type Data,
-} from "../../dataTableStore/hooks/useDataTableData";
-import classes from "./Rows.module.css";
+import { useDataTableData, type Data } from "../../dataTableStore/hooks";
+import classes from "./rows.module.css";
 
 interface RowsProps<TEntity extends object> {
   children: (row: TEntity) => React.ReactNode;

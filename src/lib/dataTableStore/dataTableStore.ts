@@ -4,11 +4,7 @@ import type {
   DataTableStoreOptions,
   RowKey,
 } from "./dataTableStore.types";
-import { Fetchable } from "./mixins/fetchable";
-import { Pagable } from "./mixins/pagable";
-import { Searchable } from "./mixins/searchable";
-import { Selectable } from "./mixins/selectable";
-import { Sortable } from "./mixins/sortable";
+import { Fetchable, Pagable, Searchable, Selectable, Sortable } from "./mixins";
 
 export class TableStore<TEntity extends object = object> extends Store<
   DataTableState<TEntity>

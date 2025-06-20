@@ -10,13 +10,13 @@ import {
   ToggleSelectionAll,
 } from "./dataTable";
 import { useDataTableDataState } from "./dataTableStore/hooks/useDataTableDataState";
-export { useDataTable } from "./dataTable/dataTable.context";
-export { DataTableProvider } from "./dataTable/dataTable.provider";
+
+export { useDataTable, DataTableProvider } from "./dataTable/";
 export { createDataTableStore } from "./dataTableStore/dataTableStore";
 export type {
   DataTableData,
-  DataTableState,
   DataTableParams,
+  DataTableState,
 } from "./dataTableStore/dataTableStore.types";
 
 export const createDataTableFor = <TEntity extends object>() => {

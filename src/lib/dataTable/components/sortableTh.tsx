@@ -1,10 +1,11 @@
 import { Group, Table, type TableThProps } from "@mantine/core";
 import { ArrowsSort, ArrowUp } from "tabler-icons-react";
 import { useDataTableSort } from "../../dataTableStore/hooks";
-import { useDataTable } from "../dataTable.context";
+import { useDataTable } from "../index";
 import classes from "./sortableTh.module.css";
 
-interface SortableThProps<TEntity extends object> extends TableThProps {
+interface SortableThProps<TEntity extends object>
+  extends Omit<TableThProps, "onClick"> {
   columnKey: Extract<keyof TEntity, string>;
 }
 
@@ -22,10 +23,13 @@ export const SortableTh = <TEntity extends object>({
 
   return (
     <Table.Th
-      mod={{ sorted: isSorted, desc }}
-      className={classes["sortable-header"]}
-      onClick={() => dataTable.toggleSort(columnKey)}
       {...props}
+      mod={[
+        { sorted: isSorted, desc },
+        ...(Array.isArray(props.mod) ? props.mod : [props.mod]),
+      ]}
+      className={`${classes["sortable-header"]} ${props.className}`}
+      onClick={() => dataTable.toggleSort(columnKey)}
     >
       <Group gap="xs" justify={rightAlign ? "flex-end" : "flex-start"}>
         {!rightAlign && children}

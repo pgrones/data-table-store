@@ -3,7 +3,7 @@ import {
   useDataTableSelection,
   useDataTableSelectionAll,
 } from "../../dataTableStore/hooks";
-import { useDataTable } from "../dataTable.context";
+import { useDataTable } from "../index";
 
 type ToggleSelectionAllProps = Omit<
   CheckboxProps,
@@ -18,10 +18,10 @@ export const ToggleSelectionAll = (props: ToggleSelectionAllProps) => {
 
   return (
     <Checkbox
+      {...props}
       checked={isSelected}
       onChange={dataTable.toggleAllRowSelections}
       indeterminate={indeterminate}
-      {...props}
     />
   );
 };
@@ -39,13 +39,13 @@ export const ToggleSelection = <TEntity extends object>({
   const dataTable = useDataTable();
   const isSelected = useDataTableSelection(row);
 
-  // console.count("ToggleSelection");
+  console.count("ToggleSelection");
 
   return (
     <Checkbox
+      {...props}
       checked={isSelected}
       onChange={() => dataTable.toggleRowSelection(row)}
-      {...props}
     />
   );
 };

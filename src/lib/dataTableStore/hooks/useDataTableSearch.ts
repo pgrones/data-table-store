@@ -1,4 +1,4 @@
-import { useDataTable } from "../../dataTable/dataTable.context";
+import { useDataTable } from "../../dataTable";
 import { useSelector } from "../../store/store.hooks";
 import type { DataTableState } from "../dataTableStore.types";
 

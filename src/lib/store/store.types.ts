@@ -68,8 +68,3 @@ export type ArrayValue<
 export const isUpdater = <TPrevValue, TValue>(
   value: ValueOrUpdater<TPrevValue, TValue>
 ): value is Updater<TPrevValue, TValue> => typeof value === "function";
-
-export const isArrayIndex = (
-  value: Record<PropertyKey, unknown> | unknown[],
-  _: string | number
-): _ is number => Array.isArray(value);

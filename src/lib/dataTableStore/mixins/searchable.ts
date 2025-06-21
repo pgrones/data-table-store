@@ -19,9 +19,15 @@ export const Searchable = <
           "searching.debouncedSearchValue": searchValue,
           "paging.currentPage": 1,
           selectedRows: [],
+          editing: {
+            added: [],
+            edited: {},
+            deleted: [],
+            history: [],
+          },
         });
 
         this.timeoutId = null;
-      }, this.debounceTimeout);
+      }, this.searchDebounceTimeout);
     };
   };

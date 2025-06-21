@@ -1,3 +1,4 @@
+import { Group } from "@mantine/core";
 import type { User } from "./app";
 import { createDataTableFor } from "./lib";
 import classes from "./table.module.css";
@@ -7,11 +8,13 @@ const DataTable = createDataTableFor<User>();
 export const EditableTable = () => {
   return (
     <div className={classes.layout}>
-      <DataTable.Search
-        style={{ gridColumn: 2, justifySelf: "flex-end" }}
-        w={250}
-        placeholder="Search..."
-      />
+      <Group style={{ gridColumn: 2 }} justify="flex-end">
+        <DataTable.UndoButton />
+
+        <DataTable.AddRowButton />
+
+        <DataTable.Search w={250} placeholder="Search..." />
+      </Group>
 
       <DataTable.ScrollContainer
         minWidth={1000}
@@ -41,13 +44,17 @@ export const EditableTable = () => {
               {(row) => (
                 <>
                   <DataTable.Td className={classes.sticky}>
-                    <DataTable.ToggleSelection row={row} />
+                    <Group>
+                      <DataTable.ToggleSelection row={row} />
+                      <DataTable.DeleteRowButton row={row} />
+                      <DataTable.RestoreRowButton row={row} />
+                    </Group>
                   </DataTable.Td>
                   <DataTable.Td>{row.id}</DataTable.Td>
                   <DataTable.Td>{row.firstName}</DataTable.Td>
                   <DataTable.Td>{row.lastName}</DataTable.Td>
                   <DataTable.Td>
-                    {row.birthday.toLocaleDateString()}
+                    {row.birthday?.toLocaleDateString()}
                   </DataTable.Td>
                 </>
               )}

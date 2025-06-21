@@ -5,7 +5,7 @@ export {
 export { Paging } from "./components/paging";
 export { Search } from "./components/search";
 export { SortableTh } from "./components/sortableTh";
-export { Rows } from "./components/rows";
+export { MemoizedRows as Rows } from "./components/rows";
 export { DataStateOverlay } from "./components/dataStateOverlay";
 export { useDataTable } from "./dataTable.context";
 export { DataTableProvider } from "./dataTable.provider";

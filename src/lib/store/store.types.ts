@@ -1,13 +1,29 @@
-type Primitive = string | number | boolean | null | undefined | symbol | bigint;
+type Primitive =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | symbol
+  | bigint
+  | Error;
 
-type PathImpl<K extends string | number, V> = V extends Primitive | Error
+type IsPlainObject<T> = T extends object
+  ? T extends Primitive | (() => unknown)
+    ? false
+    : string extends keyof T
+    ? false
+    : true
+  : false;
+
+type PathImpl<K extends string | number, V> = V extends Primitive
   ? `${K}`
   : V extends Array<unknown>
   ? `${K}` | `${K}.${number}`
   : V extends Array<infer U>
-  ? U extends Primitive | unknown
-    ? `${K}` | `${K}.${number}`
-    : `${K}` | `${K}.${number}` | `${K}.${number}.${Path<U>}`
+  ? IsPlainObject<U> extends true
+    ? `${K}` | `${K}.${number}` | `${K}.${number}.${Path<U>}`
+    : `${K}` | `${K}.${number}`
   : `${K}` | `${K}.${Path<V>}`;
 
 export type Path<T> = {
@@ -37,34 +53,14 @@ export type Changes<TState> = Partial<{
   [K in Path<TState>]: PathValue<TState, K>;
 }>;
 
-export type Subscriber<TState> = (
-  state: TState,
-  changedProperties: Path<TState>[]
-) => void;
+export type ArrayPath<T> = Path<T> extends infer P
+  ? P extends string
+    ? PathValue<T, P> extends Array<unknown>
+      ? P
+      : never
+    : never
+  : never;
+
+export type Subscriber<TState> = (state: TState) => void;
 
 export type Unsubscribe = () => boolean;
-
-export type Updater<TPrevValue, TValue> = (prevValue: TPrevValue) => TValue;
-
-export type ValueOrUpdater<TPrevValue, TValue> =
-  | TValue
-  | Updater<TPrevValue, TValue>;
-
-export type ValueOrArrayUpdater<TPrevValue, TValue> =
-  | TValue
-  | TValue[]
-  | Updater<TPrevValue, TValue>
-  | Updater<TPrevValue, TValue[]>;
-
-export type KeysWithArrayValues<TEntity> = {
-  [TKey in keyof TEntity]: TEntity[TKey] extends unknown[] ? TKey : never;
-}[keyof TEntity];
-
-export type ArrayValue<
-  TEntity,
-  TKey extends KeysWithArrayValues<TEntity>
-> = TEntity[TKey] extends unknown[] ? TEntity[TKey][number] : never;
-
-export const isUpdater = <TPrevValue, TValue>(
-  value: ValueOrUpdater<TPrevValue, TValue>
-): value is Updater<TPrevValue, TValue> => typeof value === "function";

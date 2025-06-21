@@ -8,9 +8,9 @@ export const Fetchable = <
   Base: TBase
 ) =>
   class extends Base {
-    public startRefresh() {
+    public startRefresh = () => {
       if (!this.state.isPending) this.set("isPending", true);
-    }
+    };
 
     public refreshData = (data: DataTableData<TEntity>) => {
       this.apply({ ...data, isPending: false });

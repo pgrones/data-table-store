@@ -1,4 +1,27 @@
-type Key<TEntity extends object> = Extract<keyof TEntity, string>;
+import type { Command } from "./mixins/editable/command";
+
+type Includes<T extends readonly unknown[], U> = T extends [infer F, ...infer R]
+  ? Equal<F, U> extends true
+    ? true
+    : Includes<R, U>
+  : false;
+
+type Equal<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B
+  ? 1
+  : 2
+  ? true
+  : false;
+
+export type UniqueArray<T extends readonly unknown[]> = T extends [
+  infer F,
+  ...infer R
+]
+  ? Includes<R, F> extends true
+    ? never
+    : [F, ...UniqueArray<R>]
+  : T;
+
+export type Key<TEntity extends object> = Extract<keyof TEntity, string>;
 
 export interface Paging {
   currentPage: number;
@@ -22,9 +45,17 @@ export interface TypedSorting<TEntity extends object> {
 
 export type RowKey = string;
 
+export interface Editing<TEntity extends object> {
+  added: (Partial<TEntity> & { [key: symbol]: RowKey })[];
+  edited: Record<RowKey, object>;
+  deleted: RowKey[];
+  history: Command<Partial<TEntity>>[];
+}
+
 export interface DataTableState<TEntity extends object = object> {
   data: TEntity[];
   selectedRows: RowKey[];
+  editing: Editing<TEntity>;
   sorting: Sorting | null;
   paging: Paging;
   searching: Searching;
@@ -32,15 +63,29 @@ export interface DataTableState<TEntity extends object = object> {
   isPending: boolean;
 }
 
-export type DataTableStoreOptions<TEntity extends object> = Partial<{
-  rowKey: Key<TEntity> | Array<Key<TEntity>>;
-  pageSize: number;
-  debounceTimeout: number;
-  initialPage: number;
-  initialSorting: TypedSorting<TEntity> | null;
-  initialSearchValue: string;
-  initialSelectedRows: RowKey[];
-}>;
+export interface DataTableArgs<TEntity extends object = object>
+  extends DataTableState<TEntity>,
+    Pick<
+      Required<DataTableStoreOptions<TEntity, never[]>>,
+      "loadingOverlayTimeout" | "searchDebounceTimeout" | "entityFactory"
+    > {
+  rowKey: readonly string[];
+}
+
+export interface DataTableStoreOptions<
+  TEntity extends object,
+  TRowKey extends readonly Key<TEntity>[]
+> extends Partial<{
+    searchDebounceTimeout: number;
+    loadingOverlayTimeout: number;
+    pageSize: number;
+    initialPage: number;
+    initialSorting: TypedSorting<TEntity> | null;
+    initialSearchValue: string;
+  }> {
+  rowKey: UniqueArray<TRowKey>;
+  entityFactory?: (() => Omit<TEntity, TRowKey[number]>) | null;
+}
 
 export type DataTableData<TEntity extends object> = Pick<
   DataTableState<TEntity>,

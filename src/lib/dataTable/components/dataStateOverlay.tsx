@@ -1,21 +1,26 @@
 import { LoadingOverlay, type LoadingOverlayProps } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
-import { useDataTableDataState } from "../../dataTableStore/hooks";
+import { useDataTableLoadingState } from "../../dataTableStore/hooks";
+import React from "react";
 
 type DataStateOverlayProps = Omit<LoadingOverlayProps, "visible">;
 
 export const DataStateOverlay = (props: DataStateOverlayProps) => {
-  const isPending = useDataTableDataState();
+  const { isPending, timeout } = useDataTableLoadingState();
 
-  const [visible] = useDebouncedValue(isPending, 500);
+  const [visible] = useDebouncedValue(isPending, timeout);
 
   console.count("DataStateOverlay");
 
   return (
     <LoadingOverlay
       {...props}
-      visible={visible}
-      overlayProps={{ opacity: 0.1, ...props.overlayProps }}
+      visible={isPending}
+      overlayProps={{ opacity: 0.5, ...props.overlayProps }}
+      loaderProps={{
+        children: visible ? undefined : <React.Fragment />,
+        ...props.loaderProps,
+      }}
     />
   );
 };

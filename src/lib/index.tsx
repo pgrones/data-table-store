@@ -9,10 +9,15 @@ import {
   ToggleSelection,
   ToggleSelectionAll,
 } from "./dataTable";
-import { useDataTableDataState } from "./dataTableStore/hooks/useDataTableDataState";
+import { AddRowButton } from "./dataTable/components/addRowButton";
+import { DeleteRowButton } from "./dataTable/components/deleteRowButton";
+import type { RowsProps } from "./dataTable/components/rows";
+import type { SortableThProps } from "./dataTable/components/sortableTh";
+import { UndoButton } from "./dataTable/components/undoButton";
+import { RestoreRowButton } from "./dataTable/components/restoreRowButton";
 
-export { useDataTable, DataTableProvider } from "./dataTable/";
-export { createDataTableStore } from "./dataTableStore/dataTableStore";
+export { DataTableProvider, useDataTable } from "./dataTable/index";
+export { createDataTableStoreFactoryFor } from "./dataTableStore/dataTableStore";
 export type {
   DataTableData,
   DataTableParams,
@@ -20,20 +25,7 @@ export type {
 } from "./dataTableStore/dataTableStore.types";
 
 export const createDataTableFor = <TEntity extends object>() => {
-  const DataTable = (props: TableProps) => {
-    const isPending = useDataTableDataState();
-
-    return (
-      <Table
-        {...props}
-        className={`data-table ${props.className}`}
-        mod={[
-          { pending: isPending },
-          ...(Array.isArray(props.mod) ? props.mod : [props.mod]),
-        ]}
-      />
-    );
-  };
+  const DataTable = (props: TableProps) => <Table {...props} />;
 
   DataTable.Thead = Table.Thead;
   DataTable.Tbody = Table.Tbody;
@@ -47,9 +39,14 @@ export const createDataTableFor = <TEntity extends object>() => {
   DataTable.Search = Search;
   DataTable.Paging = Paging;
   DataTable.DataStateOverlay = DataStateOverlay;
-  DataTable.SortableTh = (props: Parameters<typeof SortableTh<TEntity>>[0]) =>
-    SortableTh(props);
-  DataTable.Rows = (props: Parameters<typeof Rows<TEntity>>[0]) => Rows(props);
+  DataTable.AddRowButton = AddRowButton;
+  DataTable.DeleteRowButton = DeleteRowButton;
+  DataTable.RestoreRowButton = RestoreRowButton;
+  DataTable.UndoButton = UndoButton;
+  DataTable.Rows = (props: RowsProps<TEntity>) => <Rows {...props} />;
+  DataTable.SortableTh = (props: SortableThProps<TEntity>) => (
+    <SortableTh {...props} />
+  );
 
   return DataTable;
 };

@@ -1,14 +1,11 @@
 import { produce, type Draft } from "immer";
 import {
-  isUpdater,
-  type ArrayValue,
+  type ArrayPath,
   type Changes,
-  type KeysWithArrayValues,
   type Path,
   type PathValue,
   type Subscriber,
   type Unsubscribe,
-  type ValueOrArrayUpdater,
 } from "./store.types";
 
 export class Store<TState extends object> {
@@ -27,68 +24,58 @@ export class Store<TState extends object> {
     return () => this.subscribers.delete(subscriber);
   };
 
-  protected set<TPath extends Path<TState>>(
+  public set<TPath extends Path<TState>>(
     path: TPath,
     value: PathValue<TState, TPath>
   ) {
     this.apply({ [path]: value } as unknown as Changes<TState>);
   }
 
-  protected addListItem<TKey extends KeysWithArrayValues<TState>>(
-    key: TKey,
-    valueOrUpdater: ValueOrArrayUpdater<TState[TKey], ArrayValue<TState, TKey>>
-  ) {
-    let addedValues = isUpdater(valueOrUpdater)
-      ? valueOrUpdater(this.state[key])
-      : valueOrUpdater;
+  public addListItem(path: ArrayPath<TState>, ...values: unknown[]) {
+    const state = produce(this.state, (draftState) => {
+      this.executeByPath(draftState, path, (obj, key) =>
+        (obj[key] as unknown[]).push(...values)
+      );
+    });
 
-    addedValues = Array.isArray(addedValues)
-      ? addedValues
-      : ([addedValues] as ArrayValue<TState, TKey>[]);
-
-    this.apply({
-      [key]: [
-        ...(this.state[key] as ArrayValue<TState, TKey>[]),
-        ...addedValues,
-      ],
-    } as Changes<TState>);
+    this.update(state);
   }
 
-  protected removeListItem<TKey extends KeysWithArrayValues<TState>>(
-    key: TKey,
-    valueOrUpdater: ValueOrArrayUpdater<TState[TKey], number>
-  ) {
-    let removedIndices =
-      typeof valueOrUpdater === "function"
-        ? valueOrUpdater(this.state[key])
-        : valueOrUpdater;
+  public removeListItem(path: ArrayPath<TState>, ...indices: number[]) {
+    const state = produce(this.state, (draftState) => {
+      this.executeByPath(
+        draftState,
+        path,
+        (obj, key) =>
+          (obj[key] = (obj[key] as unknown[]).filter(
+            (_, index) => !indices.includes(index)
+          ))
+      );
+    });
 
-    removedIndices = Array.isArray(removedIndices)
-      ? removedIndices
-      : [removedIndices];
-
-    const newState = (this.state[key] as ArrayValue<TState, TKey>[]).filter(
-      (_, index) => !removedIndices.includes(index)
-    );
-
-    this.apply({ [key]: newState } as Changes<TState>);
+    this.update(state);
   }
 
-  protected apply(changes: Changes<TState>) {
+  public apply(changes: Changes<TState>) {
     const values = Object.entries(changes) as [Path<TState>, unknown][];
 
     if (values.length === 0) return;
 
     const state = produce(this.state, (draftState) => {
       for (const [path, value] of values) {
-        this.setByPath(draftState, path, value);
+        this.executeByPath(draftState, path, (obj, key) => (obj[key] = value));
       }
     });
 
-    this.update(
-      state,
-      values.map(([path]) => path)
-    );
+    this.update(state);
+  }
+
+  public delete(path: Path<TState>) {
+    const state = produce(this.state, (draftState) => {
+      this.executeByPath(draftState, path, (obj, key) => delete obj[key]);
+    });
+
+    this.update(state);
   }
 
   private parsePath(path: string): (string | number)[] {
@@ -97,7 +84,14 @@ export class Store<TState extends object> {
       .map((key) => (key.match(/^\d+$/) ? parseInt(key) : key));
   }
 
-  private setByPath(obj: Draft<TState>, path: Path<TState>, value: unknown) {
+  private executeByPath(
+    obj: Draft<TState>,
+    path: Path<TState>,
+    callback: (
+      property: Record<string | number, unknown>,
+      key: string | number
+    ) => void
+  ) {
     const keys = this.parsePath(path);
 
     if (!keys.length) return;
@@ -131,13 +125,11 @@ export class Store<TState extends object> {
 
     validateCurrent();
 
-    current[keys.at(-1)!] = value;
+    callback(current, keys.at(-1)!);
   }
 
-  private update = (state: TState, changedProperties: Path<TState>[]) => {
+  private update = (state: TState) => {
     this.state = state;
-    this.subscribers.forEach((subscriber) =>
-      subscriber(state, changedProperties)
-    );
+    this.subscribers.forEach((subscriber) => subscriber(state));
   };
 }

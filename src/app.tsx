@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { fetchData } from "./api";
-import { DataTableProvider, createDataTableStore } from "./lib";
+import { DataTableProvider, createDataTableStoreFactoryFor } from "./lib";
 import { useDataTableParams } from "./lib/dataTableStore/hooks/useDataTableParams";
 import { EditableTable } from "./table";
 
@@ -8,11 +8,18 @@ export type User = {
   id: string;
   firstName: string;
   lastName: string;
-  birthday: Date;
+  birthday: Date | null;
 };
 
-const store = createDataTableStore<User>({
-  rowKey: "id",
+const storeFactory = createDataTableStoreFactoryFor<User>();
+
+const store = storeFactory({
+  rowKey: ["id"],
+  entityFactory: () => ({
+    firstName: "",
+    lastName: "",
+    birthday: null,
+  }),
   pageSize: 30,
   initialSorting: { columnKey: "firstName", descending: false },
 });

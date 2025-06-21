@@ -24,6 +24,12 @@ export const Sortable = <
       this.apply({
         sorting: states[stateIndex % states.length],
         selectedRows: [],
+        editing: {
+          added: [],
+          edited: {},
+          deleted: [],
+          history: [],
+        },
       });
     };
   };

@@ -18,6 +18,12 @@ export const Pagable = <
       this.apply({
         "paging.currentPage": clamp(page, 1, max),
         selectedRows: [],
+        editing: {
+          added: [],
+          edited: {},
+          deleted: [],
+          history: [],
+        },
       });
     };
   };

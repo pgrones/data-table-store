@@ -1,10 +1,10 @@
 import { Group, Table, type TableThProps } from "@mantine/core";
-import { ArrowsSort, ArrowUp } from "tabler-icons-react";
 import { useDataTableSort } from "../../dataTableStore/hooks";
 import { useDataTable } from "../index";
 import classes from "./sortableTh.module.css";
+import { IconArrowsSort, IconArrowUp } from "@tabler/icons-react";
 
-interface SortableThProps<TEntity extends object>
+export interface SortableThProps<TEntity extends object>
   extends Omit<TableThProps, "onClick"> {
   columnKey: Extract<keyof TEntity, string>;
 }
@@ -34,7 +34,7 @@ export const SortableTh = <TEntity extends object>({
       <Group gap="xs" justify={rightAlign ? "flex-end" : "flex-start"}>
         {!rightAlign && children}
 
-        {isSorted ? <ArrowUp /> : <ArrowsSort />}
+        {isSorted ? <IconArrowUp /> : <IconArrowsSort />}
 
         {rightAlign && children}
       </Group>

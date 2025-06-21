@@ -39,7 +39,7 @@ export const ToggleSelection = <TEntity extends object>({
   const dataTable = useDataTable();
   const isSelected = useDataTableSelection(row);
 
-  console.count("ToggleSelection");
+  // console.count("ToggleSelection");
 
   return (
     <Checkbox

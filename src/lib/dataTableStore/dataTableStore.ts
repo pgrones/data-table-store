@@ -1,75 +1,108 @@
 import { Store } from "../store/store";
 import type {
+  DataTableArgs,
   DataTableState,
   DataTableStoreOptions,
+  Key,
   RowKey,
+  UniqueArray,
 } from "./dataTableStore.types";
 import { Fetchable, Pagable, Searchable, Selectable, Sortable } from "./mixins";
+import { Editable } from "./mixins/editable/editable";
 
 export class TableStore<TEntity extends object = object> extends Store<
   DataTableState<TEntity>
 > {
-  protected debounceTimeout: number;
-  private rowKeyProperties: string[];
+  private symbolKey = "data-table";
+  private rowKeyProperties: readonly string[];
+  protected addedRowSymbol = Symbol.for(this.symbolKey);
+  protected searchDebounceTimeout: number;
+  protected loadingOverlayTimeout: number;
+  protected entityFactory: (() => Partial<TEntity>) | null;
 
   public constructor({
-    rowKey = [],
-    debounceTimeout = 500,
-    pageSize = Infinity,
+    searchDebounceTimeout,
+    loadingOverlayTimeout,
+    rowKey,
+    entityFactory,
+    ...state
+  }: DataTableArgs<TEntity>) {
+    super(state);
+
+    this.entityFactory = entityFactory;
+    this.searchDebounceTimeout = searchDebounceTimeout;
+    this.loadingOverlayTimeout = loadingOverlayTimeout;
+    this.rowKeyProperties = Array.isArray(rowKey) ? rowKey : [rowKey];
+  }
+
+  public get getLoadingOverlayTimeout() {
+    return this.loadingOverlayTimeout;
+  }
+
+  public getKey = (row: Partial<TEntity>): RowKey => {
+    if (this.isAddedRow(row)) return row[this.addedRowSymbol];
+
+    return Object.entries(row)
+      .filter(([key]) => this.rowKeyProperties.includes(key))
+      .toSorted(([keyA], [keyB]) => keyA.localeCompare(keyB))
+      .map(([_, value]) => value)
+      .join(";");
+  };
+
+  private isAddedRow = (
+    row: Partial<TEntity>
+  ): row is Partial<TEntity> & { [key: symbol]: RowKey } => {
+    return Object.getOwnPropertySymbols(row).some(
+      (x) => Symbol.keyFor(x) === this.symbolKey
+    );
+  };
+}
+
+export class DataTableStore<TEntity extends object = object> extends Editable(
+  Selectable(Searchable(Pagable(Sortable(Fetchable(TableStore)))))
+) {
+  constructor(args: DataTableArgs<TEntity>) {
+    super({ ...args, rowKey: args.rowKey as never[] });
+  }
+}
+
+export const createDataTableStoreFactoryFor =
+  <TEntity extends object>() =>
+  <
+    const TRawKeys extends readonly [Key<TEntity>, ...Key<TEntity>[]],
+    TRowKey extends UniqueArray<TRawKeys>
+  >({
+    rowKey,
+    entityFactory: defaultEntity = null,
+    searchDebounceTimeout = 500,
+    loadingOverlayTimeout = 500,
+    pageSize = 20,
     initialPage = 1,
     initialSearchValue = "",
     initialSorting = null,
-    initialSelectedRows = [],
-  }: DataTableStoreOptions<TEntity>) {
-    super({
+  }: DataTableStoreOptions<TEntity, TRowKey>) =>
+    new DataTableStore<TEntity>({
+      rowKey,
+      entityFactory: defaultEntity as null,
+      searchDebounceTimeout,
+      loadingOverlayTimeout,
       data: [],
-      selectedRows: initialSelectedRows,
+      selectedRows: [],
+      isPending: false,
+      totalEntities: 0,
       sorting: initialSorting,
-      paging: {
-        currentPage: initialPage,
-        pageSize,
+      editing: {
+        added: [],
+        edited: {},
+        deleted: [],
+        history: [],
       },
       searching: {
         searchValue: initialSearchValue,
         debouncedSearchValue: initialSearchValue,
       },
-      totalEntities: 0,
-      isPending: false,
+      paging: {
+        currentPage: initialPage,
+        pageSize,
+      },
     });
-
-    this.debounceTimeout = debounceTimeout;
-    this.rowKeyProperties = Array.isArray(rowKey) ? rowKey : [rowKey];
-  }
-
-  public getKey = (row: TEntity) => {
-    if (!this.rowKeyProperties.length)
-      return this.state.data.indexOf(row).toString();
-
-    return Object.entries(row)
-      .toSorted(([keyA], [keyB]) => keyA.localeCompare(keyB))
-      .filter(([key]) => this.rowKeyProperties.includes(key))
-      .map(([_, value]) => value)
-      .join(";") as RowKey;
-  };
-}
-
-export class DataTableStore<TEntity extends object = object> extends Selectable(
-  Searchable(Pagable(Sortable(Fetchable(TableStore))))
-) {
-  constructor(options?: DataTableStoreOptions<TEntity>) {
-    super({
-      ...options,
-      rowKey: options?.rowKey as never[],
-      initialSorting: options?.initialSorting as null,
-    });
-  }
-}
-
-export const createDataTableStore = <TEntity extends object>(
-  options?: DataTableStoreOptions<TEntity>
-) =>
-  new DataTableStore<object>({
-    ...options,
-    rowKey: options?.rowKey as never[],
-    initialSorting: options?.initialSorting as null,
-  });

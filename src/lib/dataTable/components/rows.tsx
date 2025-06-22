@@ -10,7 +10,7 @@ export interface RowsProps<TEntity extends object> {
   children: (row: TEntity) => React.ReactNode;
 }
 
-const Rows = <TEntity extends object>({
+const RowsComponent = <TEntity extends object>({
   children: renderRow,
 }: RowsProps<TEntity>) => {
   const rowKeys = useDataTableRowKeys();
@@ -19,7 +19,10 @@ const Rows = <TEntity extends object>({
   return <MemoizedTableRows rowKeys={deferredRowKeys} children={renderRow} />;
 };
 
-export const MemoizedRows = memo(Rows, () => true) as unknown as typeof Rows;
+export const Rows = memo(
+  RowsComponent,
+  () => true
+) as unknown as typeof RowsComponent;
 
 interface TableRowsProps<TEntity extends object> extends RowsProps<TEntity> {
   rowKeys: RowKey[];

@@ -3,7 +3,7 @@ import type { StoreBase } from "../mixin";
 import { AddCommand } from "./addCommand";
 import { Command } from "./command";
 import { DeleteCommand } from "./deleteCommand";
-import { RestoreCommand } from "./RestoreCommand";
+import { RestoreCommand } from "./restoreCommand";
 import { UpdateCommand } from "./updateCommand";
 
 export const Editable = <

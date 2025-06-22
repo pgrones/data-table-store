@@ -66,6 +66,7 @@ export class DataTableStore<TEntity extends object = object> extends Editable(
   }
 }
 
+// TODO: withType extension
 export const createDataTableStoreFactoryFor =
   <TEntity extends object>() =>
   <

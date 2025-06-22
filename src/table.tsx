@@ -1,9 +1,9 @@
-import { Group } from "@mantine/core";
+import { Group, Table } from "@mantine/core";
 import type { User } from "./app";
-import { createDataTableFor } from "./lib";
+import { createMantineDataTable } from "./mantineDataTable";
 import classes from "./table.module.css";
 
-const DataTable = createDataTableFor<User>();
+const DataTable = createMantineDataTable<User>();
 
 export const EditableTable = () => {
   return (
@@ -16,15 +16,13 @@ export const EditableTable = () => {
         <DataTable.Search w={250} placeholder="Search..." />
       </Group>
 
-      <DataTable.ScrollContainer
-        minWidth={1000}
-        style={{ gridColumn: "span 2" }}
-      >
+      {/* TODO: arbitrary compound components */}
+      <Table.ScrollContainer minWidth={1000} style={{ gridColumn: "span 2" }}>
         <DataTable stickyHeader>
           <DataTable.Thead>
             <DataTable.Tr>
               <DataTable.Th className={classes.sticky}>
-                <DataTable.ToggleSelectionAll />
+                <DataTable.AllRowsSelector />
               </DataTable.Th>
               <DataTable.SortableTh columnKey="id">ID</DataTable.SortableTh>
               <DataTable.SortableTh columnKey="firstName">
@@ -45,7 +43,7 @@ export const EditableTable = () => {
                 <>
                   <DataTable.Td className={classes.sticky}>
                     <Group>
-                      <DataTable.ToggleSelection row={row} />
+                      <DataTable.RowSelector row={row} />
                       <DataTable.DeleteRowButton row={row} />
                       <DataTable.RestoreRowButton row={row} />
                     </Group>
@@ -63,7 +61,7 @@ export const EditableTable = () => {
         </DataTable>
 
         <DataTable.DataStateOverlay />
-      </DataTable.ScrollContainer>
+      </Table.ScrollContainer>
 
       <DataTable.Paging
         hideWithOnePage={false}

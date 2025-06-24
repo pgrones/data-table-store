@@ -1,33 +1,33 @@
 import React, { type PropsWithChildren } from "react";
 import { useDataTable } from "../../dataTable.context";
-import { createPolymorphicComponent } from "../polymorphism/createPolymorphicComponent";
+import {
+  createOverridablePolymorphicComponent,
+  type InjectableComponent,
+} from "../polymorphism/createOverridablePolymorphicComponent";
 import { PolymorphicRoot } from "../polymorphism/polymorphicRoot";
-
-interface InternalProps {
-  ref?: React.Ref<HTMLButtonElement>;
-}
 
 export interface AddRowButtonProps {
   addRow: () => void;
 }
 
-const defaultButton = ({ addRow, ...props }: AddRowButtonProps) => (
-  <button onClick={addRow} {...props}>
-    Add Row
-  </button>
-);
-
-export const AddRowButton = createPolymorphicComponent<
+export const AddRowButton = createOverridablePolymorphicComponent<
   "button",
-  PropsWithChildren<InternalProps>
->(({ ...props }: PropsWithChildren<InternalProps>) => {
+  AddRowButtonProps
+>((props: PropsWithChildren) => {
   const dataTable = useDataTable();
 
   return (
-    <PolymorphicRoot
-      component={defaultButton}
+    <PolymorphicRoot<InjectableComponent<AddRowButtonProps>>
       {...props}
       addRow={dataTable.addRow}
     />
   );
 });
+
+export const DefaultAddRowButton = AddRowButton.as<
+  React.ComponentProps<"button">
+>(({ addRow, ...props }) => (
+  <button onClick={addRow} {...props}>
+    Add Row
+  </button>
+));

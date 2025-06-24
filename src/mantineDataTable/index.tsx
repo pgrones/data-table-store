@@ -1,9 +1,9 @@
 import { Table } from "@mantine/core";
 import { createDataTableCreator } from "../lib";
-import { AddRowButton } from "./addRowButton";
+import { MantineAddRowButton } from "./addRowButton";
 import { UndoButton } from "./undoButton";
 import { RestoreRowButton } from "./restoreRowButton";
-import { DeleteRowButton } from "./deleteRowButton";
+import { MantineDeleteRowButton } from "./deleteRowButton";
 import { Search } from "./search";
 
 export const createMantineDataTable = createDataTableCreator({
@@ -17,9 +17,9 @@ export const createMantineDataTable = createDataTableCreator({
   caption: Table.Caption,
   col: "col",
   colgroup: "colgroup",
-  addRowButton: AddRowButton,
+  addRowButton: MantineAddRowButton,
   undoButton: UndoButton,
-  deleteRowButton: DeleteRowButton,
+  deleteRowButton: MantineDeleteRowButton,
   restoreRowButton: RestoreRowButton,
   search: Search,
 });

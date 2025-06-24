@@ -2,7 +2,7 @@ import { type ActionIconProps, ActionIcon } from "@mantine/core";
 import { IconArrowBackUp } from "@tabler/icons-react";
 import React from "react";
 import type { UndoButtonProps } from "../lib/dataTable/components/buttons/undoButton";
-import { createDataTableComponent } from "../lib/dataTable/components/polymorphism/createDataTableComponent";
+import { createDataTableComponent } from "../lib/dataTable/components/polymorphism/createOverridablePolymorphicComponent";
 import { useHotkeys } from "@mantine/hooks";
 
 type UndoButtonComponentProps = ActionIconProps &

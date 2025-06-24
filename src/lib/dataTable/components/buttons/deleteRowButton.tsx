@@ -1,11 +1,12 @@
-import type { PropsWithChildren } from "react";
 import { useDataTableDeletedState } from "../../../dataTableStore/hooks/useDataTableDataState";
 import { useDataTable } from "../../dataTable.context";
-import { createPolymorphicComponent } from "../polymorphism/createPolymorphicComponent";
+import {
+  createOverridablePolymorphicComponent,
+  type InjectableComponent,
+} from "../polymorphism/createOverridablePolymorphicComponent";
 import { PolymorphicRoot } from "../polymorphism/polymorphicRoot";
 
-interface InternalProps {
-  ref?: React.Ref<HTMLButtonElement>;
+export interface RequiredDeleteRowButtonProps {
   row: object; // TODO: typesafe
 }
 
@@ -14,30 +15,28 @@ export interface DeleteRowButtonProps {
   isDeleted: boolean;
 }
 
-const defaultButton = ({
-  deleteRow,
-  isDeleted,
-  ...props
-}: DeleteRowButtonProps) => (
-  <button onClick={deleteRow} disabled={isDeleted} {...props}>
-    Delete
-  </button>
-);
-
-export const DeleteRowButton = createPolymorphicComponent<
+export const DeleteRowButton = createOverridablePolymorphicComponent<
   "button",
-  PropsWithChildren<InternalProps>
->(({ row, ...props }: PropsWithChildren<InternalProps>) => {
+  DeleteRowButtonProps,
+  RequiredDeleteRowButtonProps
+>(({ row, ...props }) => {
   const dataTable = useDataTable();
   const rowKey = dataTable.getKey(row);
   const isDeleted = useDataTableDeletedState(rowKey);
 
   return (
-    <PolymorphicRoot
-      component={defaultButton}
+    <PolymorphicRoot<InjectableComponent<DeleteRowButtonProps>>
       {...props}
       deleteRow={() => dataTable.deleteRow(rowKey)}
       isDeleted={isDeleted}
     />
   );
 });
+
+export const DefaultDeleteRowButton = DeleteRowButton.as<
+  React.ComponentProps<"button">
+>(({ deleteRow, isDeleted, ...props }) => (
+  <button onClick={deleteRow} disabled={isDeleted} {...props}>
+    Delete
+  </button>
+));

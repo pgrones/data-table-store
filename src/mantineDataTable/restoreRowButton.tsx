@@ -1,7 +1,7 @@
 import { ActionIcon, type ActionIconProps } from "@mantine/core";
 import { IconArrowBackUp } from "@tabler/icons-react";
 import type { RestoreRowButtonProps } from "../lib/dataTable/components/buttons/restoreRowButton";
-import { createDataTableComponent } from "../lib/dataTable/components/polymorphism/createDataTableComponent";
+import { createDataTableComponent } from "../lib/dataTable/components/polymorphism/createOverridablePolymorphicComponent";
 
 type RestoreRowButtonComponentProps = ActionIconProps &
   React.ComponentProps<"button"> &

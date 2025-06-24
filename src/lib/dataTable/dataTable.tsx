@@ -1,6 +1,6 @@
 import React from "react";
-import { AddRowButton } from "./components/buttons/addRowButton";
-import { DeleteRowButton } from "./components/buttons/deleteRowButton";
+import { DefaultAddRowButton } from "./components/buttons/addRowButton";
+import { DefaultDeleteRowButton } from "./components/buttons/deleteRowButton";
 import { RestoreRowButton } from "./components/buttons/restoreRowButton";
 import { UndoButton } from "./components/buttons/undoButton";
 import { DataStateOverlay } from "./components/dataStateOverlay";
@@ -77,19 +77,20 @@ export const createDataTableCreator = <
 
   const deleteRowButton = getComponent(
     components.deleteRowButton,
-    DeleteRowButton
+    DefaultDeleteRowButton
   );
   const restoreRowButton = getComponent(
     components.restoreRowButton,
     RestoreRowButton
   );
   const undoButton = getComponent(components.undoButton, UndoButton);
-  const addRowButton = getComponent(components.addRowButton, AddRowButton);
+  const addRowButton = getComponent(
+    components.addRowButton,
+    DefaultAddRowButton
+  );
 
   const createDataTable = <TEntity extends object>() => {
-    const TableRows = createGenericComponent<TEntity>()(
-      (props: RowsProps<TEntity>) => <Rows {...props} />
-    );
+    const TableRows = (props: RowsProps<TEntity>) => <Rows {...props} />;
 
     const renderSortableTh =
       components.sortableTh ??

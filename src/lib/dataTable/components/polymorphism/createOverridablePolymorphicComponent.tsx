@@ -1,8 +1,10 @@
-import { createPolymorphicComponent } from "./createPolymorphicComponent";
+import { createPolymorphicComponent } from './createPolymorphicComponent';
 
 type As<TInjectedProps, TRequiredProps> = <TProps>(
-  component: (props: TInjectedProps & TProps) => React.ReactElement
-) => (props: TProps & TRequiredProps) => React.ReactElement;
+  component: (
+    props: TInjectedProps & TProps
+  ) => React.ReactElement | null | undefined
+) => (props: TProps & TRequiredProps) => React.ReactElement | null | undefined;
 
 export type InjectableComponent<TInjectedProps> = (
   props: TInjectedProps
@@ -18,7 +20,7 @@ export const createOverridablePolymorphicComponent = <
   const Component = createPolymorphicComponent<DefaultType, unknown>(component);
 
   return {
-    as: (component) => (props) =>
-      <Component<unknown> {...props} component={component} />,
+    as: component => props =>
+      <Component<unknown> {...props} component={component} />
   };
 };

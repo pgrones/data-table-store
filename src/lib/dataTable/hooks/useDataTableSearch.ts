@@ -1,6 +1,6 @@
-import { useDataTable } from "../../dataTable";
-import { useSelector } from "../../store/store.hooks";
-import type { DataTableState } from "../dataTableStore.types";
+import { useDataTable } from '..';
+import { useSelector } from '../../store/store.hooks';
+import type { DataTableState } from '../../dataTableStore/dataTableStore.types';
 
 const selector = (state: DataTableState) => state.searching.searchValue;
 

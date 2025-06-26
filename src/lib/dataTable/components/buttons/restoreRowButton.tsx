@@ -1,15 +1,18 @@
-import type { PropsWithChildren } from "react";
 import {
   useDataTableDeletedState,
-  useDataTableEditedState,
-} from "../../../dataTableStore/hooks/useDataTableDataState";
-import { useDataTable } from "../../dataTable.context";
-import { createPolymorphicComponent } from "../polymorphism/createPolymorphicComponent";
-import { PolymorphicRoot } from "../polymorphism/polymorphicRoot";
+  useDataTableEditedState
+} from '../../hooks/useDataTableDataState';
+import { useDataTable } from '../../dataTable.context';
+import {
+  createOverridablePolymorphicComponent,
+  type InjectableComponent
+} from '../polymorphism/createOverridablePolymorphicComponent';
+import { PolymorphicRoot } from '../polymorphism/polymorphicRoot';
 
-interface InternalProps {
-  ref?: React.Ref<HTMLButtonElement>;
-  row: object; // TODO: typesafe
+export interface RequiredRestoreRowButtonProps<
+  TEntity extends object = object
+> {
+  row: TEntity;
 }
 
 export interface RestoreRowButtonProps {
@@ -17,31 +20,29 @@ export interface RestoreRowButtonProps {
   isDirty: boolean;
 }
 
-const defaultButton = ({
-  restoreRow,
-  isDirty,
-  ...props
-}: RestoreRowButtonProps) => (
-  <button onClick={restoreRow} disabled={!isDirty} {...props}>
-    Restore
-  </button>
-);
-
-export const RestoreRowButton = createPolymorphicComponent<
-  "button",
-  PropsWithChildren<InternalProps>
->(({ row, ...props }: PropsWithChildren<InternalProps>) => {
+export const RestoreRowButton = createOverridablePolymorphicComponent<
+  'button',
+  RestoreRowButtonProps,
+  RequiredRestoreRowButtonProps
+>(({ row, ...props }) => {
   const dataTable = useDataTable();
   const rowKey = dataTable.getKey(row);
   const isDeleted = useDataTableDeletedState(rowKey);
   const isEdited = useDataTableEditedState(rowKey);
 
   return (
-    <PolymorphicRoot
-      component={defaultButton}
+    <PolymorphicRoot<InjectableComponent<RestoreRowButtonProps>>
       {...props}
       restoreRow={() => dataTable.restoreRow(rowKey)}
       isDirty={isDeleted || isEdited}
     />
   );
 });
+
+export const DefaultRestoreRowButton = RestoreRowButton.as<
+  React.ComponentProps<'button'>
+>(({ restoreRow, isDirty, ...props }) => (
+  <button onClick={restoreRow} disabled={!isDirty} {...props}>
+    Restore
+  </button>
+));

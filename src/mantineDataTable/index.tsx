@@ -1,12 +1,17 @@
-import { Table } from "@mantine/core";
-import { createDataTableCreator } from "../lib";
-import { MantineAddRowButton } from "./addRowButton";
-import { UndoButton } from "./undoButton";
-import { RestoreRowButton } from "./restoreRowButton";
-import { MantineDeleteRowButton } from "./deleteRowButton";
-import { Search } from "./search";
+import { Table } from '@mantine/core';
+import { createDataTableCreator } from '../lib';
+import { AddRowButton } from './buttons/addRowButton';
+import { UndoButton } from './buttons/undoButton';
+import { RestoreRowButton } from './buttons/restoreRowButton';
+import { DeleteRowButton } from './buttons/deleteRowButton';
+import { SearchInput } from './inputs/searchInput';
+import { Pagination } from './inputs/pagination';
+import { AllRowsSelector } from './inputs/allRowsSelector';
+import { RowSelector } from './inputs/rowSelector';
+import { SortableTh } from './inputs/sortableTh';
+import { DataState } from './dataDisplay/dataState';
 
-export const createMantineDataTable = createDataTableCreator({
+export const createMantineThemedDataTable = createDataTableCreator({
   table: Table,
   thead: Table.Thead,
   tbody: Table.Tbody,
@@ -15,11 +20,19 @@ export const createMantineDataTable = createDataTableCreator({
   th: Table.Th,
   td: Table.Td,
   caption: Table.Caption,
-  col: "col",
-  colgroup: "colgroup",
-  addRowButton: MantineAddRowButton,
+  col: 'col',
+  colgroup: 'colgroup',
+  addRowButton: AddRowButton,
   undoButton: UndoButton,
-  deleteRowButton: MantineDeleteRowButton,
+  deleteRowButton: DeleteRowButton,
   restoreRowButton: RestoreRowButton,
-  search: Search,
+  allRowsSelector: AllRowsSelector,
+  rowSelector: RowSelector,
+  searchInput: SearchInput,
+  pagination: Pagination,
+  sortableTh: SortableTh,
+  dataState: DataState,
+  additionalCompoundComponents: {
+    ScrollContainer: Table.ScrollContainer
+  }
 });

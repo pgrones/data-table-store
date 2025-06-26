@@ -1,13 +1,13 @@
-import { useDataTableDeletedState } from "../../../dataTableStore/hooks/useDataTableDataState";
-import { useDataTable } from "../../dataTable.context";
+import { useDataTableDeletedState } from '../../hooks/useDataTableDataState';
+import { useDataTable } from '../../dataTable.context';
 import {
   createOverridablePolymorphicComponent,
-  type InjectableComponent,
-} from "../polymorphism/createOverridablePolymorphicComponent";
-import { PolymorphicRoot } from "../polymorphism/polymorphicRoot";
+  type InjectableComponent
+} from '../polymorphism/createOverridablePolymorphicComponent';
+import { PolymorphicRoot } from '../polymorphism/polymorphicRoot';
 
-export interface RequiredDeleteRowButtonProps {
-  row: object; // TODO: typesafe
+export interface RequiredDeleteRowButtonProps<TEntity extends object = object> {
+  row: TEntity;
 }
 
 export interface DeleteRowButtonProps {
@@ -16,7 +16,7 @@ export interface DeleteRowButtonProps {
 }
 
 export const DeleteRowButton = createOverridablePolymorphicComponent<
-  "button",
+  'button',
   DeleteRowButtonProps,
   RequiredDeleteRowButtonProps
 >(({ row, ...props }) => {
@@ -34,7 +34,7 @@ export const DeleteRowButton = createOverridablePolymorphicComponent<
 });
 
 export const DefaultDeleteRowButton = DeleteRowButton.as<
-  React.ComponentProps<"button">
+  React.ComponentProps<'button'>
 >(({ deleteRow, isDeleted, ...props }) => (
   <button onClick={deleteRow} disabled={isDeleted} {...props}>
     Delete

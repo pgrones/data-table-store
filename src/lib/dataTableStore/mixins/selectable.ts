@@ -1,4 +1,5 @@
-import type { StoreBase } from "./mixin";
+import type { RowKey } from '../dataTableStore.types';
+import type { StoreBase } from './mixin';
 
 export const Selectable = <
   TBase extends StoreBase<TEntity>,
@@ -7,17 +8,15 @@ export const Selectable = <
   Base: TBase
 ) =>
   class extends Base {
-    public toggleRowSelection = (row: TEntity) => {
-      const rowKey = this.getKey(row);
-
+    public toggleRowSelection = (rowKey: RowKey) => {
       if (!this.state.selectedRows.includes(rowKey)) {
-        this.addListItem("selectedRows", rowKey);
+        this.addListItem('selectedRows', rowKey);
         return;
       }
 
       const keyIndex = this.state.selectedRows.indexOf(rowKey);
 
-      this.removeListItem("selectedRows", keyIndex);
+      this.removeListItem('selectedRows', keyIndex);
       return;
     };
 
@@ -25,10 +24,10 @@ export const Selectable = <
       const allKeys = this.state.data.map(this.getKey);
 
       if (allKeys.length !== this.state.selectedRows.length) {
-        this.set("selectedRows", allKeys);
+        this.set('selectedRows', allKeys);
         return;
       }
 
-      this.set("selectedRows", []);
+      this.set('selectedRows', []);
     };
   };

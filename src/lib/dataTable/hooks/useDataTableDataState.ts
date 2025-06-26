@@ -1,10 +1,10 @@
-import { useDataTable } from "../../dataTable";
-import { useSelector } from "../../store/store.hooks";
-import type { RowKey } from "../dataTableStore.types";
-import { createDataTableSelector } from "./selector";
+import { useDataTable } from '..';
+import { useSelector } from '../../store/store.hooks';
+import type { RowKey } from '../../dataTableStore/dataTableStore.types';
+import { createDataTableSelector } from './selector';
 
 const selector = createDataTableSelector(
-  [(state) => state.isPending, (_, timeout: number) => timeout],
+  [state => state.isPending, (_, timeout: number) => timeout],
   (isPending, timeout) => ({ isPending, timeout })
 );
 
@@ -15,8 +15,8 @@ export const useDataTableLoadingState = () => {
 };
 
 const undoSelector = createDataTableSelector(
-  [(state) => state.editing.history],
-  (history) => !!history.length
+  [state => state.editing.history],
+  history => !!history.length
 );
 
 export const useDataTableUndoState = () => {
@@ -26,7 +26,7 @@ export const useDataTableUndoState = () => {
 };
 
 const deleteSelector = createDataTableSelector(
-  [(state) => state.editing.deleted, (_, rowKey: RowKey) => rowKey],
+  [state => state.editing.deleted, (_, rowKey: RowKey) => rowKey],
   (deleted, rowKey) => deleted.includes(rowKey)
 );
 
@@ -37,7 +37,7 @@ export const useDataTableDeletedState = (rowKey: RowKey) => {
 };
 
 const editedSelector = createDataTableSelector(
-  [(state) => state.editing.edited, (_, rowKey: RowKey) => rowKey],
+  [state => state.editing.edited, (_, rowKey: RowKey) => rowKey],
   (edited, rowKey) => rowKey in edited
 );
 

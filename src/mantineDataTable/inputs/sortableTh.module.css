@@ -3,8 +3,6 @@
     opacity: 0;
     transition: opacity 200ms ease;
     color: var(--mantine-primary-color-filled);
-    width: 1.3em;
-    height: 1.3em;
   }
 
   &[data-sorted] {
@@ -13,7 +11,7 @@
     }
   }
 
-  &[data-desc] {
+  &[data-descending] {
     & svg {
       transform: rotate(180deg);
     }

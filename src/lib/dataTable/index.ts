@@ -1,10 +1,11 @@
-export { AllRowsSelector, RowSelector } from "./components/inputs/selector";
-export { Paging } from "./components/paging";
-export { Search } from "./components/inputs/search";
-export { SortableTh } from "./components/sortableTh";
-export { Rows } from "./components/rows";
-export { DataStateOverlay } from "./components/dataStateOverlay";
-export { useDataTable } from "./dataTable.context";
-export { DataTableProvider } from "./dataTable.provider";
+export { AllRowsSelector } from './components/inputs/allRowsSelector';
+export { RowSelector } from './components/inputs/rowSelector';
+export { Pagination } from './components/inputs/pagination';
+export { SearchInput } from './components/inputs/searchInput';
+export { SortableTh } from './components/inputs/sortableTh';
+export { Rows } from './components/dataDisplay/rows';
+export { DataState } from './components/dataDisplay/dataState';
+export { useDataTable } from './dataTable.context';
+export { DataTableProvider } from './dataTable.provider';
 
-export { createDataTable, createDataTableCreator } from "./dataTable";
+export { createDataTable, createDataTableCreator } from './dataTable.factory';

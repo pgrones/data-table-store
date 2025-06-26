@@ -1,17 +1,13 @@
-import { Table } from "@mantine/core";
-import { memo, useDeferredValue } from "react";
-import type { RowKey } from "../../dataTableStore/dataTableStore.types";
-import {
-  useDataTableRowData,
-  useDataTableRowKeys,
-} from "../../dataTableStore/hooks";
+import { memo, useDeferredValue } from 'react';
+import type { RowKey } from '../../../dataTableStore/dataTableStore.types';
+import { useDataTableRowData, useDataTableRowKeys } from '../../hooks';
 
 export interface RowsProps<TEntity extends object> {
   children: (row: TEntity) => React.ReactNode;
 }
 
 const RowsComponent = <TEntity extends object>({
-  children: renderRow,
+  children: renderRow
 }: RowsProps<TEntity>) => {
   const rowKeys = useDataTableRowKeys();
   const deferredRowKeys = useDeferredValue(rowKeys);
@@ -19,10 +15,7 @@ const RowsComponent = <TEntity extends object>({
   return <MemoizedTableRows rowKeys={deferredRowKeys} children={renderRow} />;
 };
 
-export const Rows = memo(
-  RowsComponent,
-  () => true
-) as unknown as typeof RowsComponent;
+export const Rows = memo(RowsComponent) as unknown as typeof RowsComponent;
 
 interface TableRowsProps<TEntity extends object> extends RowsProps<TEntity> {
   rowKeys: RowKey[];
@@ -30,14 +23,11 @@ interface TableRowsProps<TEntity extends object> extends RowsProps<TEntity> {
 
 const TableRows = <TEntity extends object>({
   rowKeys,
-  children,
-}: TableRowsProps<TEntity>) => {
-  console.count("Rows");
-
-  return rowKeys.map((rowKey) => (
+  children
+}: TableRowsProps<TEntity>) =>
+  rowKeys.map(rowKey => (
     <MemoizedTableRow key={rowKey} rowKey={rowKey} renderRow={children} />
   ));
-};
 
 const MemoizedTableRows = memo(TableRows) as unknown as typeof TableRows;
 
@@ -48,18 +38,11 @@ interface TableRowProps<TEntity extends object> {
 
 const TableRow = <TEntity extends object>({
   rowKey,
-  renderRow,
+  renderRow
 }: TableRowProps<TEntity>) => {
   const row = useDataTableRowData<TEntity>(rowKey);
 
-  console.log("Row", rowKey);
-
-  if (row === null)
-    throw new Error(
-      "Could not find a matching row in store with key " + rowKey
-    );
-
-  return <Table.Tr>{renderRow(row)}</Table.Tr>;
+  return renderRow(row);
 };
 
 const MemoizedTableRow = memo(TableRow) as unknown as typeof TableRow;

@@ -1,8 +1,8 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { fetchData } from "./api";
-import { DataTableProvider, createDataTableStoreFactoryFor } from "./lib";
-import { useDataTableParams } from "./lib/dataTableStore/hooks/useDataTableParams";
-import { EditableTable } from "./table";
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { fetchData } from './api';
+import { DataTableProvider, createDataTableStoreFactoryFor } from './lib';
+import { useDataTableParams } from './lib/dataTable/hooks/useDataTableParams';
+import { EditableTable } from './table';
 
 export type User = {
   id: string;
@@ -14,24 +14,24 @@ export type User = {
 const storeFactory = createDataTableStoreFactoryFor<User>();
 
 const store = storeFactory({
-  rowKey: ["id"],
+  rowKey: ['id'],
   entityFactory: () => ({
-    firstName: "",
-    lastName: "",
-    birthday: null,
+    firstName: '',
+    lastName: '',
+    birthday: null
   }),
   pageSize: 30,
-  initialSorting: { columnKey: "firstName", descending: false },
+  initialSorting: { columnKey: 'firstName', descending: false }
 });
 
 export const App = () => {
-  const params = useDataTableParams<User>(store);
+  const params = useDataTableParams(store);
 
   const { data, isFetching } = useQuery({
-    queryKey: ["data", params],
+    queryKey: ['data', params],
     queryFn: () => fetchData(params),
     placeholderData: keepPreviousData,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: false
   });
 
   return (

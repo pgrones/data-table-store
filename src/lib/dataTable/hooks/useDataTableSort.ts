@@ -1,15 +1,15 @@
-import { useDataTable } from "../../dataTable";
-import { useSelector } from "../../store/store.hooks";
-import { createDataTableSelector } from "./selector";
+import { useDataTable } from '..';
+import { useSelector } from '../../store/store.hooks';
+import { createDataTableSelector } from './selector';
 
 const selector = createDataTableSelector(
-  [(state) => state.sorting, (_, key: string) => key],
+  [state => state.sorting, (_, key: string) => key],
   (sorting, key) => {
     const isSorted = sorting?.columnKey === key;
 
     return {
       isSorted,
-      desc: isSorted && !!sorting?.descending,
+      desc: isSorted && !!sorting?.descending
     };
   }
 );

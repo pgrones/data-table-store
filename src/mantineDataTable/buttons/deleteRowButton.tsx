@@ -1,9 +1,9 @@
-import { ActionIcon, type ActionIconProps } from "@mantine/core";
-import { IconTrash } from "@tabler/icons-react";
-import { DeleteRowButton } from "../lib/dataTable/components/buttons/deleteRowButton";
+import { ActionIcon, type ActionIconProps } from '@mantine/core';
+import { IconTrash } from '@tabler/icons-react';
+import { DeleteRowButton as DataTableDeleteRowButton } from '../../lib/dataTable/components/buttons/deleteRowButton';
 
-export const MantineDeleteRowButton = DeleteRowButton.as<
-  ActionIconProps & React.ComponentProps<"button">
+export const DeleteRowButton = DataTableDeleteRowButton.as<
+  ActionIconProps & React.ComponentProps<'button'>
 >(({ deleteRow, isDeleted, onClick, disabled, ...props }) => {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!isDeleted) deleteRow();

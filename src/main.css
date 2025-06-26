@@ -1,0 +1,12 @@
+.mantine-ActionIcon-root {
+  &:disabled,
+  &[data-disabled] {
+    background-color: transparent;
+  }
+}
+
+.mantine-ScrollArea-scrollbar,
+.mantine-ScrollArea-corner {
+  background-color: var(--mantine-color-body);
+  opacity: 1;
+}

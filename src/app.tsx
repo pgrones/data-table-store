@@ -1,24 +1,22 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { fetchData } from './api';
+import { fetchData, type Customer } from './api';
 import { DataTableProvider, createDataTableStoreFactoryFor } from './lib';
 import { useDataTableParams } from './lib/dataTable/hooks/useDataTableParams';
-import { EditableTable } from './table';
+import { Table } from './table';
 
-export type User = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  birthday: Date | null;
-};
-
-const storeFactory = createDataTableStoreFactoryFor<User>();
+const storeFactory = createDataTableStoreFactoryFor<Customer>();
 
 const store = storeFactory({
   rowKey: ['id'],
   entityFactory: () => ({
     firstName: '',
     lastName: '',
-    birthday: null
+    birthday: null,
+    gender: null,
+    avatarUrl: null,
+    job: '',
+    revenue: 0,
+    trend: []
   }),
   pageSize: 30,
   initialSorting: { columnKey: 'firstName', descending: false }
@@ -36,7 +34,7 @@ export const App = () => {
 
   return (
     <DataTableProvider store={store} data={data} isPending={isFetching}>
-      <EditableTable />
+      <Table />
     </DataTableProvider>
   );
 };

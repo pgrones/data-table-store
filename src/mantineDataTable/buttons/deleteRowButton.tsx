@@ -4,20 +4,16 @@ import { DeleteRowButton as DataTableDeleteRowButton } from '../../lib/dataTable
 
 export const DeleteRowButton = DataTableDeleteRowButton.as<
   ActionIconProps & React.ComponentProps<'button'>
->(({ deleteRow, isDeleted, onClick, disabled, ...props }) => {
+>(({ deleteRow, isDeleted, onClick, ...props }) => {
+  if (isDeleted) return null;
+
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (!isDeleted) deleteRow();
+    deleteRow();
     onClick?.(e);
   };
 
   return (
-    <ActionIcon
-      variant="subtle"
-      color="red"
-      {...props}
-      onClick={handleClick}
-      disabled={isDeleted || disabled}
-    >
+    <ActionIcon variant="subtle" color="red" {...props} onClick={handleClick}>
       <IconTrash size={18} stroke={1.5} />
     </ActionIcon>
   );

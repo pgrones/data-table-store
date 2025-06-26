@@ -1,12 +1,14 @@
 import { MantineProvider } from '@mantine/core';
+import { NavigationProgress } from '@mantine/nprogress';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './app.tsx';
 
 import '@mantine/core/styles.css';
+import '@mantine/charts/styles.css';
 import '@mantine/nprogress/styles.css';
-import { NavigationProgress } from '@mantine/nprogress';
+import './main.css';
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -4,19 +4,16 @@ import { RestoreRowButton as DataTableRestoreRowButton } from '../../lib/dataTab
 
 export const RestoreRowButton = DataTableRestoreRowButton.as<
   ActionIconProps & React.ComponentProps<'button'>
->(({ restoreRow, isDirty, onClick, disabled, ...props }) => {
+>(({ restoreRow, isDirty, onClick, ...props }) => {
+  if (!isDirty) return null;
+
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (isDirty) restoreRow();
+    restoreRow();
     onClick?.(e);
   };
 
   return (
-    <ActionIcon
-      variant="subtle"
-      {...props}
-      onClick={handleClick}
-      disabled={!isDirty || disabled}
-    >
+    <ActionIcon variant="subtle" {...props} onClick={handleClick}>
       <IconArrowBackUp size={18} stroke={1.5} />
     </ActionIcon>
   );

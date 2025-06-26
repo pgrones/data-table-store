@@ -1,13 +1,10 @@
 .sortable-header {
   & svg {
-    opacity: 0;
-    transition: opacity 200ms ease;
     color: var(--mantine-primary-color-filled);
-  }
 
-  &[data-sorted] {
-    & svg {
-      opacity: 1;
+    &[data-default] {
+      color: var(--mantine-color-dimmed);
+      opacity: 0.5;
     }
   }
 
@@ -20,9 +17,5 @@
   &:hover {
     cursor: pointer;
     background-color: var(--mantine-color-default-hover) !important;
-
-    & svg {
-      opacity: 1;
-    }
   }
 }

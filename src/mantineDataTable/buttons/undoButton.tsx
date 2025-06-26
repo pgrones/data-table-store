@@ -16,6 +16,7 @@ export const UndoButton = DataTableUndoButton.as<
   return (
     <ActionIcon
       size="lg"
+      variant="subtle"
       {...props}
       onClick={handleClick}
       disabled={!canUndo || disabled}

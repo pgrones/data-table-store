@@ -73,7 +73,7 @@ export const SearchInput = ({
         _value ? (
           <ClearButton onClear={() => handleChange('')} />
         ) : (
-          <div style={{ paddingTop: 1 }}>
+          <div style={{ marginTop: -6 }}>
             {hotKeyLabel.split('+').map((x, i, arr) => (
               <React.Fragment key={x}>
                 <Kbd>{x}</Kbd>
@@ -86,7 +86,6 @@ export const SearchInput = ({
       rightSectionProps={{
         style: {
           justifyContent: 'flex-end',
-          alignItems: 'flex-start',
           paddingInline: _value ? '0.45rem' : 'var(--mantine-spacing-xs)',
           width: _value ? 'calc(var(--mantine-spacing-xs) * 2 + 15px)' : 'auto'
         }

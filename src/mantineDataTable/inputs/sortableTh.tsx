@@ -37,6 +37,8 @@ export const SortableTh = DataTableSortableTh.as<TableThProps>(
       >
         <Group
           gap="xs"
+          wrap="nowrap"
+          justify="space-between"
           style={{ flexDirection: isRightAligned ? 'row-reverse' : 'row' }}
         >
           {children}
@@ -44,7 +46,7 @@ export const SortableTh = DataTableSortableTh.as<TableThProps>(
           {isSorted ? (
             <IconSortAscending size={20} stroke={1.5} />
           ) : (
-            <IconArrowsSort size={20} stroke={1.5} />
+            <IconArrowsSort size={20} stroke={1.5} data-default={true} />
           )}
         </Group>
       </Table.Th>

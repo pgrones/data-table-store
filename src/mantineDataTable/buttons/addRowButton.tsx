@@ -14,7 +14,7 @@ export const AddRowButton = DataTableAddRowButton.as<
   };
 
   return (
-    <ActionIcon size="lg" {...props} onClick={handleClick}>
+    <ActionIcon size="lg" variant="subtle" {...props} onClick={handleClick}>
       <IconTablePlus size={22} stroke={1.5} />
     </ActionIcon>
   );

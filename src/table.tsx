@@ -44,19 +44,6 @@ export const Table = () => {
           >
             {rows}
           </DataTable.VirtualizedTbody>
-
-          <DataTable.Colgroup>
-            <DataTable.Col width={20} />
-            <DataTable.Col width={38} />
-            <DataTable.Col />
-            <DataTable.Col />
-            <DataTable.Col />
-            <DataTable.Col />
-            <DataTable.Col />
-            <DataTable.Col />
-            <DataTable.Col />
-            <DataTable.Col width={28} />
-          </DataTable.Colgroup>
         </DataTable>
 
         <DataTable.DataState />
@@ -73,14 +60,12 @@ const Headers = () => (
       <DataTable.AllRowsSelector />
     </DataTable.Th>
     <DataTable.Th />
-    <DataTable.SortableTh columnKey="firstName">
-      First Name
-    </DataTable.SortableTh>
-    <DataTable.SortableTh columnKey="lastName">Last Name</DataTable.SortableTh>
-    <DataTable.SortableTh columnKey="birthday">Birthday</DataTable.SortableTh>
-    <DataTable.SortableTh columnKey="gender">Gender</DataTable.SortableTh>
-    <DataTable.SortableTh columnKey="job">Job Title</DataTable.SortableTh>
-    <DataTable.SortableTh columnKey="revenue" ta="end">
+    <DataTable.SortableTh sortBy="firstName">First Name</DataTable.SortableTh>
+    <DataTable.SortableTh sortBy="lastName">Last Name</DataTable.SortableTh>
+    <DataTable.SortableTh sortBy="birthday">Birthday</DataTable.SortableTh>
+    <DataTable.SortableTh sortBy="gender">Gender</DataTable.SortableTh>
+    <DataTable.SortableTh sortBy="job">Job Title</DataTable.SortableTh>
+    <DataTable.SortableTh sortBy="revenue" ta="end">
       Revenue
     </DataTable.SortableTh>
     <DataTable.Th>Trend</DataTable.Th>

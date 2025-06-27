@@ -16,7 +16,7 @@ export const createTbody = (Tbody: React.ElementType) =>
 
       return (
         <Tbody {...props}>
-          <TableRows rowKeys={deferredRowKeys} children={children} />
+          <TableRows rowKeys={deferredRowKeys} renderRow={children} />
         </Tbody>
       );
     }
@@ -24,12 +24,12 @@ export const createTbody = (Tbody: React.ElementType) =>
 
 interface TableRowsProps<TEntity extends object> {
   rowKeys: RowKey[];
-  children: (row: TEntity) => React.ReactNode;
+  renderRow: (row: TEntity) => React.ReactNode;
 }
 
 const TableRows = typedMemo(
-  <TEntity extends object>({ rowKeys, children }: TableRowsProps<TEntity>) =>
+  <TEntity extends object>({ rowKeys, renderRow }: TableRowsProps<TEntity>) =>
     rowKeys.map(rowKey => (
-      <Row key={rowKey} rowKey={rowKey} renderRow={children} />
+      <Row key={rowKey} rowKey={rowKey} renderRow={renderRow} />
     ))
 );

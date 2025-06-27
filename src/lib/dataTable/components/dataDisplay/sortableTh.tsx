@@ -1,3 +1,4 @@
+import type { Key } from '../../../dataTableStore/dataTableStore.types';
 import { useDataTableSort } from '../../hooks';
 import { useDataTable } from '../../index';
 import {
@@ -7,7 +8,9 @@ import {
 import { PolymorphicRoot } from '../polymorphism/polymorphicRoot';
 
 export interface RequiredSortableThProps<TEntity extends object = object> {
-  columnKey: Extract<keyof TEntity, string>;
+  sortBy: Key<TEntity>;
+  columnId?: string;
+  children?: React.ReactNode;
 }
 
 export interface SortableThProps {
@@ -20,7 +23,7 @@ export const SortableTh = createOverridablePolymorphicComponent<
   'th',
   SortableThProps,
   RequiredSortableThProps
->(({ columnKey, ...props }) => {
+>(({ sortBy: columnKey, ...props }) => {
   const dataTable = useDataTable();
   const { isSorted, desc } = useDataTableSort(columnKey);
 

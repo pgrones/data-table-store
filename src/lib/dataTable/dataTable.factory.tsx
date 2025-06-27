@@ -4,34 +4,34 @@ import {
   DefaultDeleteRowButton,
   type RequiredDeleteRowButtonProps
 } from './components/buttons/deleteRowButton';
+import { DefaultRedoButton } from './components/buttons/redoButton';
 import {
   DefaultRestoreRowButton,
   type RequiredRestoreRowButtonProps
 } from './components/buttons/restoreRowButton';
 import { DefaultUndoButton } from './components/buttons/undoButton';
 import { DefaultDataState } from './components/dataDisplay/dataState';
-import { DefaultSearchInput } from './components/inputs/searchInput';
+import {
+  DefaultSortableTh,
+  type RequiredSortableThProps
+} from './components/dataDisplay/sortableTh';
+import { createTbody, type TbodyProps } from './components/dataDisplay/tbody';
+import {
+  createVirtualizedTbody,
+  type VirtualizedTbodyProps
+} from './components/dataDisplay/virtualizedTbody';
+import { DefaultAllRowsSelector } from './components/inputs/allRowsSelector';
+import { DefaultPagination } from './components/inputs/pagination';
 import {
   DefaultRowSelector,
   type RequiredRowSelectorProps
 } from './components/inputs/rowSelector';
-import { DefaultPagination } from './components/inputs/pagination';
-import { createTbody, type TbodyProps } from './components/dataDisplay/tbody';
-import {
-  DefaultSortableTh,
-  type RequiredSortableThProps
-} from './components/inputs/sortableTh';
+import { DefaultSearchInput } from './components/inputs/searchInput';
 import type {
   DataTableComponents,
   TypedElement,
   WithProps
 } from './dataTable.types';
-import { DefaultAllRowsSelector } from './components/inputs/allRowsSelector';
-import { DefaultRedoButton } from './components/buttons/redoButton';
-import {
-  createVirtualizedTbody,
-  type VirtualizedTbodyProps
-} from './components/dataDisplay/virtualizedTbody';
 
 const getOrDefault = <
   C extends React.ElementType | undefined,
@@ -49,7 +49,7 @@ const withCompoundComponents = <T extends React.ElementType, TCompound>(
   if (!compounds) return base as T & TCompound;
 
   for (const [key, component] of Object.entries(compounds)) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
     (base as any)[key] = component;
   }
 
@@ -58,7 +58,8 @@ const withCompoundComponents = <T extends React.ElementType, TCompound>(
 
 export const createDataTableCreator = <
   TCompoundMap extends { [K in keyof TCompoundMap]: React.ElementType },
-  Components extends DataTableComponents<TCompoundMap> = DataTableComponents<TCompoundMap>
+  Components extends
+    DataTableComponents<TCompoundMap> = DataTableComponents<TCompoundMap>
 >(
   components: Partial<Components> = {}
 ) => {

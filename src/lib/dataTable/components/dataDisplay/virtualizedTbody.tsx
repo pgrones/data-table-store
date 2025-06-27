@@ -1,5 +1,5 @@
-import { useVirtualizer } from '@tanstack/react-virtual';
 import type React from 'react';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import type { RowKey } from '../../../dataTableStore/dataTableStore.types';
 import { useDataTableRowKeys } from '../../hooks';
 import { typedMemo } from '../polymorphism/memoWithGenerics';
@@ -25,7 +25,7 @@ export const createVirtualizedTbody = (Tbody: React.ElementType) =>
 
       const virtualizer = useVirtualizer({
         count: rowKeys.length,
-        getItemKey: index => rowKeys[index],
+        getItemKey: index => rowKeys[index]!,
         getScrollElement: () => scrollRef.current,
         estimateSize: () => rowHeight,
         overscan
@@ -37,12 +37,12 @@ export const createVirtualizedTbody = (Tbody: React.ElementType) =>
       const paddingBottom =
         virtualizer.getTotalSize() - (virtualItems.at(-1)?.end ?? 0);
 
-      const visibleRowKeys = virtualItems.map(item => rowKeys[item.index]);
+      const visibleRowKeys = virtualItems.map(item => rowKeys[item.index]!);
 
       return (
         <Tbody {...props}>
           <tr style={{ height: paddingTop }} />
-          <TableRows rowKeys={visibleRowKeys} children={children} />
+          <TableRows rowKeys={visibleRowKeys} renderRow={children} />
           <tr style={{ height: paddingBottom }} />
         </Tbody>
       );
@@ -50,13 +50,13 @@ export const createVirtualizedTbody = (Tbody: React.ElementType) =>
   );
 
 interface TableRowsProps<TEntity extends object> {
-  children: (row: TEntity) => React.ReactNode;
+  renderRow: (row: TEntity) => React.ReactNode;
   rowKeys: RowKey[];
 }
 
 const TableRows = typedMemo(
-  <TEntity extends object>({ rowKeys, children }: TableRowsProps<TEntity>) =>
+  <TEntity extends object>({ rowKeys, renderRow }: TableRowsProps<TEntity>) =>
     rowKeys.map(rowKey => (
-      <Row key={rowKey} rowKey={rowKey} renderRow={children} />
+      <Row key={rowKey} rowKey={rowKey} renderRow={renderRow} />
     ))
 );

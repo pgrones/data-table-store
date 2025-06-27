@@ -1,12 +1,11 @@
 export {
-  DataTableProvider,
-  useDataTable,
   createDataTable,
-  createDataTableCreator
+  createDataTableCreator,
+  DataTableProvider,
+  useDataTable
 } from './dataTable/index';
-export { createDataTableStoreFactoryFor } from './dataTableStore/dataTableStore';
+export { createDataTableStore } from './dataTableStore/dataTableStore';
 export type {
   DataTableData,
-  DataTableParams,
-  DataTableState
+  DataTableParams
 } from './dataTableStore/dataTableStore.types';

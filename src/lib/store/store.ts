@@ -1,12 +1,12 @@
-import { produce, type Draft } from "immer";
+import { produce, type Draft } from 'immer';
 import {
   type ArrayPath,
   type Changes,
   type Path,
   type PathValue,
   type Subscriber,
-  type Unsubscribe,
-} from "./store.types";
+  type Unsubscribe
+} from './store.types';
 
 export class Store<TState extends object> {
   protected state: TState;
@@ -32,7 +32,7 @@ export class Store<TState extends object> {
   }
 
   public addListItem(path: ArrayPath<TState>, ...values: unknown[]) {
-    const state = produce(this.state, (draftState) => {
+    const state = produce(this.state, draftState => {
       this.executeByPath(draftState, path, (obj, key) =>
         (obj[key] as unknown[]).push(...values)
       );
@@ -42,7 +42,7 @@ export class Store<TState extends object> {
   }
 
   public removeListItem(path: ArrayPath<TState>, ...indices: number[]) {
-    const state = produce(this.state, (draftState) => {
+    const state = produce(this.state, draftState => {
       this.executeByPath(
         draftState,
         path,
@@ -61,7 +61,7 @@ export class Store<TState extends object> {
 
     if (values.length === 0) return;
 
-    const state = produce(this.state, (draftState) => {
+    const state = produce(this.state, draftState => {
       for (const [path, value] of values) {
         this.executeByPath(draftState, path, (obj, key) => (obj[key] = value));
       }
@@ -71,7 +71,7 @@ export class Store<TState extends object> {
   }
 
   public delete(path: Path<TState>) {
-    const state = produce(this.state, (draftState) => {
+    const state = produce(this.state, draftState => {
       this.executeByPath(draftState, path, (obj, key) => delete obj[key]);
     });
 
@@ -80,8 +80,8 @@ export class Store<TState extends object> {
 
   private parsePath(path: string): (string | number)[] {
     return path
-      .split(".")
-      .map((key) => (key.match(/^\d+$/) ? parseInt(key) : key));
+      .split('.')
+      .map(key => ((/^\d+$/.exec(key)) ? parseInt(key) : key));
   }
 
   private executeByPath(
@@ -96,40 +96,43 @@ export class Store<TState extends object> {
 
     if (!keys.length) return;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
     let current = obj as any;
 
     const validateCurrent = (i?: number) => {
       if (
-        (typeof current !== "object" || current === null) &&
+        (typeof current !== 'object' || current === null) &&
         !Array.isArray(current)
       ) {
         throw new Error(
-          `Cannot index non-object at ${keys.slice(0, i).join(".")}`
+          `Cannot index non-object at ${keys.slice(0, i).join('.')}`
         );
       }
     };
 
     for (let i = 0; i < keys.length - 1; i++) {
-      const key = keys[i];
+      const key = keys[i]!;
 
       validateCurrent(i);
 
       if (!(key in current)) {
-        const defaultValue = typeof keys[i + 1] === "number" ? [] : {};
+        const defaultValue = typeof keys[i + 1] === 'number' ? [] : {};
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         current[key] = defaultValue;
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       current = current[key];
     }
 
     validateCurrent();
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     callback(current, keys.at(-1)!);
   }
 
   private update = (state: TState) => {
     this.state = state;
-    this.subscribers.forEach((subscriber) => subscriber(state));
+    this.subscribers.forEach(subscriber => subscriber(state));
   };
 }

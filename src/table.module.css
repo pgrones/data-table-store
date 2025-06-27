@@ -21,10 +21,19 @@
 }
 
 .sticky {
+  box-sizing: border-box;
   position: sticky;
   left: 0;
   z-index: 1;
   background-color: var(--mantine-color-body);
+
+  &:not(th) {
+    border-top: 1px solid var(--table-border-color);
+  }
+
+  &:not(td) {
+    border-top: 1px solid transparent;
+  }
 
   &[data-right] {
     left: unset;

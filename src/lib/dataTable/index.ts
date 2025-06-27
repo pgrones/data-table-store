@@ -3,7 +3,7 @@ export { RowSelector } from './components/inputs/rowSelector';
 export { Pagination } from './components/inputs/pagination';
 export { SearchInput } from './components/inputs/searchInput';
 export { SortableTh } from './components/inputs/sortableTh';
-export { Rows } from './components/dataDisplay/rows';
+export { createTbody } from './components/dataDisplay/tbody';
 export { DataState } from './components/dataDisplay/dataState';
 export { useDataTable } from './dataTable.context';
 export { DataTableProvider } from './dataTable.provider';

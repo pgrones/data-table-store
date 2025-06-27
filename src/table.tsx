@@ -9,10 +9,13 @@ import {
 import type { Customer } from './api';
 import { createMantineThemedDataTable } from './mantineDataTable';
 import classes from './table.module.css';
+import { useRef } from 'react';
 
 const DataTable = createMantineThemedDataTable<Customer>();
 
 export const Table = () => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
   return (
     <div className={classes.layout}>
       <Group>
@@ -28,15 +31,19 @@ export const Table = () => {
         </Group>
       </Group>
 
-      <ScrollArea offsetScrollbars type="auto">
+      <ScrollArea offsetScrollbars type="auto" viewportRef={scrollRef}>
         <DataTable stickyHeader horizontalSpacing="lg" verticalSpacing="sm">
           <DataTable.Thead>
             <Headers />
           </DataTable.Thead>
 
-          <DataTable.Tbody>
-            <DataTable.Rows>{rows}</DataTable.Rows>
-          </DataTable.Tbody>
+          <DataTable.VirtualizedTbody
+            scrollRef={scrollRef}
+            rowHeight={64}
+            overscan={5}
+          >
+            {rows}
+          </DataTable.VirtualizedTbody>
 
           <DataTable.Colgroup>
             <DataTable.Col width={20} />
@@ -82,7 +89,7 @@ const Headers = () => (
 );
 
 const rows = (row: Customer) => (
-  <DataTable.Tr>
+  <DataTable.Tr h={64}>
     <DataTable.Td className={classes.sticky}>
       <DataTable.RowSelector row={row} />
     </DataTable.Td>

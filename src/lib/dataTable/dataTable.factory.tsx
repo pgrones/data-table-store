@@ -16,14 +16,22 @@ import {
   type RequiredRowSelectorProps
 } from './components/inputs/rowSelector';
 import { DefaultPagination } from './components/inputs/pagination';
-import { Rows, type RowsProps } from './components/dataDisplay/rows';
+import { createTbody, type TbodyProps } from './components/dataDisplay/tbody';
 import {
   DefaultSortableTh,
   type RequiredSortableThProps
 } from './components/inputs/sortableTh';
-import type { DataTableComponents, TypedElement } from './dataTable.types';
+import type {
+  DataTableComponents,
+  TypedElement,
+  WithProps
+} from './dataTable.types';
 import { DefaultAllRowsSelector } from './components/inputs/allRowsSelector';
 import { DefaultRedoButton } from './components/buttons/redoButton';
+import {
+  createVirtualizedTbody,
+  type VirtualizedTbodyProps
+} from './components/dataDisplay/virtualizedTbody';
 
 const getOrDefault = <
   C extends React.ElementType | undefined,
@@ -65,6 +73,9 @@ export const createDataTableCreator = <
   const colgroup = getOrDefault(components.colgroup, 'colgroup');
   const col = getOrDefault(components.col, 'col');
 
+  const virtualizedTbody = createVirtualizedTbody(tbody);
+  const deferredTbody = createTbody(tbody);
+
   const allRowsSelector = getOrDefault(
     components.allRowsSelector,
     DefaultAllRowsSelector
@@ -95,7 +106,6 @@ export const createDataTableCreator = <
       React.createElement(table, props);
 
     DataTable.Thead = thead;
-    DataTable.Tbody = tbody;
     DataTable.Tfoot = tfoot;
     DataTable.Tr = tr;
     DataTable.Th = th;
@@ -104,7 +114,14 @@ export const createDataTableCreator = <
     DataTable.Colgroup = colgroup;
     DataTable.Col = col;
 
-    DataTable.Rows = Rows as TypedElement<typeof Rows, RowsProps<TEntity>>;
+    DataTable.Tbody = deferredTbody as TypedElement<
+      typeof deferredTbody,
+      Parameters<WithProps<typeof tbody, TbodyProps<TEntity>>>[0]
+    >;
+    DataTable.VirtualizedTbody = virtualizedTbody as TypedElement<
+      typeof virtualizedTbody,
+      Parameters<WithProps<typeof tbody, VirtualizedTbodyProps<TEntity>>>[0]
+    >;
     DataTable.SortableTh = sortableTh as TypedElement<
       typeof sortableTh,
       RequiredSortableThProps<TEntity>

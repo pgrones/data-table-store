@@ -18,7 +18,7 @@ const store = storeFactory({
     revenue: 0,
     trend: []
   }),
-  pageSize: 30,
+  pageSize: 50,
   initialSorting: { columnKey: 'firstName', descending: false }
 });
 

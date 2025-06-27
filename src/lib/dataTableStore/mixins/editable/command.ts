@@ -1,8 +1,8 @@
-import type { TableStore } from "../../dataTableStore";
-import type { Editing, RowKey } from "../../dataTableStore.types";
+import type { TableStore } from '../../dataTableStore';
+import type { Editing, RowKey } from '../../dataTableStore.types';
 
 export abstract class Command<TEntity extends object> {
-  protected snapshot: Omit<Editing<TEntity>, "history"> | null;
+  protected snapshot: Omit<Editing<TEntity>, 'history' | 'undoHistory'> | null;
   protected store: TableStore<TEntity>;
   protected addedRowKeyPrefix: string;
   protected addedRowSymbol: symbol;
@@ -24,7 +24,7 @@ export abstract class Command<TEntity extends object> {
     this.snapshot = {
       added: editingState.added,
       deleted: editingState.deleted,
-      edited: editingState.edited,
+      edited: editingState.edited
     };
   }
 
@@ -33,9 +33,9 @@ export abstract class Command<TEntity extends object> {
   public undo() {
     if (this.snapshot !== null)
       this.store.apply({
-        "editing.added": this.snapshot.added,
-        "editing.deleted": this.snapshot.deleted,
-        "editing.edited": this.snapshot.edited,
+        'editing.added': this.snapshot.added,
+        'editing.deleted': this.snapshot.deleted,
+        'editing.edited': this.snapshot.edited
       });
   }
 

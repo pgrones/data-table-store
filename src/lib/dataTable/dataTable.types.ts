@@ -23,9 +23,10 @@ export interface DataTableComponents<TCompoundMap extends object> {
   additionalCompoundComponents?: TCompoundMap;
 }
 
-type WithProps<T extends React.ElementType, P> = T extends React.ComponentType<
-  infer Props
->
+export type WithProps<
+  T extends React.ElementType,
+  P
+> = T extends React.ComponentType<infer Props>
   ? (props: Omit<Props, keyof P> & P) => React.ReactElement
   : never;
 

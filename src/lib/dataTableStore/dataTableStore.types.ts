@@ -1,3 +1,14 @@
+import type { StateCreator } from 'zustand/vanilla';
+import {
+  type DataSlice,
+  type EditorSlice,
+  type PaginationSlice,
+  type ResetSlice,
+  type SearchSlice,
+  type SelectionSlice,
+  type SortSlice
+} from './slices';
+
 type Includes<T extends readonly unknown[], U> = T extends [infer F, ...infer R]
   ? Equal<F, U> extends true
     ? true
@@ -22,18 +33,6 @@ export type UniqueArray<T extends readonly unknown[]> = T extends [
 export type Key<TEntity extends object> = Extract<keyof TEntity, string>;
 
 export type RowKey = string;
-
-export interface ColumnOptions {
-  isResizable: boolean;
-  isOrderable: boolean;
-  isHidable: boolean;
-}
-
-export interface Column extends ColumnOptions {
-  width: number;
-  position: number;
-  visible: boolean;
-}
 
 export interface DataTableStoreOptions<
   TEntity extends object,
@@ -70,3 +69,18 @@ export interface DataTableParams<TEntity extends object> {
   searchValue: string;
   sorting: { columnKey: Key<TEntity>; descending: boolean } | null;
 }
+
+export type Store<TEntity extends object> = DataSlice<TEntity> &
+  EditorSlice<TEntity> &
+  SortSlice<TEntity> &
+  PaginationSlice &
+  ResetSlice &
+  SearchSlice &
+  SelectionSlice;
+
+export type SliceCreator<TEntity extends object, Slice> = StateCreator<
+  Store<TEntity>,
+  [['zustand/immer', never]],
+  [],
+  Slice
+>;

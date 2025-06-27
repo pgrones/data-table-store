@@ -1,6 +1,5 @@
-import { castImmutable, produce } from 'immer';
-import type { StateCreator } from 'zustand';
-import type { Key, RowKey } from '../../dataTableStore.types';
+import { type Draft } from 'immer';
+import type { Key, RowKey, SliceCreator } from '../../dataTableStore.types';
 import {
   AddCommand,
   Command,
@@ -37,19 +36,17 @@ export interface EditorSlice<TEntity extends object> {
 export const createEditorSlice =
   <TEntity extends object, TRowKey extends readonly Key<TEntity>[]>(
     createEntity?: () => Omit<TEntity, TRowKey[number]>
-  ): StateCreator<EditorSlice<TEntity>> =>
+  ): SliceCreator<TEntity, EditorSlice<TEntity>> =>
   (set, get) => {
     const executeCommand = (command: Command<TEntity>) => {
       if (!command.execute()) return;
 
-      const producer = produce((state: EditorSlice<TEntity>) => {
+      set(state => {
         state.history.push(command);
         state.undoHistory = [];
 
         if (state.history.length > 100) state.history.shift();
       });
-
-      set(state => producer(castImmutable(state)));
     };
 
     return {
@@ -66,8 +63,18 @@ export const createEditorSlice =
 
         executeCommand(new AddCommand(createEntity(), get(), set));
       },
-      updateRow: (...args) =>
-        executeCommand(new UpdateCommand(...args, get(), set)),
+      updateRow: (rowKey, key, value) =>
+        executeCommand(
+          new UpdateCommand(
+            rowKey,
+            key as keyof Draft<Partial<TEntity>>,
+            value as unknown as Draft<Partial<TEntity>>[keyof Draft<
+              Partial<TEntity>
+            >],
+            get(),
+            set
+          )
+        ),
       deleteRow: rowKey =>
         executeCommand(new DeleteCommand(rowKey, get(), set)),
       restoreRow: rowKey =>
@@ -79,11 +86,9 @@ export const createEditorSlice =
 
         command.undo();
 
-        const producer = produce((state: EditorSlice<TEntity>) => {
+        set(state => {
           state.undoHistory.push(state.history.pop()!);
         });
-
-        set(state => producer(castImmutable(state)));
       },
       redo: () => {
         const command = get().undoHistory.at(-1);
@@ -92,11 +97,9 @@ export const createEditorSlice =
 
         command.execute();
 
-        const producer = produce((state: EditorSlice<TEntity>) => {
+        set(state => {
           state.history.push(state.undoHistory.pop()!);
         });
-
-        set(state => producer(castImmutable(state)));
       },
       resetEditor: () =>
         set({

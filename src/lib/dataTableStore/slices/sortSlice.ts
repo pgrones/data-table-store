@@ -1,6 +1,4 @@
-import type { StateCreator } from 'zustand';
-import type { Key } from '../dataTableStore.types';
-import type { ResetSlice } from './resetSlice';
+import type { Key, SliceCreator } from '../dataTableStore.types';
 
 export interface SortSlice<TEntity extends object, TKey = Key<TEntity>> {
   sortBy: TKey | null;
@@ -8,15 +6,8 @@ export interface SortSlice<TEntity extends object, TKey = Key<TEntity>> {
   toggleSort: (columnKey: TKey) => void;
 }
 
-type Store<TEntity extends object> = ResetSlice & SortSlice<TEntity>;
-
 export const createSortSlice =
-  <TEntity extends object>(): StateCreator<
-    Store<TEntity>,
-    [],
-    [],
-    SortSlice<TEntity>
-  > =>
+  <TEntity extends object>(): SliceCreator<TEntity, SortSlice<TEntity>> =>
   (set, get) => ({
     sortBy: null,
     descending: false,

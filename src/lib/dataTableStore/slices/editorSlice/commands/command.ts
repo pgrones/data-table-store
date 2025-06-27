@@ -1,3 +1,4 @@
+import type { WritableDraft } from 'immer';
 import type { EditorSlice } from '../editorSlice';
 
 export abstract class Command<TEntity extends object> {
@@ -13,7 +14,7 @@ export abstract class Command<TEntity extends object> {
     set: (
       updater:
         | Partial<EditorSlice<TEntity>>
-        | ((state: EditorSlice<TEntity>) => EditorSlice<TEntity>)
+        | ((state: WritableDraft<EditorSlice<TEntity>>) => void)
     ) => void
   ) {
     this.snapshot = null;

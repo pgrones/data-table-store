@@ -1,9 +1,7 @@
-import type { StateCreator } from 'zustand';
-import type { Key, RowKey } from '../dataTableStore.types';
+import type { Key, RowKey, SliceCreator } from '../dataTableStore.types';
 import { addedRowSymbol } from './editorSlice/editorSlice';
-import type { ResetSlice } from './resetSlice';
 
-const isAddedRow = <TEntity extends object>(
+export const isAddedRow = <TEntity extends object>(
   row: Partial<TEntity>
 ): row is Partial<TEntity> & Record<typeof addedRowSymbol, RowKey> => {
   return Object.getOwnPropertySymbols(row).includes(addedRowSymbol);
@@ -18,12 +16,10 @@ export interface DataSlice<TEntity extends object> {
   getKey: (row: Partial<TEntity>) => RowKey;
 }
 
-type Store<TEntity extends object> = ResetSlice & DataSlice<TEntity>;
-
 export const createDataSlice =
   <TEntity extends object>(
     rowKeyProperties: readonly Key<TEntity>[]
-  ): StateCreator<Store<TEntity>, [], [], DataSlice<TEntity>> =>
+  ): SliceCreator<TEntity, DataSlice<TEntity>> =>
   (set, get) => ({
     isPending: false,
     data: [],

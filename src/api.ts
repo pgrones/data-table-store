@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import type { DataTableData, DataTableParams } from './lib';
 
-export type Customer = {
+export interface Customer {
   id: string;
   firstName: string;
   lastName: string;
@@ -11,7 +11,7 @@ export type Customer = {
   avatarUrl: string | null;
   revenue: number;
   trend: number[];
-};
+}
 
 const data = Array(103)
   .fill(null)
@@ -59,8 +59,8 @@ export const fetchData = ({
       !a[key]
         ? -1
         : !b[key]
-        ? 1
-        : a[key].toString().localeCompare(b[key].toString())
+          ? 1
+          : a[key].toString().localeCompare(b[key].toString())
     );
 
   if (desc) result.reverse();
@@ -73,9 +73,12 @@ export const fetchData = ({
   };
 
   const promise = new Promise<DataTableData<Customer>>(resolve => {
-    setTimeout(() => {
-      resolve(response);
-    }, getRndInteger(20, 1000));
+    setTimeout(
+      () => {
+        resolve(response);
+      },
+      getRndInteger(20, 1000)
+    );
   });
 
   return promise;

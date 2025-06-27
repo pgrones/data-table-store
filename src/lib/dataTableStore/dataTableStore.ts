@@ -1,7 +1,9 @@
+import { immer } from 'zustand/middleware/immer';
 import { createStore } from 'zustand/vanilla';
 import type {
   DataTableStoreOptions,
   Key,
+  Store,
   UniqueArray
 } from './dataTableStore.types';
 import {
@@ -11,15 +13,12 @@ import {
   createResetSlice,
   createSearchSlice,
   createSelectionSlice,
-  createSortSlice,
-  type DataSlice,
-  type EditorSlice,
-  type PaginationSlice,
-  type ResetSlice,
-  type SearchSlice,
-  type SelectionSlice,
-  type SortSlice
+  createSortSlice
 } from './slices';
+
+export type DataTableStore<TEntity extends object> = ReturnType<
+  ReturnType<typeof createDataTableStoreFactory<TEntity>>
+>;
 
 const createDataTableStoreFactory =
   <TEntity extends object>() =>
@@ -35,28 +34,22 @@ const createDataTableStoreFactory =
     initialSearchValue = '',
     initialSorting
   }: DataTableStoreOptions<TEntity, TRowKey>) =>
-    createStore<
-      DataSlice<TEntity> &
-        EditorSlice<TEntity> &
-        SortSlice<TEntity> &
-        PaginationSlice &
-        ResetSlice &
-        SearchSlice &
-        SelectionSlice
-    >()((...args) => ({
-      ...createDataSlice<TEntity>(rowKey)(...args),
-      ...createEditorSlice<TEntity, typeof rowKey>(createEntity)(...args),
-      ...createPaginationSlice<TEntity>()(...args),
-      ...createResetSlice()(...args),
-      ...createSearchSlice(searchDebounceTimeout)(...args),
-      ...createSelectionSlice<TEntity>()(...args),
-      ...createSortSlice<TEntity>()(...args),
-      currentPage: initialPage,
-      pageSize,
-      searchValue: initialSearchValue,
-      sortBy: initialSorting?.sortBy ?? null,
-      descending: !!initialSorting?.descending
-    }));
+    createStore<Store<TEntity>>()(
+      immer((...args) => ({
+        ...createDataSlice<TEntity>(rowKey)(...args),
+        ...createEditorSlice<TEntity, typeof rowKey>(createEntity)(...args),
+        ...createPaginationSlice<TEntity>()(...args),
+        ...createResetSlice<TEntity>()(...args),
+        ...createSearchSlice<TEntity>(searchDebounceTimeout)(...args),
+        ...createSelectionSlice<TEntity>()(...args),
+        ...createSortSlice<TEntity>()(...args),
+        currentPage: initialPage,
+        pageSize,
+        searchValue: initialSearchValue,
+        sortBy: initialSorting?.sortBy ?? null,
+        descending: !!initialSorting?.descending
+      }))
+    );
 
 export const createDataTableStore = <TEntity extends object>(
   ...args: Parameters<ReturnType<typeof createDataTableStoreFactory<TEntity>>>

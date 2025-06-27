@@ -1,6 +1,4 @@
-import type { StateCreator } from 'zustand';
-import type { PaginationSlice } from './paginationSlice';
-import type { ResetSlice } from './resetSlice';
+import type { SliceCreator } from '../dataTableStore.types';
 
 export interface SearchSlice {
   searchValue: string;
@@ -8,10 +6,10 @@ export interface SearchSlice {
   setSearchValue: (searchValue: string) => void;
 }
 
-type Store = PaginationSlice & ResetSlice & SearchSlice;
-
 export const createSearchSlice =
-  (searchDebounceTimeout: number): StateCreator<Store, [], [], SearchSlice> =>
+  <TEntity extends object>(
+    searchDebounceTimeout: number
+  ): SliceCreator<TEntity, SearchSlice> =>
   (set, get) => {
     let timeoutId: number | null = null;
 

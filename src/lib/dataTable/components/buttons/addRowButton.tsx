@@ -13,12 +13,12 @@ export const AddRowButton = createOverridablePolymorphicComponent<
   'button',
   AddRowButtonProps
 >(props => {
-  const dataTable = useDataTable();
+  const addRow = useDataTable(state => state.addRow);
 
   return (
     <PolymorphicRoot<InjectableComponent<AddRowButtonProps>>
       {...props}
-      addRow={dataTable.addRow}
+      addRow={addRow}
     />
   );
 });
@@ -26,7 +26,7 @@ export const AddRowButton = createOverridablePolymorphicComponent<
 export const DefaultAddRowButton = AddRowButton.as<
   React.ComponentProps<'button'>
 >(({ addRow, ...props }) => (
-  <button onClick={addRow} {...props}>
+  <button type="button" onClick={addRow} {...props}>
     Add Row
   </button>
 ));

@@ -1,12 +1,20 @@
-import { createContext, use } from "react";
-import type { DataTableStore } from "../dataTableStore/dataTableStore";
+import { createContext, use } from 'react';
+import { useStore } from 'zustand';
+import type { DataTableStore } from '../dataTableStore/dataTableStore';
+import type { Store } from '../dataTableStore/dataTableStore.types';
 
-export const DataTableContext = createContext<DataTableStore | null>(null);
+export const DataTableContext = createContext<DataTableStore<object> | null>(
+  null
+);
 
-export const useDataTable = <TEntity extends object>() => {
-  const ctx = use(DataTableContext);
+export const useDataTable = <TEntity extends object = object, U = unknown>(
+  selector: (state: Store<TEntity>) => U
+) => {
+  const store = use(
+    DataTableContext
+  ) as unknown as DataTableStore<TEntity> | null;
 
-  if (ctx === null) throw new Error("DataTableContext is not provided");
+  if (store === null) throw new Error('DataTableContext is not provided');
 
-  return ctx as DataTableStore<TEntity>;
+  return useStore(store, selector);
 };

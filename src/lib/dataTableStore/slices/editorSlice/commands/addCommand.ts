@@ -1,10 +1,6 @@
-import { castImmutable, produce } from 'immer';
+import { castDraft } from 'immer';
 import type { Key, RowKey } from '../../../dataTableStore.types';
-import {
-  addedRowKeyPrefix,
-  addedRowSymbol,
-  type EditorSlice
-} from '../editorSlice';
+import { addedRowKeyPrefix, addedRowSymbol } from '../editorSlice';
 import { Command } from './command';
 
 export class AddCommand<
@@ -12,7 +8,6 @@ export class AddCommand<
   TRowKey extends readonly Key<TEntity>[]
 > extends Command<TEntity> {
   private defaultEntity;
-  private produce;
 
   constructor(
     defaultEntity: Omit<TEntity, TRowKey[number]>,
@@ -21,18 +16,19 @@ export class AddCommand<
     super(...args);
 
     this.defaultEntity = defaultEntity;
-    this.produce = produce((state: EditorSlice<TEntity>) => {
-      state.added.push({
-        [addedRowSymbol]: `${addedRowKeyPrefix}${this.getTimestamp}`,
-        ...this.defaultEntity
-      } as Partial<TEntity> & Record<typeof addedRowSymbol, RowKey>);
-    });
   }
 
   public execute = () => {
     super.createSnapshot();
 
-    this.set(state => this.produce(castImmutable(state)));
+    this.set(state => {
+      state.added.push(
+        castDraft({
+          [addedRowSymbol]: `${addedRowKeyPrefix}${this.getTimestamp}`,
+          ...this.defaultEntity
+        } as Partial<TEntity> & Record<typeof addedRowSymbol, RowKey>)
+      );
+    });
 
     return true;
   };

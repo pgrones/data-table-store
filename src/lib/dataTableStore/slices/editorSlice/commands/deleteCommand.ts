@@ -1,10 +1,5 @@
-import { castImmutable, produce } from 'immer';
 import type { RowKey } from '../../../dataTableStore.types';
-import {
-  addedRowSymbol,
-  isAddedRowKey,
-  type EditorSlice
-} from '../editorSlice';
+import { addedRowSymbol, isAddedRowKey } from '../editorSlice';
 import { Command } from './command';
 
 export class DeleteCommand<TEntity extends object> extends Command<TEntity> {
@@ -23,21 +18,19 @@ export class DeleteCommand<TEntity extends object> extends Command<TEntity> {
     super.createSnapshot();
 
     if (isAddedRowKey(this.rowKey)) {
-      const producer = produce((state: EditorSlice<TEntity>) => {
+      this.set(state => {
         const index = state.added.findIndex(
-          x => x[addedRowSymbol] === this.rowKey
+          row =>
+            (row as Record<typeof addedRowSymbol, string>)[addedRowSymbol] ===
+            this.rowKey
         );
 
-        state.added.splice(index, 1);
+        void state.added.splice(index, 1);
       });
-
-      this.set(state => producer(castImmutable(state)));
     } else {
-      const producer = produce((state: EditorSlice<TEntity>) => {
+      this.set(state => {
         state.deleted.push(this.rowKey);
       });
-
-      this.set(state => producer(castImmutable(state)));
     }
 
     return true;

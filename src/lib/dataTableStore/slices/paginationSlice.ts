@@ -1,6 +1,4 @@
-import type { StateCreator } from 'zustand';
-import type { DataSlice } from './dataSlice';
-import type { ResetSlice } from './resetSlice';
+import type { SliceCreator } from '../dataTableStore.types';
 
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
@@ -12,17 +10,8 @@ export interface PaginationSlice {
   setTotalEntities: (totalEntities: number) => void;
 }
 
-type Store<TEntity extends object> = ResetSlice &
-  PaginationSlice &
-  DataSlice<TEntity>;
-
 export const createPaginationSlice =
-  <TEntity extends object>(): StateCreator<
-    Store<TEntity>,
-    [],
-    [],
-    PaginationSlice
-  > =>
+  <TEntity extends object>(): SliceCreator<TEntity, PaginationSlice> =>
   (set, get) => ({
     currentPage: 1,
     pageSize: 20,

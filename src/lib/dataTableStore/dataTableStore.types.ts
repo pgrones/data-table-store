@@ -1,4 +1,4 @@
-import type { Command } from "./mixins/editable/command";
+import type { Command } from './mixins/editable/command';
 
 type Includes<T extends readonly unknown[], U> = T extends [infer F, ...infer R]
   ? Equal<F, U> extends true
@@ -50,6 +50,7 @@ export interface Editing<TEntity extends object> {
   edited: Record<RowKey, object>;
   deleted: RowKey[];
   history: Command<Partial<TEntity>>[];
+  undoHistory: Command<Partial<TEntity>>[];
 }
 
 export interface DataTableState<TEntity extends object = object> {
@@ -67,7 +68,7 @@ export interface DataTableArgs<TEntity extends object = object>
   extends DataTableState<TEntity>,
     Pick<
       Required<DataTableStoreOptions<TEntity, never[]>>,
-      "loadingOverlayTimeout" | "searchDebounceTimeout" | "entityFactory"
+      'loadingTimeout' | 'searchDebounceTimeout' | 'entityFactory'
     > {
   rowKey: readonly string[];
 }
@@ -76,20 +77,31 @@ export interface DataTableStoreOptions<
   TEntity extends object,
   TRowKey extends readonly Key<TEntity>[]
 > extends Partial<{
+    /** Time to wait in ms before a search is performed. Default: 500 */
     searchDebounceTimeout: number;
-    loadingOverlayTimeout: number;
+    /** Time to wait in ms before a loading state should be shown. Default: 500 */
+    loadingTimeout: number;
+    /** Amount of entities present in a single page. Default: 20*/
     pageSize: number;
+    /** Page to start on. Default: 1 */
     initialPage: number;
+    /** Sorting to start on. Default: null */
     initialSorting: TypedSorting<TEntity> | null;
+    /** Search to start on. Default: '' */
     initialSearchValue: string;
   }> {
+  /**
+   * Array of keys that uniquely identify an entity.
+   * The properties the keys identify must be immutable
+   */
   rowKey: UniqueArray<TRowKey>;
+  /** Factory function to create a new entity when a new row is added */
   entityFactory?: (() => Omit<TEntity, TRowKey[number]>) | null;
 }
 
 export type DataTableData<TEntity extends object> = Pick<
   DataTableState<TEntity>,
-  "data" | "totalEntities"
+  'data' | 'totalEntities'
 >;
 
 export interface DataTableParams<TEntity extends object> {

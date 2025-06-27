@@ -23,6 +23,7 @@ import {
 } from './components/inputs/sortableTh';
 import type { DataTableComponents, TypedElement } from './dataTable.types';
 import { DefaultAllRowsSelector } from './components/inputs/allRowsSelector';
+import { DefaultRedoButton } from './components/buttons/redoButton';
 
 const getOrDefault = <
   C extends React.ElementType | undefined,
@@ -87,6 +88,7 @@ export const createDataTableCreator = <
     DefaultAddRowButton
   );
   const undoButton = getOrDefault(components.undoButton, DefaultUndoButton);
+  const redoButton = getOrDefault(components.redoButton, DefaultRedoButton);
 
   const createDataTable = <TEntity extends object>() => {
     const DataTable = (props: React.ComponentProps<typeof table>) =>
@@ -118,6 +120,7 @@ export const createDataTableCreator = <
 
     DataTable.AddRowButton = addRowButton;
     DataTable.UndoButton = undoButton;
+    DataTable.RedoButton = redoButton;
     DataTable.DeleteRowButton = deleteRowButton as TypedElement<
       typeof deleteRowButton,
       RequiredDeleteRowButtonProps<TEntity>

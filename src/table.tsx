@@ -1,3 +1,4 @@
+import { Sparkline } from '@mantine/charts';
 import {
   Avatar,
   Group,
@@ -8,60 +9,10 @@ import {
 import type { Customer } from './api';
 import { createMantineThemedDataTable } from './mantineDataTable';
 import classes from './table.module.css';
-import { useCallback } from 'react';
-import { Sparkline } from '@mantine/charts';
 
 const DataTable = createMantineThemedDataTable<Customer>();
 
 export const Table = () => {
-  const rows = useCallback(
-    (row: Customer) => (
-      <DataTable.Tr>
-        <DataTable.Td className={classes.sticky}>
-          <DataTable.RowSelector row={row} />
-        </DataTable.Td>
-        <DataTable.Td>
-          <Avatar src={row.avatarUrl} />
-        </DataTable.Td>
-        <DataTable.Td>{row.firstName}</DataTable.Td>
-        <DataTable.Td>{row.lastName}</DataTable.Td>
-        <DataTable.Td>{row.birthday?.toLocaleDateString()}</DataTable.Td>
-        <DataTable.Td>{row.gender}</DataTable.Td>
-        <DataTable.Td>{row.job}</DataTable.Td>
-        <DataTable.Td ta="end">
-          <NumberFormatter
-            value={row.revenue}
-            prefix="$ "
-            thousandSeparator="."
-            decimalSeparator=","
-            fixedDecimalScale
-            decimalScale={2}
-          />
-        </DataTable.Td>
-        <DataTable.Td>
-          <Sparkline
-            w={150}
-            h={38}
-            data={row.trend}
-            trendColors={{
-              positive: 'teal.6',
-              negative: 'red.6',
-              neutral: 'gray.5'
-            }}
-            fillOpacity={0.2}
-          />
-        </DataTable.Td>
-        <DataTable.Td className={classes.sticky} mod="right">
-          <Group gap="xs" justify="flex-end">
-            <DataTable.RestoreRowButton row={row} />
-            <DataTable.DeleteRowButton row={row} />
-          </Group>
-        </DataTable.Td>
-      </DataTable.Tr>
-    ),
-    []
-  );
-
   return (
     <div className={classes.layout}>
       <Group>
@@ -71,6 +22,7 @@ export const Table = () => {
 
         <Group>
           <DataTable.UndoButton />
+          <DataTable.RedoButton />
           <DataTable.AddRowButton />
           <DataTable.SearchInput w={300} placeholder="Search Customers..." />
         </Group>
@@ -79,32 +31,7 @@ export const Table = () => {
       <ScrollArea offsetScrollbars type="auto">
         <DataTable stickyHeader horizontalSpacing="lg" verticalSpacing="sm">
           <DataTable.Thead>
-            <DataTable.Tr>
-              <DataTable.Th className={classes.sticky}>
-                <DataTable.AllRowsSelector />
-              </DataTable.Th>
-              <DataTable.Th />
-              <DataTable.SortableTh columnKey="firstName">
-                First Name
-              </DataTable.SortableTh>
-              <DataTable.SortableTh columnKey="lastName">
-                Last Name
-              </DataTable.SortableTh>
-              <DataTable.SortableTh columnKey="birthday">
-                Birthday
-              </DataTable.SortableTh>
-              <DataTable.SortableTh columnKey="gender">
-                Gender
-              </DataTable.SortableTh>
-              <DataTable.SortableTh columnKey="job">
-                Job Title
-              </DataTable.SortableTh>
-              <DataTable.SortableTh columnKey="revenue" ta="end">
-                Revenue
-              </DataTable.SortableTh>
-              <DataTable.Th>Trend</DataTable.Th>
-              <DataTable.Th className={classes.sticky} mod="right" />
-            </DataTable.Tr>
+            <Headers />
           </DataTable.Thead>
 
           <DataTable.Tbody>
@@ -132,3 +59,69 @@ export const Table = () => {
     </div>
   );
 };
+
+const Headers = () => (
+  <DataTable.Tr>
+    <DataTable.Th className={classes.sticky}>
+      <DataTable.AllRowsSelector />
+    </DataTable.Th>
+    <DataTable.Th />
+    <DataTable.SortableTh columnKey="firstName">
+      First Name
+    </DataTable.SortableTh>
+    <DataTable.SortableTh columnKey="lastName">Last Name</DataTable.SortableTh>
+    <DataTable.SortableTh columnKey="birthday">Birthday</DataTable.SortableTh>
+    <DataTable.SortableTh columnKey="gender">Gender</DataTable.SortableTh>
+    <DataTable.SortableTh columnKey="job">Job Title</DataTable.SortableTh>
+    <DataTable.SortableTh columnKey="revenue" ta="end">
+      Revenue
+    </DataTable.SortableTh>
+    <DataTable.Th>Trend</DataTable.Th>
+    <DataTable.Th className={classes.sticky} mod="right" />
+  </DataTable.Tr>
+);
+
+const rows = (row: Customer) => (
+  <DataTable.Tr>
+    <DataTable.Td className={classes.sticky}>
+      <DataTable.RowSelector row={row} />
+    </DataTable.Td>
+    <DataTable.Td>
+      <Avatar src={row.avatarUrl} />
+    </DataTable.Td>
+    <DataTable.Td>{row.firstName}</DataTable.Td>
+    <DataTable.Td>{row.lastName}</DataTable.Td>
+    <DataTable.Td>{row.birthday?.toLocaleDateString()}</DataTable.Td>
+    <DataTable.Td>{row.gender}</DataTable.Td>
+    <DataTable.Td>{row.job}</DataTable.Td>
+    <DataTable.Td ta="end">
+      <NumberFormatter
+        value={row.revenue}
+        prefix="$ "
+        thousandSeparator="."
+        decimalSeparator=","
+        fixedDecimalScale
+        decimalScale={2}
+      />
+    </DataTable.Td>
+    <DataTable.Td>
+      <Sparkline
+        w={150}
+        h={38}
+        data={row.trend}
+        trendColors={{
+          positive: 'teal.6',
+          negative: 'red.6',
+          neutral: 'gray.5'
+        }}
+        fillOpacity={0.2}
+      />
+    </DataTable.Td>
+    <DataTable.Td className={classes.sticky} mod="right">
+      <Group gap="xs" justify="flex-end">
+        <DataTable.RestoreRowButton row={row} />
+        <DataTable.DeleteRowButton row={row} />
+      </Group>
+    </DataTable.Td>
+  </DataTable.Tr>
+);

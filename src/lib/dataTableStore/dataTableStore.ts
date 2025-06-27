@@ -1,28 +1,28 @@
-import { Store } from "../store/store";
+import { Store } from '../store/store';
 import type {
   DataTableArgs,
   DataTableState,
   DataTableStoreOptions,
   Key,
   RowKey,
-  UniqueArray,
-} from "./dataTableStore.types";
-import { Fetchable, Pagable, Searchable, Selectable, Sortable } from "./mixins";
-import { Editable } from "./mixins/editable/editable";
+  UniqueArray
+} from './dataTableStore.types';
+import { Fetchable, Pagable, Searchable, Selectable, Sortable } from './mixins';
+import { Editable } from './mixins/editable/editable';
 
 export class TableStore<TEntity extends object = object> extends Store<
   DataTableState<TEntity>
 > {
-  private symbolKey = "data-table";
+  private symbolKey = 'data-table';
   private rowKeyProperties: readonly string[];
   protected addedRowSymbol = Symbol.for(this.symbolKey);
   protected searchDebounceTimeout: number;
-  protected loadingOverlayTimeout: number;
+  protected loadingTimeout: number;
   protected entityFactory: (() => Partial<TEntity>) | null;
 
   public constructor({
     searchDebounceTimeout,
-    loadingOverlayTimeout,
+    loadingTimeout,
     rowKey,
     entityFactory,
     ...state
@@ -31,12 +31,12 @@ export class TableStore<TEntity extends object = object> extends Store<
 
     this.entityFactory = entityFactory;
     this.searchDebounceTimeout = searchDebounceTimeout;
-    this.loadingOverlayTimeout = loadingOverlayTimeout;
+    this.loadingTimeout = loadingTimeout;
     this.rowKeyProperties = Array.isArray(rowKey) ? rowKey : [rowKey];
   }
 
-  public get getLoadingOverlayTimeout() {
-    return this.loadingOverlayTimeout;
+  public get getLoadingTimeout() {
+    return this.loadingTimeout;
   }
 
   public getKey = (row: Partial<TEntity>): RowKey => {
@@ -46,14 +46,27 @@ export class TableStore<TEntity extends object = object> extends Store<
       .filter(([key]) => this.rowKeyProperties.includes(key))
       .toSorted(([keyA], [keyB]) => keyA.localeCompare(keyB))
       .map(([_, value]) => value)
-      .join(";");
+      .join(';');
   };
+
+  protected get getScopedStateDefaults(): Partial<DataTableState<TEntity>> {
+    return {
+      selectedRows: [],
+      editing: {
+        added: [],
+        edited: {},
+        deleted: [],
+        history: [],
+        undoHistory: []
+      }
+    };
+  }
 
   private isAddedRow = (
     row: Partial<TEntity>
   ): row is Partial<TEntity> & { [key: symbol]: RowKey } => {
     return Object.getOwnPropertySymbols(row).some(
-      (x) => Symbol.keyFor(x) === this.symbolKey
+      x => Symbol.keyFor(x) === this.symbolKey
     );
   };
 }
@@ -76,17 +89,17 @@ export const createDataTableStoreFactoryFor =
     rowKey,
     entityFactory: defaultEntity = null,
     searchDebounceTimeout = 500,
-    loadingOverlayTimeout = 500,
+    loadingTimeout = 500,
     pageSize = 20,
     initialPage = 1,
-    initialSearchValue = "",
-    initialSorting = null,
+    initialSearchValue = '',
+    initialSorting = null
   }: DataTableStoreOptions<TEntity, TRowKey>) =>
     new DataTableStore<TEntity>({
       rowKey,
       entityFactory: defaultEntity as null,
       searchDebounceTimeout,
-      loadingOverlayTimeout,
+      loadingTimeout,
       data: [],
       selectedRows: [],
       isPending: false,
@@ -97,13 +110,14 @@ export const createDataTableStoreFactoryFor =
         edited: {},
         deleted: [],
         history: [],
+        undoHistory: []
       },
       searching: {
         searchValue: initialSearchValue,
-        debouncedSearchValue: initialSearchValue,
+        debouncedSearchValue: initialSearchValue
       },
       paging: {
         currentPage: initialPage,
-        pageSize,
-      },
+        pageSize
+      }
     });

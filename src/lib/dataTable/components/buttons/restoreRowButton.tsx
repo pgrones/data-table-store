@@ -1,7 +1,4 @@
-import {
-  useDataTableDeletedState,
-  useDataTableEditedState
-} from '../../hooks/useDataTableDataState';
+import { useDataTableDeletedState, useDataTableEditedState } from '../../hooks';
 import { useDataTable } from '../../dataTable.context';
 import {
   createOverridablePolymorphicComponent,

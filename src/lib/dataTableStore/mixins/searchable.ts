@@ -1,4 +1,4 @@
-import type { StoreBase } from "./mixin";
+import type { StoreBase } from './mixin';
 
 export const Searchable = <
   TBase extends StoreBase<TEntity>,
@@ -12,19 +12,13 @@ export const Searchable = <
     public onSearchValueChanged = (searchValue: string) => {
       if (this.timeoutId !== null) clearTimeout(this.timeoutId);
 
-      this.set("searching.searchValue", searchValue);
+      this.set('searching.searchValue', searchValue);
 
       this.timeoutId = setTimeout(() => {
         this.apply({
-          "searching.debouncedSearchValue": searchValue,
-          "paging.currentPage": 1,
-          selectedRows: [],
-          editing: {
-            added: [],
-            edited: {},
-            deleted: [],
-            history: [],
-          },
+          'searching.debouncedSearchValue': searchValue,
+          'paging.currentPage': 1,
+          ...this.getScopedStateDefaults
         });
 
         this.timeoutId = null;

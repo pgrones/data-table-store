@@ -1,4 +1,4 @@
-import type { StoreBase } from "./mixin";
+import type { StoreBase } from './mixin';
 
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
@@ -16,14 +16,8 @@ export const Pagable = <
       );
 
       this.apply({
-        "paging.currentPage": clamp(page, 1, max),
-        selectedRows: [],
-        editing: {
-          added: [],
-          edited: {},
-          deleted: [],
-          history: [],
-        },
+        'paging.currentPage': clamp(page, 1, max),
+        ...this.getScopedStateDefaults
       });
     };
   };

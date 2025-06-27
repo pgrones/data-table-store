@@ -11,7 +11,7 @@ const selector = createDataTableSelector(
 export const useDataTableLoadingState = () => {
   const store = useDataTable();
 
-  return useSelector(store, selector, store.getLoadingOverlayTimeout);
+  return useSelector(store, selector, store.getLoadingTimeout);
 };
 
 const undoSelector = createDataTableSelector(
@@ -23,6 +23,17 @@ export const useDataTableUndoState = () => {
   const store = useDataTable();
 
   return useSelector(store, undoSelector);
+};
+
+const redoSelector = createDataTableSelector(
+  [state => state.editing.undoHistory],
+  history => !!history.length
+);
+
+export const useDataTableRedoState = () => {
+  const store = useDataTable();
+
+  return useSelector(store, redoSelector);
 };
 
 const deleteSelector = createDataTableSelector(

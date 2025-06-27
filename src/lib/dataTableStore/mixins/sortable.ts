@@ -1,4 +1,4 @@
-import type { StoreBase } from "./mixin";
+import type { StoreBase } from './mixin';
 
 export const Sortable = <
   TBase extends StoreBase<TEntity>,
@@ -11,25 +11,19 @@ export const Sortable = <
       const states = [
         { columnKey, descending: false },
         { columnKey, descending: true },
-        null,
+        null
       ];
 
       const stateIndex =
         states.findIndex(
-          (x) =>
+          x =>
             x?.columnKey === this.state.sorting?.columnKey &&
             x?.descending === this.state.sorting?.descending
         ) + 1;
 
       this.apply({
         sorting: states[stateIndex % states.length],
-        selectedRows: [],
-        editing: {
-          added: [],
-          edited: {},
-          deleted: [],
-          history: [],
-        },
+        ...this.getScopedStateDefaults
       });
     };
   };

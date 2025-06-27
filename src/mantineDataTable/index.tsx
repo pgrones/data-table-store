@@ -10,6 +10,7 @@ import { Pagination } from './inputs/pagination';
 import { RowSelector } from './inputs/rowSelector';
 import { SearchInput } from './inputs/searchInput';
 import { SortableTh } from './inputs/sortableTh';
+import { RedoButton } from './buttons/redoButton';
 
 export const createMantineThemedDataTable = createDataTableCreator({
   table: Table,
@@ -24,6 +25,7 @@ export const createMantineThemedDataTable = createDataTableCreator({
   colgroup: 'colgroup',
   addRowButton: AddRowButton,
   undoButton: UndoButton,
+  redoButton: RedoButton,
   deleteRowButton: DeleteRowButton,
   restoreRowButton: RestoreRowButton,
   allRowsSelector: AllRowsSelector,

@@ -1,10 +1,10 @@
-import type { RowKey } from "../../dataTableStore.types";
-import type { StoreBase } from "../mixin";
-import { AddCommand } from "./addCommand";
-import { Command } from "./command";
-import { DeleteCommand } from "./deleteCommand";
-import { RestoreCommand } from "./restoreCommand";
-import { UpdateCommand } from "./updateCommand";
+import type { RowKey } from '../../dataTableStore.types';
+import type { StoreBase } from '../mixin';
+import { AddCommand } from './addCommand';
+import { Command } from './command';
+import { DeleteCommand } from './deleteCommand';
+import { RestoreCommand } from './restoreCommand';
+import { UpdateCommand } from './updateCommand';
 
 export const Editable = <
   TBase extends StoreBase<TEntity>,
@@ -13,12 +13,12 @@ export const Editable = <
   Base: TBase
 ) =>
   class extends Base {
-    private addedRowKeyPrefix = "data-table-added-row-";
+    private addedRowKeyPrefix = 'data-table-added-row-';
 
     public addRow = () => {
       if (this.entityFactory === null)
         throw new Error(
-          "Can not add a new row if no entityFactory was provided to the store"
+          'Cannot add a new row if no entityFactory was provided to the store'
         );
 
       this.executeCommand(
@@ -77,19 +77,37 @@ export const Editable = <
 
       command.undo();
 
+      this.addListItem('editing.undoHistory', command);
+
       this.removeListItem(
-        "editing.history",
+        'editing.history',
         this.state.editing.history.length - 1
+      );
+    };
+
+    public redo = () => {
+      const command = this.state.editing.undoHistory.at(-1);
+
+      if (!command) return;
+
+      command.execute();
+
+      this.addListItem('editing.history', command);
+
+      this.removeListItem(
+        'editing.undoHistory',
+        this.state.editing.undoHistory.length - 1
       );
     };
 
     private executeCommand(command: Command<TEntity>) {
       if (command.execute()) {
-        this.addListItem("editing.history", command);
+        this.addListItem('editing.history', command);
+        this.set('editing.undoHistory', []);
       }
 
       if (this.state.editing.history.length > 100) {
-        this.removeListItem("editing.history", 0);
+        this.removeListItem('editing.history', 0);
       }
     }
   };

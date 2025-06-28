@@ -1,4 +1,3 @@
-import { useDataTableSelection } from '../../hooks';
 import { useDataTable } from '../../dataTable.context';
 import {
   createOverridablePolymorphicComponent,
@@ -16,19 +15,24 @@ export interface RowSelectorProps {
 }
 
 export const RowSelector = createOverridablePolymorphicComponent<
-  'input',
   RowSelectorProps,
   RequiredRowSelectorProps
 >(({ row, ...props }) => {
-  const dataTable = useDataTable();
-  const rowKey = dataTable.getKey(row);
-  const isSelected = useDataTableSelection(rowKey);
+  const { rowKey, isSelected, toggleRowSelection } = useDataTable(state => {
+    const rowKey = state.getKey(row);
+
+    return {
+      rowKey,
+      isSelected: state.selection.includes(rowKey),
+      toggleRowSelection: state.toggleRowSelection
+    };
+  });
 
   return (
     <PolymorphicRoot<InjectableComponent<RowSelectorProps>>
       {...props}
       isSelected={isSelected}
-      toggleSelection={() => dataTable.toggleRowSelection(rowKey)}
+      toggleSelection={() => toggleRowSelection(rowKey)}
     />
   );
 });

@@ -43,10 +43,11 @@ export const fetchData = ({
   currentPage,
   pageSize,
   searchValue,
-  sorting
+  sortBy,
+  descending
 }: DataTableParams<Customer>) => {
-  const key = sorting?.columnKey;
-  const desc = sorting?.descending;
+  const key = sortBy;
+  const desc = descending;
 
   const result = data.filter(
     x =>

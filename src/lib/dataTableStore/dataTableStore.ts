@@ -28,7 +28,6 @@ const createDataTableStoreFactory =
   >({
     rowKey,
     createEntity,
-    searchDebounceTimeout = 500,
     initialPage = 1,
     pageSize = 20,
     initialSearchValue = '',
@@ -40,7 +39,7 @@ const createDataTableStoreFactory =
         ...createEditorSlice<TEntity, typeof rowKey>(createEntity)(...args),
         ...createPaginationSlice<TEntity>()(...args),
         ...createResetSlice<TEntity>()(...args),
-        ...createSearchSlice<TEntity>(searchDebounceTimeout)(...args),
+        ...createSearchSlice<TEntity>()(...args),
         ...createSelectionSlice<TEntity>()(...args),
         ...createSortSlice<TEntity>()(...args),
         currentPage: initialPage,

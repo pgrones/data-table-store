@@ -1,4 +1,3 @@
-import { useDataTableSelectionAll } from '../../hooks';
 import { useDataTable } from '../../index';
 import {
   createOverridablePolymorphicComponent,
@@ -12,22 +11,29 @@ export interface AllRowsSelectorProps {
   toggleSelection: () => void;
 }
 
-export const AllRowsSelector = createOverridablePolymorphicComponent<
-  'input',
-  AllRowsSelectorProps
->(props => {
-  const dataTable = useDataTable();
-  const { isSelected, indeterminate } = useDataTableSelectionAll();
+export const AllRowsSelector =
+  createOverridablePolymorphicComponent<AllRowsSelectorProps>(props => {
+    const { isSelected, indeterminate, toggleAllRowSelections } = useDataTable(
+      state => {
+        const selectionCount = state.selection.length;
 
-  return (
-    <PolymorphicRoot<InjectableComponent<AllRowsSelectorProps>>
-      {...props}
-      isSelected={isSelected}
-      indeterminate={indeterminate}
-      toggleSelection={dataTable.toggleAllRowSelections}
-    />
-  );
-});
+        return {
+          isSelected: selectionCount === state.pageSize,
+          indeterminate: !!selectionCount && selectionCount !== state.pageSize,
+          toggleAllRowSelections: state.toggleAllRowSelections
+        };
+      }
+    );
+
+    return (
+      <PolymorphicRoot<InjectableComponent<AllRowsSelectorProps>>
+        {...props}
+        isSelected={isSelected}
+        indeterminate={indeterminate}
+        toggleSelection={toggleAllRowSelections}
+      />
+    );
+  });
 
 export const DefaultAllRowsSelector = AllRowsSelector.as<
   React.ComponentProps<'input'>

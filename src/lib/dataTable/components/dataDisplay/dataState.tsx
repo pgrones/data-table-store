@@ -1,4 +1,4 @@
-import { useDataTableLoadingState } from '../../hooks';
+import { useDataTable } from '../../dataTable.context';
 import {
   createOverridablePolymorphicComponent,
   type InjectableComponent
@@ -7,26 +7,23 @@ import { PolymorphicRoot } from '../polymorphism/polymorphicRoot';
 
 export interface DataStateProps {
   isPending: boolean;
-  pendingTimeout: number;
 }
 
-export const DataState = createOverridablePolymorphicComponent<
-  'div',
-  DataStateProps
->(props => {
-  const { isPending, timeout } = useDataTableLoadingState();
+export const DataState = createOverridablePolymorphicComponent<DataStateProps>(
+  props => {
+    const isPending = useDataTable(state => state.isPending);
 
-  return (
-    <PolymorphicRoot<InjectableComponent<DataStateProps>>
-      {...props}
-      isPending={isPending}
-      pendingTimeout={timeout}
-    />
-  );
-});
+    return (
+      <PolymorphicRoot<InjectableComponent<DataStateProps>>
+        {...props}
+        isPending={isPending}
+      />
+    );
+  }
+);
 
 export const DefaultDataState = DataState.as<React.ComponentProps<'div'>>(
-  ({ isPending, pendingTimeout: _, ...props }) => {
+  ({ isPending, ...props }) => {
     if (!isPending) return null;
 
     return (

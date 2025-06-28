@@ -1,4 +1,3 @@
-import { useDataTableRedoState } from '../../hooks';
 import { useDataTable } from '../../dataTable.context';
 import {
   createOverridablePolymorphicComponent,
@@ -11,25 +10,25 @@ export interface RedoButtonProps {
   canRedo: boolean;
 }
 
-export const RedoButton = createOverridablePolymorphicComponent<
-  'button',
-  RedoButtonProps
->(props => {
-  const dataTable = useDataTable();
-  const canRedo = useDataTableRedoState();
+export const RedoButton =
+  createOverridablePolymorphicComponent<RedoButtonProps>(props => {
+    const { redo, canRedo } = useDataTable(state => ({
+      redo: state.redo,
+      canRedo: !!state.undoHistory.length
+    }));
 
-  return (
-    <PolymorphicRoot<InjectableComponent<RedoButtonProps>>
-      {...props}
-      redo={dataTable.redo}
-      canRedo={canRedo}
-    />
-  );
-});
+    return (
+      <PolymorphicRoot<InjectableComponent<RedoButtonProps>>
+        {...props}
+        redo={redo}
+        canRedo={canRedo}
+      />
+    );
+  });
 
 export const DefaultRedoButton = RedoButton.as<React.ComponentProps<'button'>>(
   ({ redo, canRedo, ...props }) => (
-    <button onClick={redo} disabled={!canRedo} {...props}>
+    <button type="button" onClick={redo} disabled={!canRedo} {...props}>
       Redo
     </button>
   )

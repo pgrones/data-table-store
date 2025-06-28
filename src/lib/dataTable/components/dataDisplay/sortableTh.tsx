@@ -1,5 +1,4 @@
 import type { Key } from '../../../dataTableStore/dataTableStore.types';
-import { useDataTableSort } from '../../hooks';
 import { useDataTable } from '../../index';
 import {
   createOverridablePolymorphicComponent,
@@ -20,19 +19,25 @@ export interface SortableThProps {
 }
 
 export const SortableTh = createOverridablePolymorphicComponent<
-  'th',
   SortableThProps,
   RequiredSortableThProps
->(({ sortBy: columnKey, ...props }) => {
-  const dataTable = useDataTable();
-  const { isSorted, desc } = useDataTableSort(columnKey);
+>(({ sortBy, ...props }) => {
+  const { isSorted, desc, toggleSort } = useDataTable(state => {
+    const isSorted = (state.sortBy as unknown) === sortBy;
+
+    return {
+      isSorted,
+      desc: isSorted && !!state.descending,
+      toggleSort: state.toggleSort
+    };
+  });
 
   return (
     <PolymorphicRoot<InjectableComponent<SortableThProps>>
       {...props}
       isSorted={isSorted}
       descending={desc}
-      toggleSort={() => dataTable.toggleSort(columnKey)}
+      toggleSort={() => toggleSort(sortBy)}
     />
   );
 });

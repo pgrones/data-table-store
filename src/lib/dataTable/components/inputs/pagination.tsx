@@ -1,4 +1,3 @@
-import { useDataTablePaging } from '../../hooks';
 import { useDataTable } from '../../index';
 import {
   createOverridablePolymorphicComponent,
@@ -12,27 +11,29 @@ export interface PaginationProps {
   setPage: (page: number) => void;
 }
 
-export const Pagination = createOverridablePolymorphicComponent<
-  'button',
-  PaginationProps
->(props => {
-  const dataTable = useDataTable();
-  const { currentPage, totalPages } = useDataTablePaging();
+export const Pagination =
+  createOverridablePolymorphicComponent<PaginationProps>(props => {
+    const { currentPage, totalPages, setPage } = useDataTable(state => ({
+      currentPage: state.currentPage,
+      totalPages: Math.ceil(state.totalEntities / state.pageSize),
+      setPage: state.setPage
+    }));
 
-  return (
-    <PolymorphicRoot<InjectableComponent<PaginationProps>>
-      {...props}
-      currentPage={currentPage}
-      totalPages={totalPages}
-      setPage={dataTable.setPage}
-    />
-  );
-});
+    return (
+      <PolymorphicRoot<InjectableComponent<PaginationProps>>
+        {...props}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        setPage={setPage}
+      />
+    );
+  });
 
 export const DefaultPagination = Pagination.as<React.ComponentProps<'div'>>(
   ({ currentPage, totalPages, setPage, ...props }) => (
     <div style={{ display: 'flex', gap: 8 }} {...props}>
       <button
+        type="button"
         disabled={currentPage === 1}
         onClick={() => setPage(currentPage - 1)}
       >
@@ -40,6 +41,7 @@ export const DefaultPagination = Pagination.as<React.ComponentProps<'div'>>(
       </button>
       {currentPage}
       <button
+        type="button"
         disabled={currentPage === totalPages}
         onClick={() => setPage(currentPage + 1)}
       >

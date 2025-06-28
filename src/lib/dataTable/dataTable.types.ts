@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 export interface DataTableComponents<TCompoundMap extends object> {
   table?: React.ElementType;
   thead?: React.ElementType;
@@ -23,14 +25,24 @@ export interface DataTableComponents<TCompoundMap extends object> {
   additionalCompoundComponents?: TCompoundMap;
 }
 
-export type WithProps<
-  T extends React.ElementType,
-  P
-> = T extends React.ComponentType<infer Props>
-  ? (props: Omit<Props, keyof P> & P) => React.ReactElement
-  : never;
+export type WithProps<T extends React.ElementType, P> =
+  T extends React.ComponentType<infer Props>
+    ? (props: Omit<Props, keyof P> & P) => React.ReactElement
+    : never;
 
 export type TypedElement<C extends React.ElementType, TTypedProps> = WithProps<
   C,
   TTypedProps
 >;
+
+type TypedMemo = <
+  TComponent extends (
+    props: React.ComponentProps<TComponent>
+  ) => React.ReactNode
+>(
+  Component: TComponent,
+  propsAreEqual?: Parameters<typeof memo>[1]
+) => TComponent;
+
+export const typedMemo: TypedMemo = (Component, propsAreEqual) =>
+  memo(Component, propsAreEqual) as unknown as typeof Component;

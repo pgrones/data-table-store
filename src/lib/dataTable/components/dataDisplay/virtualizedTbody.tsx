@@ -1,8 +1,8 @@
 import type React from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import type { RowKey } from '../../../dataTableStore/dataTableStore.types';
+import { typedMemo } from '../../dataTable.types';
 import { useDataTableRowKeys } from '../../hooks';
-import { typedMemo } from '../polymorphism/memoWithGenerics';
 import { Row } from './row';
 
 export interface VirtualizedTbodyProps<TEntity extends object> {

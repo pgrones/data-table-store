@@ -1,3 +1,4 @@
+import React, { useRef } from 'react';
 import {
   CloseButton,
   Kbd,
@@ -6,7 +7,6 @@ import {
 } from '@mantine/core';
 import { useHotkeys, useMergedRef, useUncontrolled } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
-import React, { useRef } from 'react';
 
 export interface SearchInputProps
   extends Omit<TextInputProps, 'value' | 'onChange' | 'defaultValue'> {

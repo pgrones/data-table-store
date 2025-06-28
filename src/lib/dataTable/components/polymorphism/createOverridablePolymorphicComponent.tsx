@@ -11,16 +11,16 @@ export type InjectableComponent<TInjectedProps> = (
 ) => React.ReactElement;
 
 export const createOverridablePolymorphicComponent = <
-  DefaultType,
   InjectedProps,
   RequiredProps = object
 >(
   component: (props: RequiredProps) => React.ReactElement
 ): { as: As<InjectedProps, RequiredProps> } => {
-  const Component = createPolymorphicComponent<DefaultType, unknown>(component);
+  const Component = createPolymorphicComponent<unknown, unknown>(component);
 
   return {
-    as: component => props =>
+    as: component => props => (
       <Component<unknown> {...props} component={component} />
+    )
   };
 };

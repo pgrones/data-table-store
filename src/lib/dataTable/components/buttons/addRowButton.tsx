@@ -9,19 +9,17 @@ export interface AddRowButtonProps {
   addRow: () => void;
 }
 
-export const AddRowButton = createOverridablePolymorphicComponent<
-  'button',
-  AddRowButtonProps
->(props => {
-  const addRow = useDataTable(state => state.addRow);
+export const AddRowButton =
+  createOverridablePolymorphicComponent<AddRowButtonProps>(props => {
+    const addRow = useDataTable(state => state.addRow);
 
-  return (
-    <PolymorphicRoot<InjectableComponent<AddRowButtonProps>>
-      {...props}
-      addRow={addRow}
-    />
-  );
-});
+    return (
+      <PolymorphicRoot<InjectableComponent<AddRowButtonProps>>
+        {...props}
+        addRow={addRow}
+      />
+    );
+  });
 
 export const DefaultAddRowButton = AddRowButton.as<
   React.ComponentProps<'button'>

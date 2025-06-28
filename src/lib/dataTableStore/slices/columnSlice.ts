@@ -18,6 +18,6 @@ export interface Column extends ColumnOptions {
 
 export const createColumnSlice =
   <TEntity extends object>(): SliceCreator<TEntity, ColumnSlice> =>
-  (set, get) => ({
+  () => ({
     columns: []
   });

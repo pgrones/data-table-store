@@ -38,8 +38,6 @@ export interface DataTableStoreOptions<
   TEntity extends object,
   TRowKey extends readonly Key<TEntity>[]
 > extends Partial<{
-    /** Time to wait in ms before a search is performed. Default: 500 */
-    searchDebounceTimeout: number;
     /** Amount of entities present in a single page. Default: 20*/
     pageSize: number;
     /** Page to start on. Default: 1 */
@@ -67,7 +65,8 @@ export interface DataTableParams<TEntity extends object> {
   currentPage: number;
   pageSize: number;
   searchValue: string;
-  sorting: { columnKey: Key<TEntity>; descending: boolean } | null;
+  sortBy: Key<TEntity> | null;
+  descending: boolean;
 }
 
 export type Store<TEntity extends object> = DataSlice<TEntity> &

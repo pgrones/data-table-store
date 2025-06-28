@@ -1,4 +1,3 @@
-import { useDataTableDeletedState } from '../../hooks';
 import { useDataTable } from '../../dataTable.context';
 import {
   createOverridablePolymorphicComponent,
@@ -16,18 +15,19 @@ export interface DeleteRowButtonProps {
 }
 
 export const DeleteRowButton = createOverridablePolymorphicComponent<
-  'button',
   DeleteRowButtonProps,
   RequiredDeleteRowButtonProps
 >(({ row, ...props }) => {
-  const dataTable = useDataTable();
-  const rowKey = dataTable.getKey(row);
-  const isDeleted = useDataTableDeletedState(rowKey);
+  const { deleteRow, isDeleted, rowKey } = useDataTable(state => ({
+    rowKey: state.getKey(row),
+    deleteRow: state.deleteRow,
+    isDeleted: state.deleted.includes(state.getKey(row))
+  }));
 
   return (
     <PolymorphicRoot<InjectableComponent<DeleteRowButtonProps>>
       {...props}
-      deleteRow={() => dataTable.deleteRow(rowKey)}
+      deleteRow={() => deleteRow(rowKey)}
       isDeleted={isDeleted}
     />
   );
@@ -36,7 +36,7 @@ export const DeleteRowButton = createOverridablePolymorphicComponent<
 export const DefaultDeleteRowButton = DeleteRowButton.as<
   React.ComponentProps<'button'>
 >(({ deleteRow, isDeleted, ...props }) => (
-  <button onClick={deleteRow} disabled={isDeleted} {...props}>
+  <button type="button" onClick={deleteRow} disabled={isDeleted} {...props}>
     Delete
   </button>
 ));

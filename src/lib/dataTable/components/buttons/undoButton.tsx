@@ -1,4 +1,3 @@
-import { useDataTableUndoState } from '../../hooks';
 import { useDataTable } from '../../dataTable.context';
 import {
   createOverridablePolymorphicComponent,
@@ -11,25 +10,25 @@ export interface UndoButtonProps {
   canUndo: boolean;
 }
 
-export const UndoButton = createOverridablePolymorphicComponent<
-  'button',
-  UndoButtonProps
->(props => {
-  const dataTable = useDataTable();
-  const canUndo = useDataTableUndoState();
+export const UndoButton =
+  createOverridablePolymorphicComponent<UndoButtonProps>(props => {
+    const { undo, canUndo } = useDataTable(state => ({
+      undo: state.undo,
+      canUndo: !!state.history.length
+    }));
 
-  return (
-    <PolymorphicRoot<InjectableComponent<UndoButtonProps>>
-      {...props}
-      undo={dataTable.undo}
-      canUndo={canUndo}
-    />
-  );
-});
+    return (
+      <PolymorphicRoot<InjectableComponent<UndoButtonProps>>
+        {...props}
+        undo={undo}
+        canUndo={canUndo}
+      />
+    );
+  });
 
 export const DefaultUndoButton = UndoButton.as<React.ComponentProps<'button'>>(
   ({ undo, canUndo, ...props }) => (
-    <button onClick={undo} disabled={!canUndo} {...props}>
+    <button type="button" onClick={undo} disabled={!canUndo} {...props}>
       Undo
     </button>
   )

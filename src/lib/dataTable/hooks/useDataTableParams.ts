@@ -1,21 +1,18 @@
-import { useSelector } from '../../store/store.hooks';
+import { useStore } from 'zustand';
+import { useShallow } from 'zustand/shallow';
 import type { DataTableStore } from '../../dataTableStore/dataTableStore';
 import type { DataTableParams } from '../../dataTableStore/dataTableStore.types';
-import { createDataTableSelector } from './selector';
-
-const selector = createDataTableSelector(
-  [
-    state => state.paging,
-    state => state.searching.debouncedSearchValue,
-    state => state.sorting
-  ],
-  (paging, searchValue, sorting) => ({
-    ...paging,
-    searchValue,
-    sorting
-  })
-);
 
 export const useDataTableParams = <TEntity extends object>(
   store: DataTableStore<TEntity>
-) => useSelector(store, selector) as DataTableParams<TEntity>;
+): DataTableParams<TEntity> =>
+  useStore(
+    store,
+    useShallow(state => ({
+      currentPage: state.currentPage,
+      pageSize: state.pageSize,
+      searchValue: state.searchValue,
+      sortBy: state.sortBy,
+      descending: state.descending
+    }))
+  );

@@ -3,7 +3,7 @@ import type { Key, SliceCreator } from '../dataTableStore.types';
 export interface SortSlice<TEntity extends object, TKey = Key<TEntity>> {
   sortBy: TKey | null;
   descending: boolean;
-  toggleSort: (columnKey: TKey) => void;
+  toggleSort: (sortBy: TKey) => void;
 }
 
 export const createSortSlice =
@@ -11,18 +11,18 @@ export const createSortSlice =
   (set, get) => ({
     sortBy: null,
     descending: false,
-    toggleSort: columnKey =>
+    toggleSort: sortBy =>
       set(state => {
         const states = [
-          { columnKey, descending: false },
-          { columnKey, descending: true },
-          { columnKey: null, descending: false }
-        ];
+          { sortBy, descending: false },
+          { sortBy, descending: true },
+          { sortBy: null, descending: false }
+        ] as const;
 
         const stateIndex =
           states.findIndex(
             x =>
-              x.columnKey === state.sortBy && x.descending === state.descending
+              x.sortBy === state.sortBy && x.descending === state.descending
           ) + 1;
 
         get().resetScopedStates();

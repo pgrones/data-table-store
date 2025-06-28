@@ -11,11 +11,8 @@ import {
 } from './components/buttons/restoreRowButton';
 import { DefaultUndoButton } from './components/buttons/undoButton';
 import { DefaultDataState } from './components/dataDisplay/dataState';
-import {
-  DefaultSortableTh,
-  type RequiredSortableThProps
-} from './components/dataDisplay/sortableTh';
 import { createTbody, type TbodyProps } from './components/dataDisplay/tbody';
+import { DefaultTh, type RequiredThProps } from './components/dataDisplay/th';
 import {
   createVirtualizedTbody,
   type VirtualizedTbodyProps
@@ -69,7 +66,6 @@ export const createDataTableCreator = <
   const tfoot = getOrDefault(components.tfoot, 'tfoot');
   const tr = getOrDefault(components.tr, 'tr');
   const td = getOrDefault(components.td, 'td');
-  const th = getOrDefault(components.th, 'th');
   const caption = getOrDefault(components.caption, 'caption');
   const colgroup = getOrDefault(components.colgroup, 'colgroup');
   const col = getOrDefault(components.col, 'col');
@@ -83,7 +79,7 @@ export const createDataTableCreator = <
   );
   const rowSelector = getOrDefault(components.rowSelector, DefaultRowSelector);
   const searchInput = getOrDefault(components.searchInput, DefaultSearchInput);
-  const sortableTh = getOrDefault(components.sortableTh, DefaultSortableTh);
+  const overChargedTh = getOrDefault(components.th, DefaultTh);
   const pagination = getOrDefault(components.pagination, DefaultPagination);
   const dataState = getOrDefault(components.dataState, DefaultDataState);
 
@@ -104,17 +100,20 @@ export const createDataTableCreator = <
 
   const createDataTable = <TEntity extends object>() => {
     const DataTable = (props: React.ComponentProps<typeof table>) =>
-      React.createElement(table, props);
+      React.createElement(table, { ...props, 'data-data-table': true });
 
     DataTable.Thead = thead;
     DataTable.Tfoot = tfoot;
     DataTable.Tr = tr;
-    DataTable.Th = th;
     DataTable.Td = td;
     DataTable.Caption = caption;
     DataTable.Colgroup = colgroup;
     DataTable.Col = col;
 
+    DataTable.Th = overChargedTh as TypedElement<
+      typeof overChargedTh,
+      RequiredThProps<TEntity>
+    >;
     DataTable.Tbody = deferredTbody as TypedElement<
       typeof deferredTbody,
       Parameters<WithProps<typeof tbody, TbodyProps<TEntity>>>[0]
@@ -122,10 +121,6 @@ export const createDataTableCreator = <
     DataTable.VirtualizedTbody = virtualizedTbody as TypedElement<
       typeof virtualizedTbody,
       Parameters<WithProps<typeof tbody, VirtualizedTbodyProps<TEntity>>>[0]
-    >;
-    DataTable.SortableTh = sortableTh as TypedElement<
-      typeof sortableTh,
-      RequiredSortableThProps<TEntity>
     >;
     DataTable.RowSelector = rowSelector as TypedElement<
       typeof rowSelector,

@@ -8,11 +8,15 @@ export const useDataTableParams = <TEntity extends object>(
 ): DataTableParams<TEntity> =>
   useStore(
     store,
-    useShallow(state => ({
-      currentPage: state.currentPage,
-      pageSize: state.pageSize,
-      searchValue: state.searchValue,
-      sortBy: state.sortBy,
-      descending: state.descending
-    }))
+    useShallow(state => {
+      const column = [...state.columns.values()].find(x => x.isSorted);
+
+      return {
+        currentPage: state.currentPage,
+        pageSize: state.pageSize,
+        searchValue: state.searchValue,
+        sortBy: column?.sortableBy ?? null,
+        descending: column?.descending ?? false
+      };
+    })
   );

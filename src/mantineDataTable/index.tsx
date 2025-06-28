@@ -2,15 +2,15 @@ import { Table } from '@mantine/core';
 import { createDataTableCreator } from '../lib';
 import { AddRowButton } from './buttons/addRowButton';
 import { DeleteRowButton } from './buttons/deleteRowButton';
+import { RedoButton } from './buttons/redoButton';
 import { RestoreRowButton } from './buttons/restoreRowButton';
 import { UndoButton } from './buttons/undoButton';
 import { DataState } from './dataDisplay/dataState';
+import { Th } from './dataDisplay/th';
 import { AllRowsSelector } from './inputs/allRowsSelector';
 import { Pagination } from './inputs/pagination';
 import { RowSelector } from './inputs/rowSelector';
 import { SearchInput } from './inputs/searchInput';
-import { SortableTh } from './inputs/sortableTh';
-import { RedoButton } from './buttons/redoButton';
 
 export const createMantineThemedDataTable = createDataTableCreator({
   table: Table,
@@ -18,7 +18,7 @@ export const createMantineThemedDataTable = createDataTableCreator({
   tbody: Table.Tbody,
   tfoot: Table.Tfoot,
   tr: Table.Tr,
-  th: Table.Th,
+  th: Th,
   td: Table.Td,
   caption: Table.Caption,
   col: 'col',
@@ -32,6 +32,5 @@ export const createMantineThemedDataTable = createDataTableCreator({
   rowSelector: RowSelector,
   searchInput: SearchInput,
   pagination: Pagination,
-  sortableTh: SortableTh,
   dataState: DataState
 });

@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { Sparkline } from '@mantine/charts';
 import {
   Avatar,
@@ -9,7 +10,6 @@ import {
 import type { Customer } from './api';
 import { createMantineThemedDataTable } from './mantineDataTable';
 import classes from './table.module.css';
-import { useRef } from 'react';
 
 const DataTable = createMantineThemedDataTable<Customer>();
 
@@ -31,8 +31,19 @@ export const Table = () => {
         </Group>
       </Group>
 
-      <ScrollArea offsetScrollbars type="auto" viewportRef={scrollRef}>
-        <DataTable stickyHeader horizontalSpacing="lg" verticalSpacing="sm">
+      <ScrollArea
+        offsetScrollbars="x"
+        type="hover" // Important to trigger renders when size changes
+        scrollHideDelay={200}
+        viewportRef={scrollRef}
+      >
+        <DataTable
+          stickyHeader
+          horizontalSpacing="lg"
+          verticalSpacing="sm"
+          withColumnBorders
+          miw="max-content"
+        >
           <DataTable.Thead>
             <Headers />
           </DataTable.Thead>
@@ -56,20 +67,33 @@ export const Table = () => {
 
 const Headers = () => (
   <DataTable.Tr>
-    <DataTable.Th className={classes.sticky}>
+    <DataTable.Th
+      columnId="selection"
+      resizable={false}
+      className={classes.sticky}
+      w={60}
+    >
       <DataTable.AllRowsSelector />
     </DataTable.Th>
-    <DataTable.Th />
-    <DataTable.SortableTh sortBy="firstName">First Name</DataTable.SortableTh>
-    <DataTable.SortableTh sortBy="lastName">Last Name</DataTable.SortableTh>
-    <DataTable.SortableTh sortBy="birthday">Birthday</DataTable.SortableTh>
-    <DataTable.SortableTh sortBy="gender">Gender</DataTable.SortableTh>
-    <DataTable.SortableTh sortBy="job">Job Title</DataTable.SortableTh>
-    <DataTable.SortableTh sortBy="revenue" ta="end">
+    <DataTable.Th columnId="avatar" w={78} resizable={false} />
+    <DataTable.Th sortableBy="firstName">First Name</DataTable.Th>
+    <DataTable.Th sortableBy="lastName">Last Name</DataTable.Th>
+    <DataTable.Th sortableBy="birthday">Birthday</DataTable.Th>
+    <DataTable.Th sortableBy="gender">Gender</DataTable.Th>
+    <DataTable.Th sortableBy="job">Job Title</DataTable.Th>
+    <DataTable.Th sortableBy="revenue" ta="end">
       Revenue
-    </DataTable.SortableTh>
-    <DataTable.Th>Trend</DataTable.Th>
-    <DataTable.Th className={classes.sticky} mod="right" />
+    </DataTable.Th>
+    <DataTable.Th w={190} resizable={false}>
+      Trend
+    </DataTable.Th>
+    <DataTable.Th
+      columnId="actions"
+      resizable={false}
+      className={classes.sticky}
+      mod="right"
+      w={69}
+    />
   </DataTable.Tr>
 );
 
@@ -110,10 +134,8 @@ const rows = (row: Customer) => (
       />
     </DataTable.Td>
     <DataTable.Td className={classes.sticky} mod="right">
-      <Group gap="xs" justify="flex-end">
-        <DataTable.RestoreRowButton row={row} />
-        <DataTable.DeleteRowButton row={row} />
-      </Group>
+      <DataTable.RestoreRowButton row={row} />
+      <DataTable.DeleteRowButton row={row} />
     </DataTable.Td>
   </DataTable.Tr>
 );

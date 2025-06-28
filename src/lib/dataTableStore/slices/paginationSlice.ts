@@ -6,18 +6,21 @@ const clamp = (value: number, min: number, max: number) =>
 export interface PaginationSlice {
   currentPage: number;
   pageSize: number;
-  setPage: (page: number) => void;
+  setPage: (page: number, resetScopedState?: boolean) => void;
   setTotalEntities: (totalEntities: number) => void;
 }
 
 export const createPaginationSlice =
-  <TEntity extends object>(): SliceCreator<TEntity, PaginationSlice> =>
+  <TEntity extends object>(
+    currentPage: number,
+    pageSize: number
+  ): SliceCreator<TEntity, PaginationSlice> =>
   (set, get) => ({
-    currentPage: 1,
-    pageSize: 20,
-    setPage: page =>
+    currentPage,
+    pageSize,
+    setPage: (page, resetScopedState = true) =>
       set(state => {
-        get().resetScopedStates();
+        if (resetScopedState) get().resetScopedStates();
 
         const max = Math.ceil(state.totalEntities / state.pageSize);
 

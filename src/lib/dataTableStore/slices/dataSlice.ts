@@ -11,7 +11,10 @@ export interface DataSlice<TEntity extends object> {
   isPending: boolean;
   totalEntities: number;
   data: TEntity[];
-  setData: (newData: { data: TEntity[]; totalEntities: number }) => void;
+  setData: (
+    newData: { data: TEntity[]; totalEntities: number },
+    resetScopedState?: boolean
+  ) => void;
   startPending: () => void;
   getKey: (row: Partial<TEntity>) => RowKey;
 }
@@ -25,9 +28,9 @@ export const createDataSlice =
     data: [],
     totalEntities: 0,
     startPending: () => set({ isPending: true }),
-    setData: newData =>
+    setData: (newData, resetScopedState = true) =>
       set(() => {
-        get().resetScopedStates();
+        if (resetScopedState) get().resetScopedStates();
 
         return { ...newData, isPending: false };
       }),

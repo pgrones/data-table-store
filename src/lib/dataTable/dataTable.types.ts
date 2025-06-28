@@ -21,7 +21,6 @@ export interface DataTableComponents<TCompoundMap extends object> {
   restoreRowButton?: React.ElementType;
   undoButton?: React.ElementType;
   redoButton?: React.ElementType;
-  sortableTh?: React.ElementType;
   additionalCompoundComponents?: TCompoundMap;
 }
 

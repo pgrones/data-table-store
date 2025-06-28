@@ -4,4 +4,9 @@ export { createPaginationSlice, type PaginationSlice } from './paginationSlice';
 export { createResetSlice, type ResetSlice } from './resetSlice';
 export { createSearchSlice, type SearchSlice } from './searchSlice';
 export { createSelectionSlice, type SelectionSlice } from './selectionSlice';
-export { createSortSlice, type SortSlice } from './sortSlice';
+export {
+  type ColumnSlice,
+  type Column,
+  type ColumnOptions,
+  createColumnSlice
+} from './columnSlice';

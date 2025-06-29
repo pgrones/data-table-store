@@ -4,24 +4,27 @@ import { typedMemo } from '../../dataTable.types';
 import { useRowKeys } from '../../hooks';
 import { Row } from './row';
 
-export interface TbodyProps<TEntity extends object> {
+export interface RowsProps<TEntity extends object>
+  extends Omit<React.ComponentProps<'div'>, 'children'> {
   children: (row: TEntity) => React.ReactNode;
 }
 
-export const createTbody = (Tbody: React.ElementType) =>
-  typedMemo(
-    <TEntity extends object>({ children, ...props }: TbodyProps<TEntity>) => {
-      const rowKeys = useRowKeys();
+export const Rows = typedMemo(
+  <TEntity extends object>({ children, ...props }: RowsProps<TEntity>) => {
+    const rowKeys = useRowKeys();
 
-      const deferredRowKeys = useDeferredValue(rowKeys);
+    const deferredRowKeys = useDeferredValue(rowKeys);
 
-      return (
-        <Tbody {...props}>
-          <TableRows rowKeys={deferredRowKeys} renderRow={children} />
-        </Tbody>
-      );
-    }
-  );
+    return (
+      <div
+        {...props}
+        style={{ ...props.style, display: 'flex', flexWrap: 'nowrap' }}
+      >
+        <TableRows rowKeys={deferredRowKeys} renderRow={children} />
+      </div>
+    );
+  }
+);
 
 interface TableRowsProps<TEntity extends object> {
   rowKeys: RowKey[];

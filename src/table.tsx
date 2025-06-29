@@ -19,10 +19,8 @@ export const Table = () => {
 
   return (
     <div className={classes.layout}>
-      <Group>
-        <Title size="h2" mr="auto">
-          Customers
-        </Title>
+      <Group justify="space-between">
+        <Title size="h2">Customers</Title>
 
         <Group>
           <DataTable.UndoButton />
@@ -33,7 +31,45 @@ export const Table = () => {
       </Group>
 
       <ScrollArea offsetScrollbars type="auto" viewportRef={scrollRef}>
-        <DataTable
+        <DataTable>
+          <DataTable.Column
+            columnId="selection"
+            sortable={false}
+            resizable={false}
+          >
+            <DataTable.Header className={classes.sticky}>
+              <DataTable.AllRowsSelector />
+            </DataTable.Header>
+            <DataTable.Cell>
+              <DataTable.RowSelector />
+            </DataTable.Cell>
+          </DataTable.Column>
+
+          <DataTable.Column
+            columnId="avatarUrl"
+            sortable={false}
+            resizable={false}
+          >
+            <DataTable.Header />
+            <DataTable.Cell>
+              {({ value }) => <Avatar src={value} />}
+            </DataTable.Cell>
+          </DataTable.Column>
+
+          <DataTable.Column columnId="firstName">
+            <DataTable.Header>First Name</DataTable.Header>
+            <DataTable.Cell>{({ value }) => value}</DataTable.Cell>
+          </DataTable.Column>
+
+          {/* <DataTable.VirtualizedRows
+            scrollRef={scrollRef}
+            rowHeight={64}
+            overscan={5}
+          >
+            {rows}
+          </DataTable.VirtualizedRows> */}
+
+          {/* <DataTable
           stickyHeader
           horizontalSpacing="md"
           verticalSpacing="md"
@@ -50,7 +86,7 @@ export const Table = () => {
             overscan={5}
           >
             {rows}
-          </DataTable.VirtualizedTbody>
+          </DataTable.VirtualizedTbody> */}
         </DataTable>
 
         <LoadingOverlay />
@@ -90,19 +126,19 @@ const Headers = () => (
 );
 
 const rows = (row: Customer) => (
-  <DataTable.Tr h={64}>
-    <DataTable.Td className={classes.sticky}>
+  <>
+    <DataTable.Cell className={classes.sticky}>
       <DataTable.RowSelector row={row} />
-    </DataTable.Td>
-    <DataTable.Td>
+    </DataTable.Cell>
+    <DataTable.Cell>
       <Avatar src={row.avatarUrl} />
-    </DataTable.Td>
-    <DataTable.Td>{row.firstName}</DataTable.Td>
-    <DataTable.Td>{row.lastName}</DataTable.Td>
-    <DataTable.Td>{row.birthday?.toLocaleDateString()}</DataTable.Td>
-    <DataTable.Td>{row.gender}</DataTable.Td>
-    <DataTable.Td>{row.job}</DataTable.Td>
-    <DataTable.Td ta="end">
+    </DataTable.Cell>
+    <DataTable.Cell>{row.firstName}</DataTable.Cell>
+    <DataTable.Cell>{row.lastName}</DataTable.Cell>
+    <DataTable.Cell>{row.birthday?.toLocaleDateString()}</DataTable.Cell>
+    <DataTable.Cell>{row.gender}</DataTable.Cell>
+    <DataTable.Cell>{row.job}</DataTable.Cell>
+    <DataTable.Cell ta="end">
       <NumberFormatter
         value={row.revenue}
         prefix="$ "
@@ -111,25 +147,21 @@ const rows = (row: Customer) => (
         fixedDecimalScale
         decimalScale={2}
       />
-    </DataTable.Td>
-    <DataTable.Td>
+    </DataTable.Cell>
+    <DataTable.Cell>
       <Sparkline
         w={150}
         h={38}
         data={row.trend}
-        trendColors={{
-          positive: 'teal.6',
-          negative: 'red.6',
-          neutral: 'gray.5'
-        }}
         fillOpacity={0.2}
+        trendColors={{ positive: 'teal.6', negative: 'red.6' }}
       />
-    </DataTable.Td>
-    <DataTable.Td className={classes.sticky} mod="right">
+    </DataTable.Cell>
+    <DataTable.Cell className={classes.sticky} mod="right">
       <DataTable.RestoreRowButton row={row} />
       <DataTable.DeleteRowButton row={row} />
-    </DataTable.Td>
-  </DataTable.Tr>
+    </DataTable.Cell>
+  </>
 );
 
 const LoadingOverlay = () => {

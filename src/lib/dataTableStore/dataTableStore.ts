@@ -58,7 +58,7 @@ const createDataTableStoreFactory =
           merge: (persisted, current) => ({
             ...current,
             columns: new Map(
-              (persisted as { columns: [string, Column<TEntity>][] }).columns
+              (persisted as { columns: [string, Column][] }).columns
             )
           })
         }

@@ -1,16 +1,8 @@
 import { memo } from 'react';
 
 export interface DataTableComponents<TCompoundMap extends object> {
-  table?: React.ElementType;
-  thead?: React.ElementType;
-  tbody?: React.ElementType;
-  tfoot?: React.ElementType;
-  tr?: React.ElementType;
-  td?: React.ElementType;
-  th?: React.ElementType;
-  caption?: React.ElementType;
-  colgroup?: React.ElementType;
-  col?: React.ElementType;
+  cell?: React.ElementType;
+  column?: React.ElementType;
   rowSelector?: React.ElementType;
   allRowsSelector?: React.ElementType;
   searchInput?: React.ElementType;
@@ -25,7 +17,7 @@ export interface DataTableComponents<TCompoundMap extends object> {
 
 export type WithProps<T extends React.ElementType, P> =
   T extends React.ComponentType<infer Props>
-    ? (props: Omit<Props, keyof P> & P) => React.ReactElement
+    ? (props: Omit<Props, keyof P> & P) => React.ReactElement | null | undefined
     : never;
 
 export type TypedElement<C extends React.ElementType, TTypedProps> = WithProps<

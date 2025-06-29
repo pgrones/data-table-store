@@ -76,7 +76,7 @@ export interface DataTableParams<TEntity extends object> {
 
 export type Store<TEntity extends object> = DataSlice<TEntity> &
   EditorSlice<TEntity> &
-  ColumnSlice<TEntity> &
+  ColumnSlice &
   PaginationSlice &
   ResetSlice &
   SearchSlice &

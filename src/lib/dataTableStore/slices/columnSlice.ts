@@ -1,37 +1,37 @@
-import type { Key, SliceCreator } from '../dataTableStore.types';
+import type { SliceCreator } from '../dataTableStore.types';
 
-export interface ColumnOptions<TEntity extends object, TKey = Key<TEntity>> {
+export interface ColumnOptions {
   isResizable: boolean;
   isOrderable: boolean;
   isHidable: boolean;
-  sortableBy: TKey | null;
+  isSortable: boolean;
 }
 
-export interface Column<TEntity extends object> extends ColumnOptions<TEntity> {
+export interface Column extends ColumnOptions {
   isSorted: boolean;
   descending: boolean;
-  width: number | null;
+  width: number;
   postion: number | null;
   visible: boolean;
 }
 
-export interface ColumnSlice<TEntity extends object> {
-  columns: Map<string, Column<TEntity>>;
-  initializeColumn: (key: string, options: ColumnOptions<TEntity>) => void;
+export interface ColumnSlice {
+  columns: Map<string, Column>;
+  initializeColumn: (key: string, options: ColumnOptions) => void;
   reorderColumn: (key: string, position: number) => void;
   resizeColumn: (key: string, width: number) => void;
   toggleColumnSort: (key: string, resetScopedStates?: boolean) => void;
   toggleColumnVisibility: (key: string, visible?: boolean) => void;
 }
 
-const createDefaultEntry = <TEntity extends object>(): Column<TEntity> => ({
+const createDefaultEntry = (): Column => ({
   isOrderable: true,
   isResizable: true,
   isHidable: true,
+  isSortable: true,
   isSorted: false,
   descending: false,
-  sortableBy: null,
-  width: null,
+  width: 150,
   postion: null,
   visible: false
 });
@@ -54,7 +54,7 @@ const getNextSort = (isSorted: boolean, descending: boolean) => {
 export const createColumnSlice =
   <TEntity extends object>(
     initialSorting: [string, boolean] | null
-  ): SliceCreator<TEntity, ColumnSlice<TEntity>> =>
+  ): SliceCreator<TEntity, ColumnSlice> =>
   (set, get) => {
     const initializedEntries = new Set<string>();
 
@@ -67,11 +67,11 @@ export const createColumnSlice =
     };
 
     const columns = !initialSorting
-      ? new Map<string, Column<TEntity>>()
+      ? new Map<string, Column>()
       : new Map([
           [
             initialSorting[0],
-            { ...createDefaultEntry<TEntity>(), descending: initialSorting[1] }
+            { ...createDefaultEntry(), descending: initialSorting[1] }
           ]
         ]);
 
@@ -88,10 +88,9 @@ export const createColumnSlice =
 
         set(state => {
           state.columns.set(key, {
-            ...createDefaultEntry<TEntity>(),
+            ...createDefaultEntry(),
             ...options,
-            ...state.columns.get(key),
-            sortableBy: options.sortableBy as never
+            ...state.columns.get(key)
           });
         });
       },
@@ -119,7 +118,7 @@ export const createColumnSlice =
         set(state => {
           const current = state.columns.get(key)!;
 
-          if (!current.sortableBy) return;
+          if (!current.isSortable) return;
 
           const next = getNextSort(current.isSorted, current.descending);
           const prev = [...state.columns.entries()].find(

@@ -9,14 +9,16 @@ export const useDataTableParams = <TEntity extends object>(
   useStore(
     store,
     useShallow(state => {
-      const column = [...state.columns.values()].find(x => x.isSorted);
+      const sortedColumn = [...state.columns.entries()].find(
+        ([_, value]) => value.isSorted
+      );
 
       return {
         currentPage: state.currentPage,
         pageSize: state.pageSize,
         searchValue: state.searchValue,
-        sortBy: column?.sortableBy ?? null,
-        descending: column?.descending ?? false
+        sortBy: sortedColumn ? (sortedColumn[0] as never) : null,
+        descending: sortedColumn?.[1]?.descending ?? false
       };
     })
   );

@@ -1,33 +1,27 @@
-import React from 'react';
-import { DefaultAddRowButton } from './components/buttons/addRowButton';
+import type { Key } from '../dataTableStore';
 import {
+  Column,
+  createColumn,
+  DefaultAddRowButton,
+  DefaultAllRowsSelector,
+  DefaultCell,
   DefaultDeleteRowButton,
-  type RequiredDeleteRowButtonProps
-} from './components/buttons/deleteRowButton';
-import { DefaultRedoButton } from './components/buttons/redoButton';
-import {
+  DefaultPagination,
+  DefaultRedoButton,
   DefaultRestoreRowButton,
-  type RequiredRestoreRowButtonProps
-} from './components/buttons/restoreRowButton';
-import { DefaultUndoButton } from './components/buttons/undoButton';
-import { createTbody, type TbodyProps } from './components/dataDisplay/tbody';
-import { DefaultTh, type RequiredThProps } from './components/dataDisplay/th';
-import {
-  createVirtualizedTbody,
-  type VirtualizedTbodyProps
-} from './components/dataDisplay/virtualizedTbody';
-import { DefaultAllRowsSelector } from './components/inputs/allRowsSelector';
-import { DefaultPagination } from './components/inputs/pagination';
-import {
   DefaultRowSelector,
-  type RequiredRowSelectorProps
-} from './components/inputs/rowSelector';
-import { DefaultSearchInput } from './components/inputs/searchInput';
-import type {
-  DataTableComponents,
-  TypedElement,
-  WithProps
-} from './dataTable.types';
+  DefaultSearchInput,
+  DefaultUndoButton,
+  Rows,
+  VirtualizedRows,
+  type ColumnProps,
+  type RequiredDeleteRowButtonProps,
+  type RequiredRestoreRowButtonProps,
+  type RequiredRowSelectorProps,
+  type RowsProps,
+  type VirtualizedRowsProps
+} from './components';
+import type { DataTableComponents, TypedElement } from './dataTable.types';
 
 const getOrDefault = <
   C extends React.ElementType | undefined,
@@ -59,18 +53,7 @@ export const createDataTableCreator = <
 >(
   components: Partial<Components> = {}
 ) => {
-  const table = getOrDefault(components.table, 'table');
-  const thead = getOrDefault(components.thead, 'thead');
-  const tbody = getOrDefault(components.tbody, 'tbody');
-  const tfoot = getOrDefault(components.tfoot, 'tfoot');
-  const tr = getOrDefault(components.tr, 'tr');
-  const td = getOrDefault(components.td, 'td');
-  const caption = getOrDefault(components.caption, 'caption');
-  const colgroup = getOrDefault(components.colgroup, 'colgroup');
-  const col = getOrDefault(components.col, 'col');
-
-  const virtualizedTbody = createVirtualizedTbody(tbody);
-  const deferredTbody = createTbody(tbody);
+  const cell = getOrDefault(components.cell, DefaultCell);
 
   const allRowsSelector = getOrDefault(
     components.allRowsSelector,
@@ -78,7 +61,7 @@ export const createDataTableCreator = <
   );
   const rowSelector = getOrDefault(components.rowSelector, DefaultRowSelector);
   const searchInput = getOrDefault(components.searchInput, DefaultSearchInput);
-  const overChargedTh = getOrDefault(components.th, DefaultTh);
+  // const overChargedTh = getOrDefault(components.th, DefaultTh);
   const pagination = getOrDefault(components.pagination, DefaultPagination);
 
   const deleteRowButton = getOrDefault(
@@ -97,29 +80,21 @@ export const createDataTableCreator = <
   const redoButton = getOrDefault(components.redoButton, DefaultRedoButton);
 
   const createDataTable = <TEntity extends object>() => {
-    const DataTable = (props: React.ComponentProps<typeof table>) =>
-      React.createElement(table, { ...props, 'data-data-table': true });
+    const DataTable = (props: React.ComponentProps<'div'>) => (
+      <div {...props} data-data-table />
+    );
 
-    DataTable.Thead = thead;
-    DataTable.Tfoot = tfoot;
-    DataTable.Tr = tr;
-    DataTable.Td = td;
-    DataTable.Caption = caption;
-    DataTable.Colgroup = colgroup;
-    DataTable.Col = col;
-
-    DataTable.Th = overChargedTh as TypedElement<
-      typeof overChargedTh,
-      RequiredThProps<TEntity>
+    // DataTable.Th = overChargedTh as TypedElement<
+    //   typeof overChargedTh,
+    //   RequiredThProps<TEntity>
+    // >;
+    DataTable.Column = createColumn<TEntity>();
+    DataTable.Rows = Rows as TypedElement<typeof Rows, RowsProps<TEntity>>;
+    DataTable.VirtualizedRows = VirtualizedRows as TypedElement<
+      typeof VirtualizedRows,
+      VirtualizedRowsProps<TEntity>
     >;
-    DataTable.Tbody = deferredTbody as TypedElement<
-      typeof deferredTbody,
-      Parameters<WithProps<typeof tbody, TbodyProps<TEntity>>>[0]
-    >;
-    DataTable.VirtualizedTbody = virtualizedTbody as TypedElement<
-      typeof virtualizedTbody,
-      Parameters<WithProps<typeof tbody, VirtualizedTbodyProps<TEntity>>>[0]
-    >;
+    DataTable.Cell = cell;
     DataTable.RowSelector = rowSelector as TypedElement<
       typeof rowSelector,
       RequiredRowSelectorProps<TEntity>

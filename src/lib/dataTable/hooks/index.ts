@@ -11,3 +11,5 @@ export * from './useRowRestoration';
 export * from './useRowSelection';
 export * from './useSearch';
 export * from './useUndo';
+export * from './useColumnDimensions';
+export * from './useColumnInitialization';

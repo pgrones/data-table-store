@@ -1,4 +1,5 @@
-import type React from "react";
+/* eslint-disable @typescript-eslint/no-unnecessary-type-parameters */
+import type React from 'react';
 
 type ExtendedProps<Props = object, OverrideProps = object> = OverrideProps &
   Omit<Props, keyof OverrideProps>;
@@ -12,9 +13,9 @@ type PropsOf<C extends ElementType> = React.JSX.LibraryManagedAttributes<
   React.ComponentPropsWithoutRef<C>
 >;
 
-type ComponentProp<C> = {
+interface ComponentProp<C> {
   component?: C;
-};
+}
 
 type InheritedProps<C extends ElementType, Props = object> = ExtendedProps<
   PropsOf<C>,
@@ -22,7 +23,7 @@ type InheritedProps<C extends ElementType, Props = object> = ExtendedProps<
 >;
 
 export type PolymorphicRef<C> = C extends React.ElementType
-  ? React.ComponentPropsWithRef<C>["ref"]
+  ? React.ComponentPropsWithRef<C>['ref']
   : never;
 
 export type PolymorphicComponentProps<

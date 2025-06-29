@@ -1,11 +1,13 @@
-import { SearchInput as DataTableSearchInput } from '../../lib/dataTable/components/inputs/searchInput';
+import { SearchInput as DataTableSearchInput, useSearch } from '@lib';
 import { SearchInput as Search, type SearchInputProps } from './search';
 
 export const SearchInput = DataTableSearchInput.as<
   Omit<SearchInputProps, 'value'>
->(({ search, searchValue, onChange, ...props }) => {
+>(({ onChange, ...props }) => {
+  const { searchValue, setSearchValue } = useSearch();
+
   const handleChange = (value: string) => {
-    search(value);
+    setSearchValue(value);
     onChange?.(value);
   };
 

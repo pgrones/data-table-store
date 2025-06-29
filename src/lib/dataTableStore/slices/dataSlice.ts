@@ -8,14 +8,12 @@ export const isAddedRow = <TEntity extends object>(
 };
 
 export interface DataSlice<TEntity extends object> {
-  isPending: boolean;
   totalEntities: number;
   data: TEntity[];
   setData: (
     newData: { data: TEntity[]; totalEntities: number },
     resetScopedState?: boolean
   ) => void;
-  startPending: () => void;
   getKey: (row: Partial<TEntity>) => RowKey;
 }
 
@@ -24,10 +22,8 @@ export const createDataSlice =
     rowKeyProperties: readonly Key<TEntity>[]
   ): SliceCreator<TEntity, DataSlice<TEntity>> =>
   (set, get) => ({
-    isPending: false,
     data: [],
     totalEntities: 0,
-    startPending: () => set({ isPending: true }),
     setData: (newData, resetScopedState = true) =>
       set(() => {
         if (resetScopedState) get().resetScopedStates();

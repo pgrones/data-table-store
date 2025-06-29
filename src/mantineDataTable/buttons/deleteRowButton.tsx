@@ -1,10 +1,15 @@
+import {
+  DeleteRowButton as DataTableDeleteRowButton,
+  useRowDeletion
+} from '@lib';
 import { ActionIcon, type ActionIconProps } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
-import { DeleteRowButton as DataTableDeleteRowButton } from '../../lib/dataTable/components/buttons/deleteRowButton';
 
 export const DeleteRowButton = DataTableDeleteRowButton.as<
   ActionIconProps & React.ComponentProps<'button'>
->(({ deleteRow, isDeleted, onClick, ...props }) => {
+>(({ rowKey, onClick, ...props }) => {
+  const { deleteRow, isDeleted } = useRowDeletion(rowKey);
+
   if (isDeleted) return null;
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {

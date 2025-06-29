@@ -5,9 +5,9 @@ import React, {
   useRef,
   useState
 } from 'react';
+import { Th as DataTableTh } from '@lib';
 import { Group, Portal, Table, type TableThProps } from '@mantine/core';
 import { IconArrowsSort, IconSortAscending } from '@tabler/icons-react';
-import { Th as DataTableTh } from '../../lib/dataTable';
 import classes from './th.module.css';
 
 export const Th = DataTableTh.as<

@@ -1,7 +1,7 @@
 import { useDeferredValue } from 'react';
 import type { RowKey } from '../../../dataTableStore/dataTableStore.types';
 import { typedMemo } from '../../dataTable.types';
-import { useDataTableRowKeys } from '../../hooks';
+import { useRowKeys } from '../../hooks';
 import { Row } from './row';
 
 export interface TbodyProps<TEntity extends object> {
@@ -11,7 +11,7 @@ export interface TbodyProps<TEntity extends object> {
 export const createTbody = (Tbody: React.ElementType) =>
   typedMemo(
     <TEntity extends object>({ children, ...props }: TbodyProps<TEntity>) => {
-      const rowKeys = useDataTableRowKeys();
+      const rowKeys = useRowKeys();
 
       const deferredRowKeys = useDeferredValue(rowKeys);
 

@@ -1,10 +1,15 @@
+import {
+  RestoreRowButton as DataTableRestoreRowButton,
+  useRowRestoration
+} from '@lib';
 import { ActionIcon, type ActionIconProps } from '@mantine/core';
 import { IconArrowBackUp } from '@tabler/icons-react';
-import { RestoreRowButton as DataTableRestoreRowButton } from '../../lib/dataTable/components/buttons/restoreRowButton';
 
 export const RestoreRowButton = DataTableRestoreRowButton.as<
   ActionIconProps & React.ComponentProps<'button'>
->(({ restoreRow, isDirty, onClick, ...props }) => {
+>(({ rowKey, onClick, ...props }) => {
+  const { restoreRow, isDirty } = useRowRestoration(rowKey);
+
   if (!isDirty) return null;
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {

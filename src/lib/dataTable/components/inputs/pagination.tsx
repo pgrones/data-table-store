@@ -1,52 +1,35 @@
-import { useDataTable } from '../../index';
+import { usePagination } from '../../hooks';
 import {
   createOverridablePolymorphicComponent,
-  type InjectableComponent
-} from '../polymorphism/createOverridablePolymorphicComponent';
-import { PolymorphicRoot } from '../polymorphism/polymorphicRoot';
+  PolymorphicRoot
+} from '../polymorphism';
 
-export interface PaginationProps {
-  currentPage: number;
-  totalPages: number;
-  setPage: (page: number) => void;
-}
-
-export const Pagination =
-  createOverridablePolymorphicComponent<PaginationProps>(props => {
-    const { currentPage, totalPages, setPage } = useDataTable(state => ({
-      currentPage: state.currentPage,
-      totalPages: Math.ceil(state.totalEntities / state.pageSize),
-      setPage: state.setPage
-    }));
-
-    return (
-      <PolymorphicRoot<InjectableComponent<PaginationProps>>
-        {...props}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        setPage={setPage}
-      />
-    );
-  });
+export const Pagination = createOverridablePolymorphicComponent(props => (
+  <PolymorphicRoot {...props} />
+));
 
 export const DefaultPagination = Pagination.as<React.ComponentProps<'div'>>(
-  ({ currentPage, totalPages, setPage, ...props }) => (
-    <div style={{ display: 'flex', gap: 8 }} {...props}>
-      <button
-        type="button"
-        disabled={currentPage === 1}
-        onClick={() => setPage(currentPage - 1)}
-      >
-        {'<<'}
-      </button>
-      {currentPage}
-      <button
-        type="button"
-        disabled={currentPage === totalPages}
-        onClick={() => setPage(currentPage + 1)}
-      >
-        {'>>'}
-      </button>
-    </div>
-  )
+  props => {
+    const { currentPage, totalPages, setPage } = usePagination();
+
+    return (
+      <div style={{ display: 'flex', gap: 8 }} {...props}>
+        <button
+          type="button"
+          disabled={currentPage === 1}
+          onClick={() => setPage(currentPage - 1)}
+        >
+          {'<<'}
+        </button>
+        {currentPage}
+        <button
+          type="button"
+          disabled={currentPage === totalPages}
+          onClick={() => setPage(currentPage + 1)}
+        >
+          {'>>'}
+        </button>
+      </div>
+    );
+  }
 );

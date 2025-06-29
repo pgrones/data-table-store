@@ -2,7 +2,7 @@ import type React from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import type { RowKey } from '../../../dataTableStore/dataTableStore.types';
 import { typedMemo } from '../../dataTable.types';
-import { useDataTableRowKeys } from '../../hooks';
+import { useRowKeys } from '../../hooks';
 import { Row } from './row';
 
 export interface VirtualizedTbodyProps<TEntity extends object> {
@@ -21,7 +21,7 @@ export const createVirtualizedTbody = (Tbody: React.ElementType) =>
       children,
       ...props
     }: VirtualizedTbodyProps<TEntity>) => {
-      const rowKeys = useDataTableRowKeys();
+      const rowKeys = useRowKeys();
 
       const virtualizer = useVirtualizer({
         count: rowKeys.length,

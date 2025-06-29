@@ -1,7 +1,10 @@
+import {
+  createDataTableStore,
+  DataTableProvider,
+  useDataTableParams
+} from '@lib';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { fetchData, type Customer } from './api';
-import { createDataTableStore, DataTableProvider } from './lib';
-import { useDataTableParams } from './lib/dataTable/hooks/useDataTableParams';
 import { Table } from './table';
 
 const store = createDataTableStore<Customer>({
@@ -23,7 +26,7 @@ const store = createDataTableStore<Customer>({
 export const App = () => {
   const params = useDataTableParams(store);
 
-  const { data, isFetching } = useQuery({
+  const { data } = useQuery({
     queryKey: ['data', params],
     queryFn: () => fetchData(params),
     placeholderData: keepPreviousData,
@@ -31,7 +34,7 @@ export const App = () => {
   });
 
   return (
-    <DataTableProvider store={store} data={data} isPending={isFetching}>
+    <DataTableProvider store={store} data={data}>
       <Table />
     </DataTableProvider>
   );

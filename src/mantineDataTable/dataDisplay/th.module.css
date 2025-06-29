@@ -1,4 +1,6 @@
 .header {
+  transition: width 200ms ease;
+
   & svg {
     color: var(--mantine-primary-color-filled);
 

@@ -1,11 +1,13 @@
-import { type ActionIconProps, ActionIcon } from '@mantine/core';
+import { RedoButton as DataTableRedoButton, useRedo } from '@lib';
+import { ActionIcon, type ActionIconProps } from '@mantine/core';
 import { useHotkeys } from '@mantine/hooks';
 import { IconArrowForwardUp } from '@tabler/icons-react';
-import { RedoButton as DataTableRedoButton } from '../../lib/dataTable/components/buttons/redoButton';
 
 export const RedoButton = DataTableRedoButton.as<
   ActionIconProps & React.ComponentProps<'button'>
->(({ redo, canRedo, onClick, disabled, ...props }) => {
+>(({ onClick, disabled, ...props }) => {
+  const { redo, canRedo } = useRedo();
+
   useHotkeys([['mod+Y', () => canRedo && redo()]]);
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {

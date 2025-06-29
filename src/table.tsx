@@ -7,6 +7,7 @@ import {
   ScrollArea,
   Title
 } from '@mantine/core';
+import { useQueryClient } from '@tanstack/react-query';
 import type { Customer } from './api';
 import { createMantineThemedDataTable } from './mantineDataTable';
 import classes from './table.module.css';
@@ -31,18 +32,13 @@ export const Table = () => {
         </Group>
       </Group>
 
-      <ScrollArea
-        offsetScrollbars="x"
-        type="hover" // Important to trigger renders when size changes
-        scrollHideDelay={200}
-        viewportRef={scrollRef}
-      >
+      <ScrollArea offsetScrollbars type="auto" viewportRef={scrollRef}>
         <DataTable
           stickyHeader
-          horizontalSpacing="lg"
-          verticalSpacing="sm"
-          withColumnBorders
+          horizontalSpacing="md"
+          verticalSpacing="md"
           miw="max-content"
+          w="auto"
         >
           <DataTable.Thead>
             <Headers />
@@ -57,7 +53,7 @@ export const Table = () => {
           </DataTable.VirtualizedTbody>
         </DataTable>
 
-        <DataTable.DataState />
+        <LoadingOverlay />
       </ScrollArea>
 
       <DataTable.Pagination ml="auto" hideWithOnePage={false} />
@@ -71,11 +67,10 @@ const Headers = () => (
       columnId="selection"
       resizable={false}
       className={classes.sticky}
-      w={60}
     >
       <DataTable.AllRowsSelector />
     </DataTable.Th>
-    <DataTable.Th columnId="avatar" w={78} resizable={false} />
+    <DataTable.Th columnId="avatar" resizable={false} />
     <DataTable.Th sortableBy="firstName">First Name</DataTable.Th>
     <DataTable.Th sortableBy="lastName">Last Name</DataTable.Th>
     <DataTable.Th sortableBy="birthday">Birthday</DataTable.Th>
@@ -84,15 +79,12 @@ const Headers = () => (
     <DataTable.Th sortableBy="revenue" ta="end">
       Revenue
     </DataTable.Th>
-    <DataTable.Th w={190} resizable={false}>
-      Trend
-    </DataTable.Th>
+    <DataTable.Th resizable={false}>Trend</DataTable.Th>
     <DataTable.Th
       columnId="actions"
       resizable={false}
       className={classes.sticky}
       mod="right"
-      w={69}
     />
   </DataTable.Tr>
 );
@@ -139,3 +131,11 @@ const rows = (row: Customer) => (
     </DataTable.Td>
   </DataTable.Tr>
 );
+
+const LoadingOverlay = () => {
+  const queryclient = useQueryClient();
+
+  const isPending = queryclient.isFetching({ queryKey: 'data' });
+
+  return <DataTable.DataState isPending={isPending === 1} />;
+};

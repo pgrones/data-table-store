@@ -1,9 +1,10 @@
-import { useDataTable } from '../../dataTable.context';
+import type { RowKey } from '../../../dataTableStore';
+import { useRowKey, useRowRestoration } from '../../hooks';
 import {
   createOverridablePolymorphicComponent,
+  PolymorphicRoot,
   type InjectableComponent
-} from '../polymorphism/createOverridablePolymorphicComponent';
-import { PolymorphicRoot } from '../polymorphism/polymorphicRoot';
+} from '../polymorphism';
 
 export interface RequiredRestoreRowButtonProps<
   TEntity extends object = object
@@ -12,37 +13,31 @@ export interface RequiredRestoreRowButtonProps<
 }
 
 export interface RestoreRowButtonProps {
-  restoreRow: () => void;
-  isDirty: boolean;
+  rowKey: RowKey;
 }
 
 export const RestoreRowButton = createOverridablePolymorphicComponent<
   RestoreRowButtonProps,
   RequiredRestoreRowButtonProps
 >(({ row, ...props }) => {
-  const { rowKey, isDirty, restoreRow } = useDataTable(state => {
-    const rowKey = state.getKey(row);
-
-    return {
-      rowKey,
-      restoreRow: state.restoreRow,
-      isDirty: state.deleted.includes(rowKey) || rowKey in state.edited
-    };
-  });
+  const rowKey = useRowKey(row);
 
   return (
     <PolymorphicRoot<InjectableComponent<RestoreRowButtonProps>>
       {...props}
-      restoreRow={() => restoreRow(rowKey)}
-      isDirty={isDirty}
+      rowKey={rowKey}
     />
   );
 });
 
 export const DefaultRestoreRowButton = RestoreRowButton.as<
   React.ComponentProps<'button'>
->(({ restoreRow, isDirty, ...props }) => (
-  <button type="button" onClick={restoreRow} disabled={!isDirty} {...props}>
-    Restore
-  </button>
-));
+>(({ rowKey, ...props }) => {
+  const { restoreRow, isDirty } = useRowRestoration(rowKey);
+
+  return (
+    <button type="button" onClick={restoreRow} disabled={!isDirty} {...props}>
+      Restore
+    </button>
+  );
+});

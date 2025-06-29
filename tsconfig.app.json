@@ -27,7 +27,11 @@
     "verbatimModuleSyntax": true,
     "noUncheckedIndexedAccess": true,
     "downlevelIteration": true,
-    "noImplicitOverride": true
+    "noImplicitOverride": true,
+
+    "paths": {
+      "@lib": ["./src/lib/index"]
+    }
   },
   "include": ["src"]
 }

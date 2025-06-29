@@ -1,11 +1,17 @@
+import {
+  AllRowsSelector as DataTableAllRowsSelector,
+  useAllRowsSelection
+} from '@lib';
 import { Checkbox, type CheckboxProps } from '@mantine/core';
-import { AllRowsSelector as DataTableAllRowsSelector } from '../../lib/dataTable';
 
 export const AllRowsSelector = DataTableAllRowsSelector.as<
   Omit<CheckboxProps, 'checked' | 'indeterminate'>
->(({ isSelected, toggleSelection, indeterminate, onChange, ...props }) => {
+>(({ onChange, ...props }) => {
+  const { isSelected, indeterminate, toggleAllRowSelections } =
+    useAllRowsSelection();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    toggleSelection();
+    toggleAllRowSelections();
     onChange?.(e);
   };
 

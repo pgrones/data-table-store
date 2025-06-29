@@ -1,12 +1,7 @@
-export { createDataSlice, type DataSlice } from './dataSlice';
-export { createEditorSlice, type EditorSlice } from './editorSlice/editorSlice';
-export { createPaginationSlice, type PaginationSlice } from './paginationSlice';
-export { createResetSlice, type ResetSlice } from './resetSlice';
-export { createSearchSlice, type SearchSlice } from './searchSlice';
-export { createSelectionSlice, type SelectionSlice } from './selectionSlice';
-export {
-  type ColumnSlice,
-  type Column,
-  type ColumnOptions,
-  createColumnSlice
-} from './columnSlice';
+export * from './columnSlice';
+export * from './dataSlice';
+export * from './editorSlice';
+export * from './paginationSlice';
+export * from './resetSlice';
+export * from './searchSlice';
+export * from './selectionSlice';

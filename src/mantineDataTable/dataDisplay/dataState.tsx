@@ -2,11 +2,12 @@ import { useEffect } from 'react';
 import { LoadingOverlay, type LoadingOverlayProps } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { nprogress } from '@mantine/nprogress';
-import { DataState as DataTableDataState } from '../../lib/dataTable';
 
-export const DataState = DataTableDataState.as<
-  Omit<LoadingOverlayProps, 'visible'>
->(({ isPending, overlayProps, ...props }) => {
+export const DataState = ({
+  overlayProps,
+  isPending,
+  ...props
+}: LoadingOverlayProps & { isPending: boolean }) => {
   const [isLoaderVisible] = useDebouncedValue(isPending, 500);
 
   useEffect(() => {
@@ -21,4 +22,4 @@ export const DataState = DataTableDataState.as<
       overlayProps={{ opacity: 0.5, ...overlayProps }}
     />
   );
-});
+};

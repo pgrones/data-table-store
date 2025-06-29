@@ -1,11 +1,13 @@
-import { type ActionIconProps, ActionIcon } from '@mantine/core';
+import { UndoButton as DataTableUndoButton, useUndo } from '@lib';
+import { ActionIcon, type ActionIconProps } from '@mantine/core';
 import { useHotkeys } from '@mantine/hooks';
 import { IconArrowBackUp } from '@tabler/icons-react';
-import { UndoButton as DataTableUndoButton } from '../../lib/dataTable/components/buttons/undoButton';
 
 export const UndoButton = DataTableUndoButton.as<
   ActionIconProps & React.ComponentProps<'button'>
->(({ undo, canUndo, onClick, disabled, ...props }) => {
+>(({ onClick, disabled, ...props }) => {
+  const { undo, canUndo } = useUndo();
+
   useHotkeys([['mod+Z', () => canUndo && undo()]]);
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {

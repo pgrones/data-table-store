@@ -9,27 +9,23 @@ import { typedMemo } from './dataTable.types';
 type DataTableProviderProps<TEntity extends object> = PropsWithChildren<{
   store: DataTableStore<TEntity>;
   data: DataTableData<TEntity> | undefined;
-  isPending: boolean;
 }>;
 
 export const DataTableProvider = <TEntity extends object>({
   children,
   store,
-  data,
-  isPending
+  data
 }: DataTableProviderProps<TEntity>) => {
-  const { setData, startPending } = useStore(
+  const { setData } = useStore(
     store,
     useShallow(state => ({
-      startPending: state.startPending,
       setData: state.setData
     }))
   );
 
   useEffect(() => {
-    if (isPending) startPending();
-    else if (data) setData(data);
-  }, [isPending, data, setData, startPending]);
+    if (data) setData(data);
+  }, [data, setData]);
 
   return <MemoizedContext store={store}>{children}</MemoizedContext>;
 };

@@ -1,47 +1,24 @@
-import { useDataTable } from '../../index';
+import { useAllRowsSelection } from '../../hooks';
 import {
   createOverridablePolymorphicComponent,
-  type InjectableComponent
-} from '../polymorphism/createOverridablePolymorphicComponent';
-import { PolymorphicRoot } from '../polymorphism/polymorphicRoot';
+  PolymorphicRoot
+} from '../polymorphism';
 
-export interface AllRowsSelectorProps {
-  isSelected: boolean;
-  indeterminate: boolean;
-  toggleSelection: () => void;
-}
-
-export const AllRowsSelector =
-  createOverridablePolymorphicComponent<AllRowsSelectorProps>(props => {
-    const { isSelected, indeterminate, toggleAllRowSelections } = useDataTable(
-      state => {
-        const selectionCount = state.selection.length;
-
-        return {
-          isSelected: selectionCount === state.pageSize,
-          indeterminate: !!selectionCount && selectionCount !== state.pageSize,
-          toggleAllRowSelections: state.toggleAllRowSelections
-        };
-      }
-    );
-
-    return (
-      <PolymorphicRoot<InjectableComponent<AllRowsSelectorProps>>
-        {...props}
-        isSelected={isSelected}
-        indeterminate={indeterminate}
-        toggleSelection={toggleAllRowSelections}
-      />
-    );
-  });
+export const AllRowsSelector = createOverridablePolymorphicComponent(props => (
+  <PolymorphicRoot {...props} />
+));
 
 export const DefaultAllRowsSelector = AllRowsSelector.as<
   React.ComponentProps<'input'>
->(({ isSelected, toggleSelection, indeterminate: _, ...props }) => (
-  <input
-    type="checkbox"
-    {...props}
-    checked={isSelected}
-    onChange={toggleSelection}
-  />
-));
+>(props => {
+  const { toggleAllRowSelections, isSelected } = useAllRowsSelection();
+
+  return (
+    <input
+      type="checkbox"
+      {...props}
+      checked={isSelected}
+      onChange={toggleAllRowSelections}
+    />
+  );
+});

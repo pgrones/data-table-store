@@ -1,39 +1,25 @@
-import { useDataTable } from '../../dataTable.context';
+import { useSearch } from '../../hooks';
 import {
   createOverridablePolymorphicComponent,
-  type InjectableComponent
-} from '../polymorphism/createOverridablePolymorphicComponent';
-import { PolymorphicRoot } from '../polymorphism/polymorphicRoot';
+  PolymorphicRoot
+} from '../polymorphism';
 
-export interface SearchProps {
-  searchValue: string;
-  search: (searchValue: string) => void;
-}
-export const SearchInput = createOverridablePolymorphicComponent<SearchProps>(
+export const SearchInput = createOverridablePolymorphicComponent(props => {
+  return <PolymorphicRoot {...props} />;
+});
+
+export const DefaultSearchInput = SearchInput.as<React.ComponentProps<'input'>>(
   props => {
-    const { searchValue, setSearchValue } = useDataTable(state => ({
-      searchValue: state.searchValue,
-      setSearchValue: state.setSearchValue
-    }));
+    const { searchValue, setSearchValue } = useSearch();
 
     return (
-      <PolymorphicRoot<InjectableComponent<SearchProps>>
+      <input
+        type="search"
+        placeholder="Search..."
         {...props}
-        search={setSearchValue}
-        searchValue={searchValue}
+        value={searchValue}
+        onChange={e => setSearchValue(e.target.value)}
       />
     );
   }
-);
-
-export const DefaultSearchInput = SearchInput.as<React.ComponentProps<'input'>>(
-  ({ search, searchValue, ...props }) => (
-    <input
-      type="search"
-      placeholder="Search..."
-      {...props}
-      value={searchValue}
-      onChange={e => search(e.target.value)}
-    />
-  )
 );

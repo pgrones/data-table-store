@@ -1,4 +1,4 @@
-import { createPolymorphicComponent } from "./createPolymorphicComponent";
+import { createPolymorphicComponent } from './createPolymorphicComponent';
 
 export interface PolymorphicRootProps {
   component?: React.ElementType;
@@ -6,12 +6,12 @@ export interface PolymorphicRootProps {
 }
 
 export const PolymorphicRoot = createPolymorphicComponent<
-  "div",
+  'div',
   PolymorphicRootProps
 >(({ component, renderRoot, ...props }: PolymorphicRootProps) => {
-  const Element = component || "div";
+  const Element = component ?? 'div';
 
-  return typeof renderRoot === "function" ? (
+  return typeof renderRoot === 'function' ? (
     renderRoot(props)
   ) : (
     <Element {...props} />

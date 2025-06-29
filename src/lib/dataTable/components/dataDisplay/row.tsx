@@ -1,6 +1,6 @@
-import type { RowKey } from '../../../dataTableStore/dataTableStore.types';
-import { useDataTable } from '../../dataTable.context';
+import type { RowKey } from '../../../dataTableStore';
 import { typedMemo } from '../../dataTable.types';
+import { useRow } from '../../hooks';
 
 interface RowProps<TEntity extends object> {
   rowKey: RowKey;
@@ -9,11 +9,7 @@ interface RowProps<TEntity extends object> {
 
 export const Row = typedMemo(
   <TEntity extends object>({ rowKey, renderRow }: RowProps<TEntity>) => {
-    const row = useDataTable<TEntity, TEntity>(
-      state =>
-        state.data.find(x => state.getKey(x) === rowKey) ??
-        (state.added as TEntity[]).find(x => state.getKey(x) === rowKey)!
-    );
+    const row = useRow(rowKey) as TEntity;
 
     return renderRow(row);
   }

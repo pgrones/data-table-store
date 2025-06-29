@@ -1,11 +1,13 @@
+import { RowSelector as DataTableRowSelector, useRowSelection } from '@lib';
 import { Checkbox, type CheckboxProps } from '@mantine/core';
-import { RowSelector as DataTableRowSelector } from '../../lib/dataTable';
 
 export const RowSelector = DataTableRowSelector.as<
   Omit<CheckboxProps, 'checked'>
->(({ isSelected, toggleSelection, onChange, ...props }) => {
+>(({ rowKey, onChange, ...props }) => {
+  const { isSelected, toggleRowSelection } = useRowSelection(rowKey);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    toggleSelection();
+    toggleRowSelection();
     onChange?.(e);
   };
 

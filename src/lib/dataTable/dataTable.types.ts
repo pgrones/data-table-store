@@ -15,7 +15,6 @@ export interface DataTableComponents<TCompoundMap extends object> {
   allRowsSelector?: React.ElementType;
   searchInput?: React.ElementType;
   pagination?: React.ElementType;
-  dataState?: React.ElementType;
   addRowButton?: React.ElementType;
   deleteRowButton?: React.ElementType;
   restoreRowButton?: React.ElementType;

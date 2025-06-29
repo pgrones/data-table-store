@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import type { DataTableData, DataTableParams } from './lib';
+import type { DataTableData, DataTableParams } from '@lib';
 
 export interface Customer {
   id: string;

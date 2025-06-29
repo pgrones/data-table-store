@@ -1,12 +1,14 @@
+import { Pagination as DataTablePagination, usePagination } from '@lib';
 import {
-  type PaginationProps,
-  Pagination as MantinePagination
+  Pagination as MantinePagination,
+  type PaginationProps
 } from '@mantine/core';
-import { Pagination as DataTablePagination } from '../../lib/dataTable';
 
 export const Pagination = DataTablePagination.as<
   Omit<PaginationProps, 'total' | 'value'>
->(({ currentPage, totalPages, setPage, onChange, ...props }) => {
+>(({ onChange, ...props }) => {
+  const { currentPage, totalPages, setPage } = usePagination();
+
   const handleChange = (value: number) => {
     setPage(value);
     onChange?.(value);

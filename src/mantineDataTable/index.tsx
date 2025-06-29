@@ -1,5 +1,5 @@
+import { createDataTableCreator } from '@lib';
 import { Table } from '@mantine/core';
-import { createDataTableCreator } from '../lib';
 import { AddRowButton } from './buttons/addRowButton';
 import { DeleteRowButton } from './buttons/deleteRowButton';
 import { RedoButton } from './buttons/redoButton';
@@ -32,5 +32,7 @@ export const createMantineThemedDataTable = createDataTableCreator({
   rowSelector: RowSelector,
   searchInput: SearchInput,
   pagination: Pagination,
-  dataState: DataState
+  additionalCompoundComponents: {
+    DataState
+  }
 });

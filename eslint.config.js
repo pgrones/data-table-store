@@ -153,5 +153,15 @@ export default tseslint.config(
       'jsx-a11y/anchor-is-valid': 'off',
       'jsx-a11y/anchor-has-content': 'off'
     }
+  },
+  {
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: ['**/lib/**/*', '**/lib']
+        }
+      ]
+    }
   }
 );

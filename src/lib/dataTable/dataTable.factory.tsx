@@ -10,7 +10,6 @@ import {
   type RequiredRestoreRowButtonProps
 } from './components/buttons/restoreRowButton';
 import { DefaultUndoButton } from './components/buttons/undoButton';
-import { DefaultDataState } from './components/dataDisplay/dataState';
 import { createTbody, type TbodyProps } from './components/dataDisplay/tbody';
 import { DefaultTh, type RequiredThProps } from './components/dataDisplay/th';
 import {
@@ -81,7 +80,6 @@ export const createDataTableCreator = <
   const searchInput = getOrDefault(components.searchInput, DefaultSearchInput);
   const overChargedTh = getOrDefault(components.th, DefaultTh);
   const pagination = getOrDefault(components.pagination, DefaultPagination);
-  const dataState = getOrDefault(components.dataState, DefaultDataState);
 
   const deleteRowButton = getOrDefault(
     components.deleteRowButton,
@@ -129,7 +127,6 @@ export const createDataTableCreator = <
     DataTable.AllRowsSelector = allRowsSelector;
     DataTable.SearchInput = searchInput;
     DataTable.Pagination = pagination;
-    DataTable.DataState = dataState;
 
     DataTable.AddRowButton = addRowButton;
     DataTable.UndoButton = undoButton;

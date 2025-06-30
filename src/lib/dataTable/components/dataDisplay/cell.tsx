@@ -1,13 +1,14 @@
-import { useColumnDimensions } from '../../hooks';
 import {
   createOverridablePolymorphicComponent,
   PolymorphicRoot,
   type InjectableComponent
 } from '../polymorphism';
+import { cellSymbol } from './cell.extensions';
 
-export interface RequiredCellProps<TValue = unknown> {
+export interface RequiredCellProps {
+  __value?: unknown;
   children:
-    | ((props: { value: TValue }) => React.ReactNode)
+    | ((props: { value: unknown }) => React.ReactNode)
     | React.ReactNode
     | null
     | undefined;
@@ -22,8 +23,6 @@ export const Cell = createOverridablePolymorphicComponent<
   CellProps,
   RequiredCellProps
 >(props => {
-  const { width, spacing } = useColumnDimensions('');
-
   return (
     <PolymorphicRoot<InjectableComponent<CellProps>>
       {...props}
@@ -32,6 +31,8 @@ export const Cell = createOverridablePolymorphicComponent<
     />
   );
 });
+
+Cell.__name = cellSymbol;
 
 export const DefaultCell = Cell.as<
   Omit<React.ComponentProps<'div'>, 'children'> & RequiredCellProps

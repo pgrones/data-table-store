@@ -2,6 +2,7 @@ import { memo } from 'react';
 
 export interface DataTableComponents<TCompoundMap extends object> {
   cell?: React.ElementType;
+  header?: React.ElementType;
   column?: React.ElementType;
   rowSelector?: React.ElementType;
   allRowsSelector?: React.ElementType;

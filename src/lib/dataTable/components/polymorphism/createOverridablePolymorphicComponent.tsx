@@ -15,7 +15,7 @@ export const createOverridablePolymorphicComponent = <
   RequiredProps = object
 >(
   component: (props: RequiredProps) => React.ReactElement
-): { as: As<InjectedProps, RequiredProps> } => {
+): { as: As<InjectedProps, RequiredProps>; __name?: symbol } => {
   const Component = createPolymorphicComponent<unknown, unknown>(component);
 
   return {

@@ -3,10 +3,10 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import type { RowKey } from '../../../dataTableStore';
 import { typedMemo } from '../../dataTable.types';
 import { useRowKeys } from '../../hooks';
+import { useDataTableOptions } from '../dataTable.context';
 import { Row } from './row';
 
-export interface VirtualizedRowsProps<TEntity extends object>
-  extends Omit<React.ComponentProps<'div'>, 'children'> {
+export interface VirtualizedRowsProps<TEntity extends object> {
   children: (row: TEntity) => React.ReactNode;
   scrollRef: React.RefObject<HTMLElement | null>;
   rowHeight: number;
@@ -18,10 +18,11 @@ export const VirtualizedRows = typedMemo(
     scrollRef,
     rowHeight,
     overscan,
-    children,
-    ...props
+
+    children
   }: VirtualizedRowsProps<TEntity>) => {
     const rowKeys = useRowKeys();
+    const { horizontalSpacing, verticalSpacing } = useDataTableOptions();
 
     const virtualizer = useVirtualizer({
       count: rowKeys.length,
@@ -33,9 +34,8 @@ export const VirtualizedRows = typedMemo(
 
     return (
       <div
-        {...props}
+        role="rowgroup"
         style={{
-          ...props.style,
           height: `${virtualizer.getTotalSize()}px`,
           position: 'relative'
         }}
@@ -43,6 +43,7 @@ export const VirtualizedRows = typedMemo(
         {virtualizer.getVirtualItems().map(({ key, start, size }) => (
           <div
             key={key}
+            role="row"
             style={{
               transform: `translateY(${start}px)`,
               height: size,
@@ -50,8 +51,10 @@ export const VirtualizedRows = typedMemo(
               top: 0,
               left: 0,
               width: '100%',
-              display: 'flex',
-              flexWrap: 'nowrap'
+              display: 'grid',
+              gridAutoFlow: 'column',
+              columnGap: horizontalSpacing,
+              paddingBlock: verticalSpacing
             }}
           >
             <Row rowKey={key as RowKey} renderRow={children} />

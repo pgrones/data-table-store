@@ -1,18 +1,11 @@
 import type { Key } from '../../../dataTableStore';
 import { useColumnInitialization } from '../../hooks';
 import type { RequiredCellProps } from './cell';
+import { columnSymbol } from './column.extensions';
 
-export interface ColumnProps<
-  TEntity extends object,
-  TKey extends Key<TEntity> | (string & {})
-> {
-  columnId: TKey;
-  children: [
-    React.ReactElement,
-    React.ReactElement<
-      RequiredCellProps<TKey extends keyof TEntity ? TEntity[TKey] : unknown>
-    >
-  ];
+export interface ColumnProps<TEntity extends object> {
+  columnId: Key<TEntity> | (string & {});
+  children: [React.ReactElement, React.ReactElement<RequiredCellProps>];
   sortable?: boolean;
   resizable?: boolean;
   orderable?: boolean;
@@ -20,13 +13,13 @@ export interface ColumnProps<
 }
 
 export const createColumn = <TEntity extends object>() => {
-  const Column = <TKey extends Key<TEntity> | (string & {})>({
+  const Column = ({
     columnId,
     hidable,
     orderable,
     resizable,
     sortable
-  }: ColumnProps<TEntity, TKey>) => {
+  }: ColumnProps<TEntity>) => {
     useColumnInitialization(columnId, {
       isHidable: hidable,
       isOrderable: orderable,
@@ -39,7 +32,7 @@ export const createColumn = <TEntity extends object>() => {
     return null;
   };
 
-  Column.displayName = 'DataTable.Column';
+  Column.__name = columnSymbol;
 
   return Column;
 };

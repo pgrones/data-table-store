@@ -1,11 +1,10 @@
-import type { Key } from '../dataTableStore';
 import {
-  Column,
   createColumn,
   DefaultAddRowButton,
   DefaultAllRowsSelector,
   DefaultCell,
   DefaultDeleteRowButton,
+  DefaultHeader,
   DefaultPagination,
   DefaultRedoButton,
   DefaultRestoreRowButton,
@@ -14,7 +13,6 @@ import {
   DefaultUndoButton,
   Rows,
   VirtualizedRows,
-  type ColumnProps,
   type RequiredDeleteRowButtonProps,
   type RequiredRestoreRowButtonProps,
   type RequiredRowSelectorProps,
@@ -54,6 +52,7 @@ export const createDataTableCreator = <
   components: Partial<Components> = {}
 ) => {
   const cell = getOrDefault(components.cell, DefaultCell);
+  const header = getOrDefault(components.header, DefaultHeader);
 
   const allRowsSelector = getOrDefault(
     components.allRowsSelector,
@@ -61,7 +60,6 @@ export const createDataTableCreator = <
   );
   const rowSelector = getOrDefault(components.rowSelector, DefaultRowSelector);
   const searchInput = getOrDefault(components.searchInput, DefaultSearchInput);
-  // const overChargedTh = getOrDefault(components.th, DefaultTh);
   const pagination = getOrDefault(components.pagination, DefaultPagination);
 
   const deleteRowButton = getOrDefault(
@@ -84,11 +82,8 @@ export const createDataTableCreator = <
       <div {...props} data-data-table />
     );
 
-    // DataTable.Th = overChargedTh as TypedElement<
-    //   typeof overChargedTh,
-    //   RequiredThProps<TEntity>
-    // >;
     DataTable.Column = createColumn<TEntity>();
+    DataTable.Header = header;
     DataTable.Rows = Rows as TypedElement<typeof Rows, RowsProps<TEntity>>;
     DataTable.VirtualizedRows = VirtualizedRows as TypedElement<
       typeof VirtualizedRows,

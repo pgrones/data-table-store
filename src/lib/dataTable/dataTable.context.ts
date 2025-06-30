@@ -15,7 +15,8 @@ export const useDataTable = <TEntity extends object = object, U = unknown>(
     DataTableContext
   ) as unknown as DataTableStore<TEntity> | null;
 
-  if (store === null) throw new Error('DataTableContext is not provided');
+  if (store === null)
+    throw new Error('DataTableContext was not found in the tree');
 
   return useStore(store, useShallow(selector));
 };

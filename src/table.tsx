@@ -52,7 +52,7 @@ export const Table = () => {
           >
             <DataTable.Header />
             <DataTable.Cell>
-              {({ value }) => <Avatar src={value} />}
+              {({ value }) => <Avatar src={value as string} />}
             </DataTable.Cell>
           </DataTable.Column>
 

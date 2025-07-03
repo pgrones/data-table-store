@@ -1,5 +1,6 @@
 import {
   createColumn,
+  DataTable as DataTableComponent,
   DefaultAddRowButton,
   DefaultAllRowsSelector,
   DefaultCell,
@@ -11,15 +12,9 @@ import {
   DefaultRowSelector,
   DefaultSearchInput,
   DefaultUndoButton,
-  Rows,
-  VirtualizedRows,
-  type RequiredDeleteRowButtonProps,
-  type RequiredRestoreRowButtonProps,
-  type RequiredRowSelectorProps,
-  type RowsProps,
-  type VirtualizedRowsProps
+  type DataTableProps
 } from './components';
-import type { DataTableComponents, TypedElement } from './dataTable.types';
+import type { DataTableComponents } from './dataTable.types';
 
 const getOrDefault = <
   C extends React.ElementType | undefined,
@@ -78,22 +73,17 @@ export const createDataTableCreator = <
   const redoButton = getOrDefault(components.redoButton, DefaultRedoButton);
 
   const createDataTable = <TEntity extends object>() => {
-    const DataTable = (props: React.ComponentProps<'div'>) => (
-      <div {...props} data-data-table />
+    const DataTable = (props: DataTableProps<TEntity>) => (
+      <DataTableComponent {...props} Cell={cell} Header={header} />
     );
 
-    DataTable.Column = createColumn<TEntity>();
-    DataTable.Header = header;
-    DataTable.Rows = Rows as TypedElement<typeof Rows, RowsProps<TEntity>>;
-    DataTable.VirtualizedRows = VirtualizedRows as TypedElement<
-      typeof VirtualizedRows,
-      VirtualizedRowsProps<TEntity>
-    >;
-    DataTable.Cell = cell;
-    DataTable.RowSelector = rowSelector as TypedElement<
-      typeof rowSelector,
-      RequiredRowSelectorProps<TEntity>
-    >;
+    DataTable.Column = createColumn<
+      TEntity,
+      React.ComponentProps<typeof header>,
+      React.ComponentProps<typeof cell>
+    >();
+
+    DataTable.RowSelector = rowSelector;
     DataTable.AllRowsSelector = allRowsSelector;
     DataTable.SearchInput = searchInput;
     DataTable.Pagination = pagination;
@@ -101,14 +91,8 @@ export const createDataTableCreator = <
     DataTable.AddRowButton = addRowButton;
     DataTable.UndoButton = undoButton;
     DataTable.RedoButton = redoButton;
-    DataTable.DeleteRowButton = deleteRowButton as TypedElement<
-      typeof deleteRowButton,
-      RequiredDeleteRowButtonProps<TEntity>
-    >;
-    DataTable.RestoreRowButton = restoreRowButton as TypedElement<
-      typeof restoreRowButton,
-      RequiredRestoreRowButtonProps<TEntity>
-    >;
+    DataTable.DeleteRowButton = deleteRowButton;
+    DataTable.RestoreRowButton = restoreRowButton;
 
     return withCompoundComponents(
       DataTable,

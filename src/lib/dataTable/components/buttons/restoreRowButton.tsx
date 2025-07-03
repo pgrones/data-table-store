@@ -1,34 +1,27 @@
 import type { RowKey } from '../../../dataTableStore';
-import { useRowKey, useRowRestoration } from '../../hooks';
+import { useRowRestoration } from '../../hooks';
+import { useRowContext } from '../dataDisplay';
 import {
   createOverridablePolymorphicComponent,
   PolymorphicRoot,
   type InjectableComponent
 } from '../polymorphism';
 
-export interface RequiredRestoreRowButtonProps<
-  TEntity extends object = object
-> {
-  row: TEntity;
-}
-
 export interface RestoreRowButtonProps {
   rowKey: RowKey;
 }
 
-export const RestoreRowButton = createOverridablePolymorphicComponent<
-  RestoreRowButtonProps,
-  RequiredRestoreRowButtonProps
->(({ row, ...props }) => {
-  const rowKey = useRowKey(row);
+export const RestoreRowButton =
+  createOverridablePolymorphicComponent<RestoreRowButtonProps>(props => {
+    const { rowKey } = useRowContext();
 
-  return (
-    <PolymorphicRoot<InjectableComponent<RestoreRowButtonProps>>
-      {...props}
-      rowKey={rowKey}
-    />
-  );
-});
+    return (
+      <PolymorphicRoot<InjectableComponent<RestoreRowButtonProps>>
+        {...props}
+        rowKey={rowKey}
+      />
+    );
+  });
 
 export const DefaultRestoreRowButton = RestoreRowButton.as<
   React.ComponentProps<'button'>

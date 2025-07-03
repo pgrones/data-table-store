@@ -1,14 +1,14 @@
-import React, { Children, cloneElement } from 'react';
 import {
-  isDataTableCell,
-  isDataTableColumn,
-  isDataTableHeader,
-  Rows,
-  VirtualizedRows,
+  createRows,
+  createVirtualizedRows,
+  type CellProps,
   type ColumnProps,
+  type HeaderProps,
   type VirtualizedRowsProps
 } from './dataDisplay';
 import { DataTableOptionsContext } from './dataTable.context';
+import { useCells, useColumnWidths } from './dataTable.hooks';
+import classes from './dataTable.module.css';
 
 export interface DataTableProps<TEntity extends object> {
   verticalSpacing?: string | number;
@@ -20,84 +20,72 @@ export interface DataTableProps<TEntity extends object> {
   striped?: 'even' | 'odd' | boolean;
   withRowBorders?: boolean;
   withColumnBorders?: boolean;
-  virtualized?: Omit<
-    VirtualizedRowsProps<TEntity>,
-    'children' | 'verticalSpacing' | 'horizontalSpacing'
-  >;
-  children: React.ReactElement<ColumnProps<TEntity>>[];
+  virtualized?: Omit<VirtualizedRowsProps<TEntity>, 'children'>;
+  children: React.ReactElement<
+    ColumnProps<TEntity, string, unknown, unknown>
+  >[];
 }
 
-export const createDataTable =
-  <TEntity extends object>() =>
-  ({
-    horizontalSpacing = 20,
-    verticalSpacing = 20,
-    stickyHeader = false,
-    stickyHeaderOffset = 0,
-    highlightOnHover = false,
-    highlightOnSelect = false,
-    striped = false,
-    withRowBorders = true,
-    withColumnBorders = false,
-    virtualized,
-    children
-  }: DataTableProps<TEntity>) => {
-    const columns = Children.toArray(children).filter(isDataTableColumn);
+export const DataTable = <TEntity extends object>({
+  horizontalSpacing = 12,
+  verticalSpacing = 12,
+  stickyHeader = false,
+  stickyHeaderOffset = 0,
+  highlightOnHover = false,
+  highlightOnSelect = false,
+  striped = false,
+  withRowBorders = true,
+  withColumnBorders = false,
+  virtualized,
+  children,
+  Header,
+  Cell
+}: DataTableProps<TEntity> & {
+  Cell: React.ComponentType<CellProps>;
+  Header: React.ComponentType<React.PropsWithChildren<HeaderProps>>;
+}) => {
+  const ref = useColumnWidths(verticalSpacing, horizontalSpacing);
 
-    const headers = columns.map(col => ({
-      header: Children.toArray(col.props.children).find(isDataTableHeader),
-      key: col.props.columnId
-    }));
+  const [columns, renderRow] = useCells(children, Cell);
 
-    const cells = columns.map(col => ({
-      Cell: Children.toArray(col.props.children).find(isDataTableCell),
-      key: col.props.columnId as Extract<keyof TEntity, string>
-    }));
+  const Rows = createRows<TEntity>();
+  const VirtualizedRows = createVirtualizedRows<TEntity>();
 
-    const renderRow = (row: TEntity) =>
-      cells.map(
-        ({ Cell, key }) =>
-          key in row && Cell && cloneElement(Cell, { __value: row[key], key })
-      );
-
-    return (
-      <DataTableOptionsContext
-        value={{
-          highlightOnHover,
-          highlightOnSelect,
-          withRowBorders,
-          withColumnBorders,
-          horizontalSpacing,
-          verticalSpacing,
-          striped: striped === true ? 'even' : striped
-        }}
-      >
-        <div role="table">
-          <div role="rowgroup">
-            <div
-              role="row"
-              style={{
-                display: 'grid',
-                gridAutoFlow: 'column',
-                columnGap: horizontalSpacing,
-                paddingBlock: verticalSpacing,
-                position: stickyHeader ? 'sticky' : 'unset',
-                top: stickyHeaderOffset
-              }}
-            >
-              {headers.map(({ header, key }) => (
-                <div role="columnheader" key={key}>
+  return (
+    <DataTableOptionsContext
+      value={{
+        highlightOnHover,
+        highlightOnSelect,
+        withRowBorders,
+        withColumnBorders,
+        striped: striped === true ? 'even' : striped
+      }}
+    >
+      <div role="table" ref={ref} data-data-table>
+        <div role="rowgroup">
+          <div
+            role="row"
+            className={classes.row}
+            style={{
+              position: stickyHeader ? 'sticky' : 'unset',
+              top: stickyHeaderOffset
+            }}
+          >
+            {columns.map(({ columnKey, header, headerProps }) => (
+              <div role="columnheader" key={columnKey}>
+                <Header {...headerProps} columnKey={columnKey}>
                   {header}
-                </div>
-              ))}
-            </div>
+                </Header>
+              </div>
+            ))}
           </div>
-          {virtualized ? (
-            <VirtualizedRows {...virtualized}>{renderRow}</VirtualizedRows>
-          ) : (
-            <Rows>{renderRow}</Rows>
-          )}
         </div>
-      </DataTableOptionsContext>
-    );
-  };
+        {virtualized ? (
+          <VirtualizedRows {...virtualized}>{renderRow}</VirtualizedRows>
+        ) : (
+          <Rows>{renderRow}</Rows>
+        )}
+      </div>
+    </DataTableOptionsContext>
+  );
+};

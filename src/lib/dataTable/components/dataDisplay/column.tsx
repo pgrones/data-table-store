@@ -1,32 +1,38 @@
 import type { Key } from '../../../dataTableStore';
-import { useColumnInitialization } from '../../hooks';
-import type { RequiredCellProps } from './cell';
 import { columnSymbol } from './column.extensions';
 
-export interface ColumnProps<TEntity extends object> {
-  columnId: Key<TEntity> | (string & {});
-  children: [React.ReactElement, React.ReactElement<RequiredCellProps>];
+export interface ColumnProps<
+  TEntity extends object,
+  TKey extends Key<Partial<TEntity>> | (string & {}),
+  THeaderProps,
+  TCellProps
+> {
+  columnKey: TKey;
+  header?: React.ReactNode;
+  cell?:
+    | React.ReactNode
+    | ((props: {
+        value: TKey extends keyof TEntity
+          ? TEntity[TKey] | undefined
+          : undefined;
+      }) => React.ReactNode);
+  headerProps?: THeaderProps;
+  cellProps?: TCellProps;
+  defaultWidth?: number | string;
   sortable?: boolean;
   resizable?: boolean;
   orderable?: boolean;
   hidable?: boolean;
 }
 
-export const createColumn = <TEntity extends object>() => {
-  const Column = ({
-    columnId,
-    hidable,
-    orderable,
-    resizable,
-    sortable
-  }: ColumnProps<TEntity>) => {
-    useColumnInitialization(columnId, {
-      isHidable: hidable,
-      isOrderable: orderable,
-      isResizable: resizable,
-      isSortable: sortable
-    });
-
+export const createColumn = <
+  TEntity extends object,
+  THeaderProps,
+  TCellProps
+>() => {
+  const Column = <TKey extends Key<TEntity> | (string & {})>(
+    _: ColumnProps<TEntity, TKey, THeaderProps, TCellProps>
+  ) => {
     // This is really just a config and should not render anything.
     // The DataTable does the rendering
     return null;

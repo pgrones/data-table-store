@@ -1,32 +1,27 @@
 import type { RowKey } from '../../../dataTableStore';
-import { useRowDeletion, useRowKey } from '../../hooks';
+import { useRowDeletion } from '../../hooks';
+import { useRowContext } from '../dataDisplay';
 import {
   createOverridablePolymorphicComponent,
   PolymorphicRoot,
   type InjectableComponent
 } from '../polymorphism';
 
-export interface RequiredDeleteRowButtonProps<TEntity extends object = object> {
-  row: TEntity;
-}
-
 export interface DeleteRowButtonProps {
   rowKey: RowKey;
 }
 
-export const DeleteRowButton = createOverridablePolymorphicComponent<
-  DeleteRowButtonProps,
-  RequiredDeleteRowButtonProps
->(({ row, ...props }) => {
-  const rowKey = useRowKey(row);
+export const DeleteRowButton =
+  createOverridablePolymorphicComponent<DeleteRowButtonProps>(props => {
+    const { rowKey } = useRowContext();
 
-  return (
-    <PolymorphicRoot<InjectableComponent<DeleteRowButtonProps>>
-      {...props}
-      rowKey={rowKey}
-    />
-  );
-});
+    return (
+      <PolymorphicRoot<InjectableComponent<DeleteRowButtonProps>>
+        {...props}
+        rowKey={rowKey}
+      />
+    );
+  });
 
 export const DefaultDeleteRowButton = DeleteRowButton.as<
   React.ComponentProps<'button'>

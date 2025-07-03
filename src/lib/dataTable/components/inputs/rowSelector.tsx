@@ -1,32 +1,27 @@
 import type { RowKey } from '../../../dataTableStore';
-import { useRowKey, useRowSelection } from '../../hooks';
+import { useRowSelection } from '../../hooks';
+import { useRowContext } from '../dataDisplay';
 import {
   createOverridablePolymorphicComponent,
   PolymorphicRoot,
   type InjectableComponent
 } from '../polymorphism';
 
-export interface RequiredRowSelectorProps<TEntity extends object = object> {
-  row: TEntity;
-}
-
 export interface RowSelectorProps {
   rowKey: RowKey;
 }
 
-export const RowSelector = createOverridablePolymorphicComponent<
-  RowSelectorProps,
-  RequiredRowSelectorProps
->(({ row, ...props }) => {
-  const rowKey = useRowKey(row);
+export const RowSelector =
+  createOverridablePolymorphicComponent<RowSelectorProps>(props => {
+    const { rowKey } = useRowContext();
 
-  return (
-    <PolymorphicRoot<InjectableComponent<RowSelectorProps>>
-      {...props}
-      rowKey={rowKey}
-    />
-  );
-});
+    return (
+      <PolymorphicRoot<InjectableComponent<RowSelectorProps>>
+        {...props}
+        rowKey={rowKey}
+      />
+    );
+  });
 
 export const DefaultRowSelector = RowSelector.as<React.ComponentProps<'input'>>(
   ({ rowKey, ...props }) => {

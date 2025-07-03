@@ -12,7 +12,7 @@ import { RowSelector } from './inputs/rowSelector';
 import { SearchInput } from './inputs/searchInput';
 
 export const createMantineThemedDataTable = createDataTableCreator({
-  // cell: Cell,
+  cell: Cell,
   addRowButton: AddRowButton,
   undoButton: UndoButton,
   redoButton: RedoButton,

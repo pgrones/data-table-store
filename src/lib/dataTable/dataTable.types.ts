@@ -1,8 +1,9 @@
 import { memo } from 'react';
+import type { CellProps, HeaderProps } from './components';
 
 export interface DataTableComponents<TCompoundMap extends object> {
-  cell?: React.ElementType;
-  header?: React.ElementType;
+  cell?: React.ComponentType<CellProps>;
+  header?: React.ComponentType<React.PropsWithChildren<HeaderProps>>;
   column?: React.ElementType;
   rowSelector?: React.ElementType;
   allRowsSelector?: React.ElementType;
@@ -15,16 +16,6 @@ export interface DataTableComponents<TCompoundMap extends object> {
   redoButton?: React.ElementType;
   additionalCompoundComponents?: TCompoundMap;
 }
-
-export type WithProps<T extends React.ElementType, P> =
-  T extends React.ComponentType<infer Props>
-    ? (props: Omit<Props, keyof P> & P) => React.ReactElement | null | undefined
-    : never;
-
-export type TypedElement<C extends React.ElementType, TTypedProps> = WithProps<
-  C,
-  TTypedProps
->;
 
 type TypedMemo = <
   TComponent extends (

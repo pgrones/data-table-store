@@ -2,15 +2,15 @@ import { useDeferredValue } from 'react';
 import type { RowKey } from '../../../dataTableStore/dataTableStore.types';
 import { typedMemo } from '../../dataTable.types';
 import { useRowKeys } from '../../hooks';
-import { useDataTableOptions } from '../dataTable.context';
 import { Row } from './row';
+import classes from '../dataTable.module.css';
 
 export interface RowsProps<TEntity extends object> {
-  children: (row: TEntity) => React.ReactNode;
+  children: (row: Partial<TEntity>) => React.ReactNode;
 }
 
-export const Rows = typedMemo(
-  <TEntity extends object>({ children }: RowsProps<TEntity>) => {
+export const createRows = <TEntity extends object>() =>
+  typedMemo(({ children }: RowsProps<TEntity>) => {
     const rowKeys = useRowKeys();
     const deferredRowKeys = useDeferredValue(rowKeys);
 
@@ -19,31 +19,18 @@ export const Rows = typedMemo(
         <TableRows rowKeys={deferredRowKeys} renderRow={children} />
       </div>
     );
-  }
-);
+  });
 
 interface TableRowsProps<TEntity extends object> {
   rowKeys: RowKey[];
-  renderRow: (row: TEntity) => React.ReactNode;
+  renderRow: (row: Partial<TEntity>) => React.ReactNode;
 }
 
 const TableRows = typedMemo(
-  <TEntity extends object>({ rowKeys, renderRow }: TableRowsProps<TEntity>) => {
-    const { horizontalSpacing, verticalSpacing } = useDataTableOptions();
-
-    return rowKeys.map(rowKey => (
-      <div
-        key={rowKey}
-        role="row"
-        style={{
-          display: 'grid',
-          gridAutoFlow: 'column',
-          columnGap: horizontalSpacing,
-          paddingBlock: verticalSpacing
-        }}
-      >
+  <TEntity extends object>({ rowKeys, renderRow }: TableRowsProps<TEntity>) =>
+    rowKeys.map(rowKey => (
+      <div key={rowKey} role="row" className={classes.row}>
         <Row rowKey={rowKey} renderRow={renderRow} />
       </div>
-    ));
-  }
+    ))
 );

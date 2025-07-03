@@ -5,13 +5,16 @@ export interface ColumnOptions {
   isOrderable: boolean;
   isHidable: boolean;
   isSortable: boolean;
+  defaultWidth: number | string;
+  defaultPosition: number;
 }
 
-export interface Column extends ColumnOptions {
+export interface Column
+  extends Omit<ColumnOptions, 'defaultWidth' | 'defaultPosition'> {
   isSorted: boolean;
   descending: boolean;
-  width: number;
-  postion: number | null;
+  width: string;
+  postion: number;
   visible: boolean;
 }
 
@@ -19,7 +22,7 @@ export interface ColumnSlice {
   columns: Map<string, Column>;
   initializeColumn: (key: string, options: ColumnOptions) => void;
   reorderColumn: (key: string, position: number) => void;
-  resizeColumn: (key: string, width: number) => void;
+  resizeColumn: (key: string, width: number | string) => void;
   toggleColumnSort: (key: string, resetScopedStates?: boolean) => void;
   toggleColumnVisibility: (key: string, visible?: boolean) => void;
 }
@@ -31,9 +34,9 @@ const createDefaultEntry = (): Column => ({
   isSortable: true,
   isSorted: false,
   descending: false,
-  width: 150,
-  postion: null,
-  visible: false
+  width: '150px',
+  postion: 0,
+  visible: true
 });
 
 const getNextSort = (isSorted: boolean, descending: boolean) => {
@@ -66,31 +69,33 @@ export const createColumnSlice =
       );
     };
 
-    const columns = !initialSorting
-      ? new Map<string, Column>()
-      : new Map([
-          [
-            initialSorting[0],
-            { ...createDefaultEntry(), descending: initialSorting[1] }
-          ]
-        ]);
-
     return {
-      columns,
-      initializeColumn: (key, options) => {
-        if (initializedEntries.has(key))
-          throw new Error(
-            'Columns should only be initialized once and columns keys must be unique. Duplicate key: ' +
-              key
-          );
+      columns: new Map<string, Column>(),
+      initializeColumn: (
+        key,
+        { defaultWidth, defaultPosition, ...options }
+      ) => {
+        if (initializedEntries.has(key)) return;
 
         initializedEntries.add(key);
+
+        let initialSort: Pick<Column, 'isSorted' | 'descending'> | undefined =
+          undefined;
+
+        if (key === initialSorting?.[0])
+          initialSort = { isSorted: true, descending: initialSorting[1] };
 
         set(state => {
           state.columns.set(key, {
             ...createDefaultEntry(),
             ...options,
-            ...state.columns.get(key)
+            width:
+              typeof defaultWidth === 'number'
+                ? `${defaultWidth}px`
+                : defaultWidth,
+            postion: defaultPosition,
+            ...state.columns.get(key),
+            ...initialSort
           });
         });
       },
@@ -109,7 +114,8 @@ export const createColumnSlice =
         set(state => {
           if (!state.columns.get(key)!.isResizable) return;
 
-          state.columns.get(key)!.width = width;
+          state.columns.get(key)!.width =
+            typeof width === 'number' ? `${width}px` : width;
         });
       },
       toggleColumnSort: (key, resetScopedStates = true) => {

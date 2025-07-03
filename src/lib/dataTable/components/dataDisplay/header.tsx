@@ -1,15 +1,28 @@
 import {
   createOverridablePolymorphicComponent,
-  PolymorphicRoot
+  PolymorphicRoot,
+  type InjectableComponent
 } from '../polymorphism';
-import { headerSymbol } from './header.extensions';
 
-export const Header = createOverridablePolymorphicComponent(props => (
-  <PolymorphicRoot {...props} />
-));
+export interface HeaderProps {
+  columnKey: string;
+}
 
-Header.__name = headerSymbol;
+export const Header = createOverridablePolymorphicComponent<HeaderProps>(
+  ({ columnKey, ...props }: { columnKey?: string }) => {
+    if (!columnKey) throw new Error('columnKey has not been provided');
 
-export const DefaultHeader = Header.as<React.ComponentProps<'div'>>(props => (
-  <div {...props} />
-));
+    return (
+      <PolymorphicRoot<InjectableComponent<HeaderProps>>
+        {...props}
+        columnKey={columnKey}
+      />
+    );
+  }
+);
+
+export const DefaultHeader = Header.as<React.ComponentProps<'div'>>(
+  ({ columnKey, ...props }) => {
+    return <div {...props} />;
+  }
+);

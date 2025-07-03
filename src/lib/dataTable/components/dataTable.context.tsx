@@ -6,8 +6,6 @@ export interface DataTableOptions {
   highlightOnSelect: boolean;
   withColumnBorders: boolean;
   withRowBorders: boolean;
-  verticalSpacing: string | number;
-  horizontalSpacing: string | number;
 }
 
 export const DataTableOptionsContext = createContext<DataTableOptions | null>(

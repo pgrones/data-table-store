@@ -1,5 +1,13 @@
 import type { SliceCreator } from '../dataTableStore.types';
 
+export interface FontStyles {
+  fontFamily: string;
+  fontSize: string;
+  fontWeight: string;
+  fontStyle: string;
+  padding: number;
+}
+
 export interface ColumnOptions {
   isResizable: boolean;
   isOrderable: boolean;
@@ -16,11 +24,15 @@ export interface Column
   width: string;
   postion: number;
   visible: boolean;
+  maxWidth: number | null;
+  fontStyles: FontStyles | null;
 }
 
 export interface ColumnSlice {
   columns: Map<string, Column>;
   initializeColumn: (key: string, options: ColumnOptions) => void;
+  setFontStyles: (key: string, fontStyles: FontStyles) => void;
+  setMaxWidths: (entries: Map<string, number>) => void;
   reorderColumn: (key: string, position: number) => void;
   resizeColumn: (key: string, width: number | string) => void;
   toggleColumnSort: (key: string, resetScopedStates?: boolean) => void;
@@ -35,6 +47,8 @@ const createDefaultEntry = (): Column => ({
   isSorted: false,
   descending: false,
   width: '150px',
+  maxWidth: null,
+  fontStyles: null,
   postion: 0,
   visible: true
 });
@@ -97,6 +111,22 @@ export const createColumnSlice =
             ...state.columns.get(key),
             ...initialSort
           });
+        });
+      },
+      setFontStyles: (key, fontStyles) => {
+        set(state => {
+          if (!state.columns.has(key)) return;
+
+          state.columns.get(key)!.fontStyles = fontStyles;
+        });
+      },
+      setMaxWidths: entries => {
+        set(state => {
+          for (const [key, value] of entries.entries()) {
+            if (!state.columns.has(key)) continue;
+
+            state.columns.get(key)!.maxWidth = value;
+          }
         });
       },
       reorderColumn: (key, position) => {

@@ -7,6 +7,14 @@ export const isAddedRow = <TEntity extends object>(
   return Object.getOwnPropertySymbols(row).includes(addedRowSymbol);
 };
 
+const hasToString = (value: unknown): value is { toString: () => string } => {
+  return (
+    value !== null &&
+    typeof value === 'object' &&
+    typeof value.toString === 'function'
+  );
+};
+
 export interface DataSlice<TEntity extends object> {
   totalEntities: number;
   data: TEntity[];
@@ -27,6 +35,42 @@ export const createDataSlice =
     setData: (newData, resetScopedState = true) =>
       set(() => {
         if (resetScopedState) get().resetScopedStates();
+
+        const maxWidths = new Map<string, number>();
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d')!;
+
+        for (const row of newData.data) {
+          for (const key in row) {
+            let value: string | undefined;
+
+            switch (typeof row[key]) {
+              case 'string':
+                value = row[key];
+                break;
+              case 'number':
+              case 'bigint':
+                value = row[key].toString();
+                break;
+              case 'object':
+                value = hasToString(row[key]) ? row[key].toString() : undefined;
+                break;
+            }
+
+            if (!value) continue;
+
+            const styles = get().columns.get(key)?.fontStyles;
+
+            if (!styles) continue;
+
+            ctx.font = `${styles.fontStyle} ${styles.fontWeight} ${styles.fontSize} ${styles.fontFamily}`;
+            const width = ctx.measureText(value).width + styles.padding * 2;
+
+            maxWidths.set(key, Math.max(width, maxWidths.get(key) ?? 0));
+          }
+        }
+
+        get().setMaxWidths(maxWidths);
 
         return { ...newData, isPending: false };
       }),

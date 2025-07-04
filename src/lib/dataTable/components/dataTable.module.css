@@ -1,11 +1,18 @@
 .row {
   display: grid;
   grid-template-columns: var(
-    --columnWidths,
+    --column-widths,
     repeat(auto-fit, minmax(150px, 1fr))
   );
   width: 100%;
   align-items: center;
-  column-gap: calc(var(--horizontalSpacing, 12px) * 2);
-  padding-block: var(--verticalSpacing, 12px);
+
+  > div[role='cell'],
+  > div[role='columnheader'] {
+    height: 100%;
+
+    > * {
+      padding: var(--vertical-spacing, 12px) var(--horizontal-spacing, 12px);
+    }
+  }
 }

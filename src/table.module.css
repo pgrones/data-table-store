@@ -9,34 +9,23 @@
 
   & :global(.mantine-ScrollArea-scrollbar) {
     z-index: 10;
+    background-color: var(--mantine-color-body);
+
+    :global(.mantine-ScrollArea-corner) {
+      background-color: var(--mantine-color-body);
+    }
   }
 
-  & td,
-  & th {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-width: 50px;
-  }
-}
+  :global([role='cell']):has(.sticky),
+  :global([role='columnheader']):has(.sticky) {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background-color: var(--mantine-color-body);
 
-.sticky {
-  box-sizing: border-box;
-  position: sticky;
-  left: 0;
-  z-index: 1;
-  background-color: var(--mantine-color-body);
-
-  &:not(th) {
-    border-top: 1px solid var(--table-border-color);
-  }
-
-  &:not(td) {
-    border-top: 1px solid transparent;
-  }
-
-  &[data-right] {
-    left: unset;
-    right: 0;
+    &:has([data-right]) {
+      left: unset;
+      right: 0;
+    }
   }
 }

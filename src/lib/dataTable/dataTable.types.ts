@@ -4,7 +4,6 @@ import type { CellProps, HeaderProps } from './components';
 export interface DataTableComponents<TCompoundMap extends object> {
   cell?: React.ComponentType<CellProps>;
   header?: React.ComponentType<React.PropsWithChildren<HeaderProps>>;
-  column?: React.ElementType;
   rowSelector?: React.ElementType;
   allRowsSelector?: React.ElementType;
   searchInput?: React.ElementType;

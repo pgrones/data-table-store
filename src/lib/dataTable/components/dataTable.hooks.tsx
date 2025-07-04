@@ -1,4 +1,4 @@
-import React, { Children, useCallback, useMemo, useState } from 'react';
+import { Children, useCallback, useMemo, useState } from 'react';
 import type { Key } from '../../dataTableStore';
 import { useDataTable } from '../dataTable.context';
 import { useColumnInitialization } from '../hooks';
@@ -21,17 +21,17 @@ export const useColumnWidths = (
       .join(' ')
   );
 
-  ref?.style.setProperty('--columnWidths', widths);
+  ref?.style.setProperty('--column-widths', widths);
 
   ref?.style.setProperty(
-    '--verticalSpacing',
+    '--vertical-spacing',
     typeof verticalSpacing === 'number'
       ? `${verticalSpacing}px`
       : verticalSpacing
   );
 
   ref?.style.setProperty(
-    '--horizontalSpacing',
+    '--horizontal-spacing',
     typeof horizontalSpacing === 'number'
       ? `${horizontalSpacing}px`
       : horizontalSpacing
@@ -101,7 +101,9 @@ export const useCells = <TEntity extends object>(
           typeof entityValue !== 'function'
         ) {
           return (
-            <Cell {...cellProps} key={columnKey} value={entityValue as never} />
+            <div role="cell" key={columnKey}>
+              <Cell {...cellProps} value={entityValue as never} />
+            </div>
           );
         }
 
@@ -113,7 +115,11 @@ export const useCells = <TEntity extends object>(
                 })
               : cell;
 
-          return <Cell {...cellProps} key={columnKey} value={value} />;
+          return (
+            <div role="cell" key={columnKey}>
+              <Cell {...cellProps} value={value} />
+            </div>
+          );
         }
 
         throw new Error(

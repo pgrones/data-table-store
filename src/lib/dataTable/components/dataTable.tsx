@@ -1,3 +1,6 @@
+import { createElement } from 'react';
+import { useIsInitialized } from '../hooks/useIsInitialized';
+import { useTableKey } from '../hooks/useTableKey';
 import {
   createRows,
   createVirtualizedRows,
@@ -44,8 +47,9 @@ export const DataTable = <TEntity extends object>({
   Cell: React.ComponentType<CellProps>;
   Header: React.ComponentType<React.PropsWithChildren<HeaderProps>>;
 }) => {
+  const isInitialized = useIsInitialized();
+  const tableKey = useTableKey();
   const ref = useColumnWidths(verticalSpacing, horizontalSpacing);
-
   const [columns, renderRow] = useCells(children, Cell);
 
   const Rows = createRows<TEntity>();
@@ -61,16 +65,16 @@ export const DataTable = <TEntity extends object>({
         striped: striped === true ? 'even' : striped
       }}
     >
-      <div role="table" ref={ref} data-data-table>
-        <div role="rowgroup">
-          <div
-            role="row"
-            className={classes.row}
-            style={{
-              position: stickyHeader ? 'sticky' : 'unset',
-              top: stickyHeaderOffset
-            }}
-          >
+      <div role="table" ref={ref} data-data-table id={tableKey}>
+        <div
+          role="rowgroup"
+          style={{
+            position: stickyHeader ? 'sticky' : 'unset',
+            top: stickyHeaderOffset,
+            zIndex: 1
+          }}
+        >
+          <div role="row" className={classes.row}>
             {columns.map(({ columnKey, header, headerProps }) => (
               <div role="columnheader" key={columnKey}>
                 <Header {...headerProps} columnKey={columnKey}>
@@ -84,6 +88,28 @@ export const DataTable = <TEntity extends object>({
           <VirtualizedRows {...virtualized}>{renderRow}</VirtualizedRows>
         ) : (
           <Rows>{renderRow}</Rows>
+        )}
+
+        {!isInitialized && (
+          <div
+            id="measure-cell"
+            style={{
+              position: 'absolute',
+              visibility: 'hidden',
+              height: 0,
+              overflow: 'hidden',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            {children.map(column =>
+              createElement(Cell, {
+                ...(column.props.cellProps as object),
+                key: column.props.columnKey,
+                id: column.props.columnKey,
+                style: { padding: horizontalSpacing }
+              } as never)
+            )}
+          </div>
         )}
       </div>
     </DataTableOptionsContext>

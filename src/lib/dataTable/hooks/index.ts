@@ -12,3 +12,5 @@ export * from './useRowSelection';
 export * from './useSearch';
 export * from './useUndo';
 export * from './useColumnInitialization';
+export * from './useSorting';
+export * from './useResize';

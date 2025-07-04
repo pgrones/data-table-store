@@ -1,0 +1,122 @@
+button.header {
+  cursor: default;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  position: relative;
+  background-color: var(--mantine-color-body);
+
+  .wrapper {
+    gap: var(--mantine-spacing-xs);
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    &[data-end] {
+      flex-direction: row-reverse;
+    }
+  }
+
+  .icon {
+    display: none;
+  }
+
+  &[data-sortable] {
+    &:hover {
+      cursor: pointer;
+      background-color: var(--mantine-color-default-hover) !important;
+    }
+
+    .icon {
+      width: 20px;
+      min-width: 20px;
+      height: 20px;
+      min-height: 20px;
+      stroke-width: 1.5;
+    }
+
+    &[data-sorted] .icon:not([data-default]) {
+      display: block;
+      color: var(--mantine-primary-color-filled);
+    }
+
+    &[data-descending] .icon {
+      rotate: 180deg;
+    }
+
+    &[data-sortable]:not([data-sorted]) .icon[data-default] {
+      display: block;
+      color: var(--mantine-color-dimmed);
+      opacity: 0.5;
+    }
+  }
+
+  .label {
+    font-size: var(--mantine-font-size-xs);
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--mantine-color-gray-4);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.resize {
+  cursor: ew-resize;
+  position: absolute;
+  width: 20px;
+  z-index: 10;
+  top: 0;
+  height: 100%;
+  right: -10px;
+
+  &:hover,
+  &:active {
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      top: 10%;
+      width: 2px;
+      height: 80%;
+      border-radius: 2px;
+      background-color: var(--mantine-color-dimmed);
+      pointer-events: none;
+      will-change: transform;
+      backface-visibility: hidden;
+    }
+
+    &::before {
+      left: 0;
+    }
+
+    &::after {
+      right: 0;
+    }
+  }
+
+  &:active .line {
+    position: absolute;
+    width: 3px;
+    height: 100vh;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--mantine-primary-color-filled);
+    z-index: 10;
+    border-radius: 3px;
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+}
+
+.blocker {
+  cursor: ew-resize;
+  position: fixed;
+  inset: 0;
+  pointer-events: auto;
+  z-index: 99999;
+}

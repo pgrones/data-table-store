@@ -80,7 +80,7 @@ export type Store<TEntity extends object> = DataSlice<TEntity> &
   PaginationSlice &
   ResetSlice &
   SearchSlice &
-  SelectionSlice;
+  SelectionSlice & { tableKey: string };
 
 export type SliceCreator<TEntity extends object, Slice> = StateCreator<
   Store<TEntity>,

@@ -32,6 +32,7 @@ export const Table = () => {
 
       <ScrollArea offsetScrollbars type="auto" viewportRef={scrollRef}>
         <DataTable
+          stickyHeader
           horizontalSpacing="var(--mantine-spacing-md)"
           verticalSpacing="var(--mantine-spacing-md)"
           virtualized={{ scrollRef, rowHeight: 70 }}
@@ -40,7 +41,7 @@ export const Table = () => {
             columnKey="selection"
             sortable={false}
             resizable={false}
-            defaultWidth={20}
+            defaultWidth="calc(20px + var(--horizontal-spacing) * 2)"
             headerProps={{ className: classes.sticky }}
             header={<DataTable.AllRowsSelector />}
             cellProps={{ className: classes.sticky }}
@@ -51,7 +52,7 @@ export const Table = () => {
             columnKey="avatarUrl"
             sortable={false}
             resizable={false}
-            defaultWidth={38}
+            defaultWidth="calc(38px + var(--horizontal-spacing) * 2)"
             cell={({ value }) => <Avatar src={value} />}
           />
 
@@ -90,7 +91,7 @@ export const Table = () => {
             columnKey="trend"
             resizable={false}
             sortable={false}
-            defaultWidth={150}
+            defaultWidth="calc(150px + var(--horizontal-spacing) * 2)"
             header="Trend"
             cell={({ value }) => (
               <Sparkline
@@ -107,7 +108,7 @@ export const Table = () => {
             columnKey="actions"
             sortable={false}
             resizable={false}
-            defaultWidth={28}
+            defaultWidth="calc(28px + var(--horizontal-spacing) * 2)"
             headerProps={{ className: classes.sticky, mod: 'right' }}
             cellProps={{ className: classes.sticky, mod: 'right' }}
             cell={

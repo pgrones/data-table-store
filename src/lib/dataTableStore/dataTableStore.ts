@@ -42,6 +42,7 @@ const createDataTableStoreFactory =
     createStore<Store<TEntity>>()(
       persist(
         immer((...args) => ({
+          tableKey,
           ...createDataSlice<TEntity>(rowKey)(...args),
           ...createEditorSlice<TEntity, typeof rowKey>(createEntity)(...args),
           ...createPaginationSlice<TEntity>(initialPage, pageSize)(...args),

@@ -6,12 +6,14 @@ import { RestoreRowButton } from './buttons/restoreRowButton';
 import { UndoButton } from './buttons/undoButton';
 import { Cell } from './dataDisplay/cell';
 import { DataState } from './dataDisplay/dataState';
+import { Header, HeaderLabel } from './dataDisplay/header';
 import { AllRowsSelector } from './inputs/allRowsSelector';
 import { Pagination } from './inputs/pagination';
 import { RowSelector } from './inputs/rowSelector';
 import { SearchInput } from './inputs/searchInput';
 
 export const createMantineThemedDataTable = createDataTableCreator({
+  header: Header,
   cell: Cell,
   addRowButton: AddRowButton,
   undoButton: UndoButton,
@@ -23,6 +25,7 @@ export const createMantineThemedDataTable = createDataTableCreator({
   searchInput: SearchInput,
   pagination: Pagination,
   additionalCompoundComponents: {
-    DataState
+    DataState,
+    HeaderLabel
   }
 });

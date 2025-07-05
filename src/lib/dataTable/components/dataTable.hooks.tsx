@@ -67,7 +67,13 @@ export const useCells = <TEntity extends object>(
     for (const column of columnComponents) {
       const columnKey = column.props.columnKey;
 
-      initializeColumn(columnKey, index, {
+      const cell = column.props.cell;
+      const renderCell =
+        typeof cell === 'function'
+          ? (value: unknown) => cell({ value } as never)
+          : undefined;
+
+      initializeColumn(columnKey, index, renderCell, {
         isHidable: column.props.hidable,
         isOrderable: column.props.orderable,
         isResizable: column.props.resizable,
@@ -77,8 +83,8 @@ export const useCells = <TEntity extends object>(
 
       columns.push({
         columnKey,
+        cell,
         header: column.props.header,
-        cell: column.props.cell,
         cellProps: column.props.cellProps ?? {},
         headerProps: column.props.headerProps ?? {}
       });

@@ -6,6 +6,7 @@ export interface FontStyles {
   fontWeight: string;
   fontStyle: string;
   padding: number;
+  renderCell?: (value: unknown) => unknown;
 }
 
 export interface ColumnOptions {
@@ -31,7 +32,11 @@ export interface Column
 export interface ColumnSlice {
   columns: Map<string, Column>;
   initializeColumn: (key: string, options: ColumnOptions) => void;
-  setFontStyles: (key: string, fontStyles: FontStyles) => void;
+  setFontStyles: (
+    key: string,
+    fontStyles: FontStyles,
+    renderCell?: FontStyles['renderCell']
+  ) => void;
   setMaxWidths: (entries: Map<string, number>) => void;
   reorderColumn: (key: string, position: number) => void;
   resizeColumn: (key: string, width: number | string) => void;
@@ -113,11 +118,12 @@ export const createColumnSlice =
           });
         });
       },
-      setFontStyles: (key, fontStyles) => {
+      setFontStyles: (key, fontStyles, renderCell) => {
         set(state => {
           if (!state.columns.has(key)) return;
 
           state.columns.get(key)!.fontStyles = fontStyles;
+          state.columns.get(key)!.fontStyles!.renderCell = renderCell;
         });
       },
       setMaxWidths: entries => {

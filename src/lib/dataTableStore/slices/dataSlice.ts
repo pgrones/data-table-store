@@ -1,18 +1,11 @@
 import type { Key, RowKey, SliceCreator } from '../dataTableStore.types';
+import type { Column } from './columnSlice';
 import { addedRowSymbol } from './editorSlice/editorSlice';
 
 export const isAddedRow = <TEntity extends object>(
   row: Partial<TEntity>
 ): row is Partial<TEntity> & Record<typeof addedRowSymbol, RowKey> => {
   return Object.getOwnPropertySymbols(row).includes(addedRowSymbol);
-};
-
-const hasToString = (value: unknown): value is { toString: () => string } => {
-  return (
-    value !== null &&
-    typeof value === 'object' &&
-    typeof value.toString === 'function'
-  );
 };
 
 export interface DataSlice<TEntity extends object> {
@@ -36,41 +29,7 @@ export const createDataSlice =
       set(() => {
         if (resetScopedState) get().resetScopedStates();
 
-        const maxWidths = new Map<string, number>();
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d')!;
-
-        for (const row of newData.data) {
-          for (const key in row) {
-            let value: string | undefined;
-
-            switch (typeof row[key]) {
-              case 'string':
-                value = row[key];
-                break;
-              case 'number':
-              case 'bigint':
-                value = row[key].toString();
-                break;
-              case 'object':
-                value = hasToString(row[key]) ? row[key].toString() : undefined;
-                break;
-            }
-
-            if (!value) continue;
-
-            const styles = get().columns.get(key)?.fontStyles;
-
-            if (!styles) continue;
-
-            ctx.font = `${styles.fontStyle} ${styles.fontWeight} ${styles.fontSize} ${styles.fontFamily}`;
-            const width = ctx.measureText(value).width + styles.padding * 2;
-
-            maxWidths.set(key, Math.max(width, maxWidths.get(key) ?? 0));
-          }
-        }
-
-        get().setMaxWidths(maxWidths);
+        get().setMaxWidths(calculateMaxWidths(newData.data, get().columns));
 
         return { ...newData, isPending: false };
       }),
@@ -84,3 +43,48 @@ export const createDataSlice =
         .join(';');
     }
   });
+
+const tryStringify = (
+  cellValue: unknown,
+  renderCell: ((value: unknown) => unknown) | undefined
+) => {
+  const value = renderCell?.(cellValue);
+
+  if (typeof value === 'string') return value;
+
+  switch (typeof cellValue) {
+    case 'string':
+      return cellValue;
+    case 'number':
+    case 'bigint':
+      return cellValue.toString();
+  }
+};
+
+const calculateMaxWidths = <TEntity extends object>(
+  data: TEntity[],
+  columns: Map<string, Column>
+) => {
+  const maxWidths = new Map<Extract<keyof TEntity, string>, number>();
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d')!;
+
+  for (const row of data) {
+    for (const key in row) {
+      const styles = columns.get(key)?.fontStyles;
+
+      if (!styles) continue;
+
+      const value = tryStringify(row[key], styles.renderCell);
+
+      if (!value) continue;
+
+      ctx.font = `${styles.fontStyle} ${styles.fontWeight} ${styles.fontSize} ${styles.fontFamily}`;
+      const width = ctx.measureText(value).width + styles.padding * 2;
+
+      maxWidths.set(key, Math.max(width, maxWidths.get(key) ?? 0));
+    }
+  }
+
+  return maxWidths;
+};

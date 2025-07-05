@@ -2,10 +2,10 @@ import { useEffect, useRef } from 'react';
 import type { ColumnOptions } from '../../dataTableStore/slices';
 import { useDataTable } from '../dataTable.context';
 
-type Options = Omit<ColumnOptions, 'fontStyles'>;
-
 export const useColumnInitialization = () => {
-  const columnKeyRef = useRef(new Set<string>());
+  const columnKeyRef = useRef(
+    new Map<string, ((value: unknown) => unknown) | undefined>()
+  );
 
   const { initializeColumn, setFontStyles, tableKey } = useDataTable(state => ({
     initializeColumn: state.initializeColumn,
@@ -14,7 +14,7 @@ export const useColumnInitialization = () => {
   }));
 
   useEffect(() => {
-    for (const columnKey of columnKeyRef.current) {
+    for (const [columnKey, renderCell] of columnKeyRef.current) {
       const measureCell = document
         .getElementById(tableKey)
         ?.querySelector('#measure-cell')
@@ -24,18 +24,27 @@ export const useColumnInitialization = () => {
 
       const computed = getComputedStyle(measureCell);
 
-      setFontStyles(columnKey, {
-        fontFamily: computed.fontFamily,
-        fontSize: computed.fontSize,
-        fontWeight: computed.fontWeight,
-        fontStyle: computed.fontStyle,
-        padding: parseFloat(computed.padding)
-      });
+      setFontStyles(
+        columnKey,
+        {
+          fontFamily: computed.fontFamily,
+          fontSize: computed.fontSize,
+          fontWeight: computed.fontWeight,
+          fontStyle: computed.fontStyle,
+          padding: parseFloat(computed.padding)
+        },
+        renderCell
+      );
     }
   }, [setFontStyles, tableKey]);
 
-  return (columnKey: string, index: number, options: Partial<Options>) => {
-    columnKeyRef.current.add(columnKey);
+  return (
+    columnKey: string,
+    index: number,
+    renderCell: ((value: unknown) => unknown) | undefined,
+    options: Partial<ColumnOptions>
+  ) => {
+    columnKeyRef.current.set(columnKey, renderCell);
 
     initializeColumn(columnKey, {
       isHidable: options.isHidable ?? true,

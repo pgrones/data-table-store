@@ -8,10 +8,33 @@ import {
   type ColumnProps
 } from './dataDisplay';
 
-export const useColumnWidths = (
-  verticalSpacing: string | number,
-  horizontalSpacing: string | number
-) => {
+export interface StyleProps {
+  verticalSpacing?: string | number;
+  horizontalSpacing?: string | number;
+  highlightOnHover?: boolean;
+  hoverColor?: string;
+  highlightOnSelect?: boolean;
+  selectedColor?: string;
+  striped?: 'even' | 'odd' | boolean;
+  stripedColor?: string;
+  withRowBorders?: boolean;
+  withColumnBorders?: boolean;
+  borderColor?: string;
+}
+
+export const useColumnStyles = ({
+  horizontalSpacing = 12,
+  verticalSpacing = 12,
+  highlightOnHover = false,
+  hoverColor = 'gray',
+  highlightOnSelect = false,
+  selectedColor = 'gray',
+  striped = false,
+  stripedColor = 'gray',
+  withRowBorders = false,
+  withColumnBorders = false,
+  borderColor = 'gray'
+}: StyleProps) => {
   const [ref, setRef] = useState<HTMLDivElement | null>(null);
 
   const widths = useDataTable(state =>
@@ -21,17 +44,30 @@ export const useColumnWidths = (
       .join(' ')
   );
 
-  ref?.style.setProperty('--column-widths', widths);
+  if (ref) {
+    ref.dataset.highlightOnHover = highlightOnHover.toString();
+    ref.dataset.highlightOnSelect = highlightOnSelect.toString();
+    ref.dataset.striped = striped === true ? 'odd' : striped.toString();
+    ref.dataset.withRowBorders = withRowBorders.toString();
+    ref.dataset.withColumnBorders = withColumnBorders.toString();
+  }
+
+  ref?.style.setProperty('--data-table-column-widths', widths);
+  ref?.style.setProperty('--data-table-hover-color', hoverColor);
+  ref?.style.setProperty('--data-table-selected-color', selectedColor);
+  ref?.style.setProperty('--data-table-striped-color', stripedColor);
+  ref?.style.setProperty('--data-table-border-color', borderColor);
+  ref?.style.setProperty('--data-table-border', `1px solid ${borderColor}`);
 
   ref?.style.setProperty(
-    '--vertical-spacing',
+    '--data-table-vertical-spacing',
     typeof verticalSpacing === 'number'
       ? `${verticalSpacing}px`
       : verticalSpacing
   );
 
   ref?.style.setProperty(
-    '--horizontal-spacing',
+    '--data-table-horizontal-spacing',
     typeof horizontalSpacing === 'number'
       ? `${horizontalSpacing}px`
       : horizontalSpacing
@@ -107,7 +143,7 @@ export const useCells = <TEntity extends object>(
           typeof entityValue !== 'function'
         ) {
           return (
-            <div role="cell" key={columnKey}>
+            <div role="cell" key={columnKey} className="data-table-cell">
               <Cell {...cellProps} value={entityValue as never} />
             </div>
           );
@@ -122,7 +158,7 @@ export const useCells = <TEntity extends object>(
               : cell;
 
           return (
-            <div role="cell" key={columnKey}>
+            <div role="cell" key={columnKey} className="data-table-cell">
               <Cell {...cellProps} value={value} />
             </div>
           );

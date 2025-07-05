@@ -3,8 +3,8 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import type { RowKey } from '../../../dataTableStore';
 import { typedMemo } from '../../dataTable.types';
 import { useRowKeys } from '../../hooks';
+import { useSelectedRows } from '../../hooks/useSelectedRows';
 import { Row } from './row';
-import classes from '../dataTable.module.css';
 
 export interface VirtualizedRowsProps<TEntity extends object> {
   children: (row: Partial<TEntity>) => React.ReactNode;
@@ -32,9 +32,12 @@ export const createVirtualizedRows = <TEntity extends object>() =>
         overscan
       });
 
+      const selection = useSelectedRows();
+
       return (
         <div
           role="rowgroup"
+          className="data-table-row-group"
           style={{
             height: `${virtualizer.getTotalSize()}px`,
             position: 'relative'
@@ -44,7 +47,8 @@ export const createVirtualizedRows = <TEntity extends object>() =>
             <div
               key={key}
               role="row"
-              className={classes.row}
+              className="data-table-row"
+              data-selected={selection.includes(key as string)}
               style={{
                 transform: `translateY(${start}px)`,
                 height: size,

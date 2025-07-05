@@ -2,8 +2,8 @@ import { useDeferredValue } from 'react';
 import type { RowKey } from '../../../dataTableStore/dataTableStore.types';
 import { typedMemo } from '../../dataTable.types';
 import { useRowKeys } from '../../hooks';
+import { useSelectedRows } from '../../hooks/useSelectedRows';
 import { Row } from './row';
-import classes from '../dataTable.module.css';
 
 export interface RowsProps<TEntity extends object> {
   children: (row: Partial<TEntity>) => React.ReactNode;
@@ -15,7 +15,7 @@ export const createRows = <TEntity extends object>() =>
     const deferredRowKeys = useDeferredValue(rowKeys);
 
     return (
-      <div role="rowgroup">
+      <div role="rowgroup" className="data-table-row-group">
         <TableRows rowKeys={deferredRowKeys} renderRow={children} />
       </div>
     );
@@ -27,10 +27,18 @@ interface TableRowsProps<TEntity extends object> {
 }
 
 const TableRows = typedMemo(
-  <TEntity extends object>({ rowKeys, renderRow }: TableRowsProps<TEntity>) =>
-    rowKeys.map(rowKey => (
-      <div key={rowKey} role="row" className={classes.row}>
+  <TEntity extends object>({ rowKeys, renderRow }: TableRowsProps<TEntity>) => {
+    const selection = useSelectedRows();
+
+    return rowKeys.map(rowKey => (
+      <div
+        key={rowKey}
+        role="row"
+        className="data-table-row"
+        data-selected={selection.includes(rowKey)}
+      >
         <Row rowKey={rowKey} renderRow={renderRow} />
       </div>
-    ))
+    ));
+  }
 );

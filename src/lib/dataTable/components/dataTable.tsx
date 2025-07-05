@@ -9,20 +9,12 @@ import {
   type HeaderProps,
   type VirtualizedRowsProps
 } from './dataDisplay';
-import { DataTableOptionsContext } from './dataTable.context';
-import { useCells, useColumnWidths } from './dataTable.hooks';
+import { useCells, useColumnStyles, type StyleProps } from './dataTable.hooks';
 import classes from './dataTable.module.css';
 
-export interface DataTableProps<TEntity extends object> {
-  verticalSpacing?: string | number;
-  horizontalSpacing?: string | number;
+export interface DataTableProps<TEntity extends object> extends StyleProps {
   stickyHeader?: boolean;
   stickyHeaderOffset?: number | string;
-  highlightOnHover?: boolean;
-  highlightOnSelect?: boolean;
-  striped?: 'even' | 'odd' | boolean;
-  withRowBorders?: boolean;
-  withColumnBorders?: boolean;
   virtualized?: Omit<VirtualizedRowsProps<TEntity>, 'children'>;
   children: React.ReactElement<
     ColumnProps<TEntity, string, unknown, unknown>
@@ -31,87 +23,82 @@ export interface DataTableProps<TEntity extends object> {
 
 export const DataTable = <TEntity extends object>({
   horizontalSpacing = 12,
-  verticalSpacing = 12,
   stickyHeader = false,
   stickyHeaderOffset = 0,
-  highlightOnHover = false,
-  highlightOnSelect = false,
-  striped = false,
-  withRowBorders = true,
-  withColumnBorders = false,
   virtualized,
   children,
   Header,
-  Cell
+  Cell,
+  ...styleProps
 }: DataTableProps<TEntity> & {
   Cell: React.ComponentType<CellProps>;
   Header: React.ComponentType<React.PropsWithChildren<HeaderProps>>;
 }) => {
   const isInitialized = useIsInitialized();
   const tableKey = useTableKey();
-  const ref = useColumnWidths(verticalSpacing, horizontalSpacing);
+  const ref = useColumnStyles({ horizontalSpacing, ...styleProps });
   const [columns, renderRow] = useCells(children, Cell);
 
   const Rows = createRows<TEntity>();
   const VirtualizedRows = createVirtualizedRows<TEntity>();
 
   return (
-    <DataTableOptionsContext
-      value={{
-        highlightOnHover,
-        highlightOnSelect,
-        withRowBorders,
-        withColumnBorders,
-        striped: striped === true ? 'even' : striped
-      }}
+    <div
+      role="table"
+      ref={ref}
+      id={tableKey}
+      className={`${classes.table} data-table-table`}
     >
-      <div role="table" ref={ref} data-data-table id={tableKey}>
+      <div
+        role="rowgroup"
+        className="data-table-header-row-group"
+        style={{
+          position: stickyHeader ? 'sticky' : 'unset',
+          top: stickyHeaderOffset,
+          zIndex: 100
+        }}
+      >
+        <div role="row" className="data-table-row">
+          {columns.map(({ columnKey, header, headerProps }) => (
+            <div
+              role="columnheader"
+              className="data-table-header"
+              key={columnKey}
+            >
+              <Header {...headerProps} columnKey={columnKey}>
+                {header}
+              </Header>
+            </div>
+          ))}
+        </div>
+      </div>
+      {virtualized ? (
+        <VirtualizedRows {...virtualized}>{renderRow}</VirtualizedRows>
+      ) : (
+        <Rows>{renderRow}</Rows>
+      )}
+
+      {!isInitialized && (
         <div
-          role="rowgroup"
+          id="measure-cell"
           style={{
-            position: stickyHeader ? 'sticky' : 'unset',
-            top: stickyHeaderOffset,
-            zIndex: 1
+            position: 'absolute',
+            visibility: 'hidden',
+            height: 0,
+            overflow: 'hidden',
+            whiteSpace: 'nowrap'
           }}
         >
-          <div role="row" className={classes.row}>
-            {columns.map(({ columnKey, header, headerProps }) => (
-              <div role="columnheader" key={columnKey}>
-                <Header {...headerProps} columnKey={columnKey}>
-                  {header}
-                </Header>
-              </div>
-            ))}
-          </div>
+          {children.map(column =>
+            createElement(Cell, {
+              ...(column.props.cellProps as object),
+              key: column.props.columnKey,
+              id: column.props.columnKey,
+              style: { padding: horizontalSpacing }
+            } as never)
+          )}
         </div>
-        {virtualized ? (
-          <VirtualizedRows {...virtualized}>{renderRow}</VirtualizedRows>
-        ) : (
-          <Rows>{renderRow}</Rows>
-        )}
-
-        {!isInitialized && (
-          <div
-            id="measure-cell"
-            style={{
-              position: 'absolute',
-              visibility: 'hidden',
-              height: 0,
-              overflow: 'hidden',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            {children.map(column =>
-              createElement(Cell, {
-                ...(column.props.cellProps as object),
-                key: column.props.columnKey,
-                id: column.props.columnKey,
-                style: { padding: horizontalSpacing }
-              } as never)
-            )}
-          </div>
-        )}
-      </div>
-    </DataTableOptionsContext>
+      )}
+    </div>
   );
 };

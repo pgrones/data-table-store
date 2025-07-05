@@ -14,6 +14,7 @@ import {
   DefaultUndoButton,
   type DataTableProps
 } from './components';
+import type { StyleProps } from './components/dataTable.hooks';
 import type { DataTableComponents } from './dataTable.types';
 
 const getOrDefault = <
@@ -44,6 +45,10 @@ export const createDataTableCreator = <
   Components extends
     DataTableComponents<TCompoundMap> = DataTableComponents<TCompoundMap>
 >(
+  tableDefaults:
+    | (Pick<DataTableProps<object>, 'stickyHeader' | 'stickyHeaderOffset'> &
+        StyleProps)
+    | null,
   components: Partial<Components> = {}
 ) => {
   const cell = getOrDefault(components.cell, DefaultCell);
@@ -74,7 +79,12 @@ export const createDataTableCreator = <
 
   const createDataTable = <TEntity extends object>() => {
     const DataTable = (props: DataTableProps<TEntity>) => (
-      <DataTableComponent {...props} Cell={cell} Header={header} />
+      <DataTableComponent
+        {...tableDefaults}
+        {...props}
+        Cell={cell}
+        Header={header}
+      />
     );
 
     DataTable.Column = createColumn<
@@ -107,4 +117,4 @@ export const createDataTableCreator = <
 };
 
 export const createDataTable = <TEntity extends object>() =>
-  createDataTableCreator().withType<TEntity>();
+  createDataTableCreator(null).withType<TEntity>();

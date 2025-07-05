@@ -7,8 +7,8 @@
   overflow: hidden;
   padding: 40px;
 
-  & :global(.mantine-ScrollArea-scrollbar) {
-    z-index: 10;
+  :global(.mantine-ScrollArea-scrollbar) {
+    z-index: 200;
     background-color: var(--mantine-color-body);
 
     :global(.mantine-ScrollArea-corner) {
@@ -16,12 +16,21 @@
     }
   }
 
-  :global([role='cell']):has(.sticky),
-  :global([role='columnheader']):has(.sticky) {
+  :global(.data-table-cell) {
+    background-color: var(--mantine-color-body);
+  }
+
+  :global(.data-table-table)[data-with-row-borders='true']
+    :global(.data-table-row):nth-of-type(even)
+    .sticky {
+    box-shadow: inset 0 1px 0 var(--data-table-border-color);
+  }
+
+  :global(.data-table-cell):has(.sticky),
+  :global(.data-table-header):has(.sticky) {
     position: sticky;
     left: 0;
-    z-index: 1;
-    background-color: var(--mantine-color-body);
+    z-index: 20;
 
     &:has([data-right]) {
       left: unset;

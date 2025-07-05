@@ -15,7 +15,7 @@ export const HeaderResize = ({ columnKey }: HeaderResizeProps) => {
 
   if (!resize?.isResizable) return null;
 
-  const handleDrag = () => {
+  const handleDrag = ({ clientX: initialX }: React.MouseEvent) => {
     cleanupRef.current?.();
 
     if (!ref.current) return;
@@ -32,12 +32,14 @@ export const HeaderResize = ({ columnKey }: HeaderResizeProps) => {
     blocker.className = classes.blocker!;
 
     const handleMove = ({ x }: MouseEvent) => {
-      if (!isDragging) {
+      if (!ref.current) return;
+
+      if (!isDragging && initialX !== x) {
         isDragging = true;
         document.body.appendChild(blocker);
       }
 
-      if (!ref.current) return;
+      if (!isDragging) return;
 
       const left = x - rect.left;
 
@@ -61,7 +63,7 @@ export const HeaderResize = ({ columnKey }: HeaderResizeProps) => {
       cleanup();
       cleanupRef.current = null;
 
-      if (!ref.current) return;
+      if (!ref.current || !isDragging) return;
 
       const newWidth = Math.max(
         minDistanceToLeftEdge,
@@ -92,11 +94,16 @@ export const HeaderResize = ({ columnKey }: HeaderResizeProps) => {
     const header = wrapper.parentElement!;
     const padding = parseFloat(getComputedStyle(header).padding || '0') * 2;
 
+    const columnHeader = header.parentElement!;
+    const border = parseFloat(
+      getComputedStyle(columnHeader).borderRightWidth || '0'
+    );
+
     const icon = [...wrapper.children].find(x => x.tagName === 'svg');
     const iconWidth = icon ? parseFloat(getComputedStyle(icon).width) : 0;
 
     const headerWidth = Math.ceil(
-      label.scrollWidth + gap + iconWidth + padding + 1
+      label.scrollWidth + gap + iconWidth + padding + border + 1
     );
 
     resize.resizeColumn(Math.max(resize.maxWidth, headerWidth, 100));

@@ -6,9 +6,10 @@ button.header {
   align-items: center;
   position: relative;
   background-color: var(--mantine-color-body);
+  border-radius: var(--mantine-radius-default);
 
   .wrapper {
-    gap: var(--mantine-spacing-xs);
+    gap: var(--mantine-spacing-sm);
     flex-wrap: nowrap;
     justify-content: space-between;
     align-items: center;
@@ -57,10 +58,24 @@ button.header {
     font-size: var(--mantine-font-size-xs);
     text-transform: uppercase;
     font-weight: 600;
-    color: var(--mantine-color-gray-4);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    height: 25%;
+    top: 50%;
+    right: -1px;
+    width: 2px;
+    transform: translateY(-50%);
+    border-radius: 3px;
+    background-color: var(--mantine-color-default-border);
+    will-change: transform;
+    backface-visibility: hidden;
+    z-index: 8;
   }
 }
 
@@ -100,14 +115,14 @@ button.header {
 
   &:active .line {
     position: absolute;
-    width: 3px;
+    width: 2px;
     height: 100vh;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
     background-color: var(--mantine-primary-color-filled);
     z-index: 10;
-    border-radius: 3px;
+    border-radius: 2px;
     will-change: transform;
     backface-visibility: hidden;
   }

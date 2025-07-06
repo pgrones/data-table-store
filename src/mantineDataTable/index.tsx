@@ -11,6 +11,7 @@ import { AllRowsSelector } from './inputs/allRowsSelector';
 import { Pagination } from './inputs/pagination';
 import { RowSelector } from './inputs/rowSelector';
 import { SearchInput } from './inputs/searchInput';
+import { OrderableContext } from './orderableContext';
 
 export const createMantineThemedDataTable = createDataTableCreator(
   {
@@ -38,7 +39,8 @@ export const createMantineThemedDataTable = createDataTableCreator(
     pagination: Pagination,
     additionalCompoundComponents: {
       DataState,
-      HeaderLabel
+      HeaderLabel,
+      OrderableContext
     }
   }
 );

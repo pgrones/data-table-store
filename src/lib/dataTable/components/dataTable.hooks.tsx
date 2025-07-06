@@ -1,7 +1,7 @@
 import { Children, useCallback, useMemo, useState } from 'react';
 import type { Key } from '../../dataTableStore';
 import { useDataTable } from '../dataTable.context';
-import { useColumnInitialization } from '../hooks';
+import { useColumnInitialization, useColumnKeys } from '../hooks';
 import {
   isDataTableColumn,
   type CellProps,
@@ -39,7 +39,7 @@ export const useColumnStyles = ({
 
   const widths = useDataTable(state =>
     [...state.columns.values()]
-      .toSorted((a, b) => a.postion - b.postion)
+      .toSorted((a, b) => a.position - b.position)
       .map(x => x.width)
       .join(' ')
   );
@@ -91,6 +91,7 @@ export const useCells = <TEntity extends object>(
   Cell: React.ComponentType<CellProps>
 ) => {
   const initializeColumn = useColumnInitialization();
+  const columnKeys = useColumnKeys();
 
   const columns = useMemo(() => {
     const columns: Column<TEntity>[] = [];
@@ -117,19 +118,19 @@ export const useCells = <TEntity extends object>(
         defaultWidth: column.props.defaultWidth
       });
 
-      columns.push({
+      columns[columnKeys.indexOf(columnKey)] = {
         columnKey,
         cell,
         header: column.props.header,
         cellProps: column.props.cellProps ?? {},
         headerProps: column.props.headerProps ?? {}
-      });
+      };
 
       index++;
     }
 
     return columns;
-  }, [children, initializeColumn]);
+  }, [columnKeys, children, initializeColumn]);
 
   const renderRow = useCallback(
     (row: Partial<TEntity>) =>

@@ -23,7 +23,7 @@ export interface Column
   isSorted: boolean;
   descending: boolean;
   width: string;
-  postion: number;
+  position: number;
   visible: boolean;
   maxWidth: number | null;
   fontStyles: FontStyles | null;
@@ -54,7 +54,7 @@ const createDefaultEntry = (): Column => ({
   width: '150px',
   maxWidth: null,
   fontStyles: null,
-  postion: 0,
+  position: 0,
   visible: true
 });
 
@@ -112,7 +112,7 @@ export const createColumnSlice =
               typeof defaultWidth === 'number'
                 ? `${defaultWidth}px`
                 : defaultWidth,
-            postion: defaultPosition,
+            position: defaultPosition,
             ...state.columns.get(key),
             ...initialSort
           });
@@ -139,9 +139,21 @@ export const createColumnSlice =
         ensureInitialized(key);
 
         set(state => {
-          if (!state.columns.get(key)!.isOrderable) return;
+          const currentState = state.columns.get(key);
 
-          state.columns.get(key)!.postion = position;
+          if (!currentState?.isOrderable) return;
+
+          const columns = new Array<string>(state.columns.size);
+          [...state.columns.entries()].forEach(
+            ([key, value]) => (columns[value.position] = key)
+          );
+
+          const from = columns.indexOf(key);
+          columns.splice(position, 0, columns.splice(from, 1)[0]!);
+
+          columns.forEach(
+            (key, position) => (state.columns.get(key)!.position = position)
+          );
         });
       },
       resizeColumn: (key, width) => {

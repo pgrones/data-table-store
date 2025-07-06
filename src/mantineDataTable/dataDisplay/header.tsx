@@ -5,7 +5,9 @@ import {
   type ElementProps,
   type UnstyledButtonProps
 } from '@mantine/core';
+import { useMergedRef } from '@mantine/hooks';
 import { IconArrowsSort, IconSortAscending } from '@tabler/icons-react';
+import { useColumnOrdering } from '../useColumnOrdering';
 import { HeaderResize } from './header.resize';
 import classes from './header.module.css';
 
@@ -22,8 +24,17 @@ export const HeaderLabel = ({ children }: { children: string }) => (
 );
 
 export const Header = DataTableHeader.as<HeaderProps>(
-  ({ onClick, className = '', mod, children, columnKey, ...props }) => {
+  ({ onClick, className = '', mod, children, columnKey, ref, ...props }) => {
     const sorting = useSorting(columnKey);
+
+    const {
+      ref: orderRef,
+      style,
+      attributes,
+      listeners
+    } = useColumnOrdering(columnKey);
+
+    const mergedRef = useMergedRef(ref, orderRef);
 
     const isRightAligned = props.ta === 'right' || props.ta === 'end';
 
@@ -35,8 +46,10 @@ export const Header = DataTableHeader.as<HeaderProps>(
     return (
       <UnstyledButton
         {...props}
+        ref={mergedRef}
         className={`${classes.header} ${className}`}
         onClick={handleClick}
+        style={[props.style, style]}
         mod={[
           mod,
           {
@@ -45,6 +58,8 @@ export const Header = DataTableHeader.as<HeaderProps>(
             descending: sorting?.descending
           }
         ]}
+        {...attributes}
+        {...listeners}
       >
         <Group className={classes.wrapper} mod={{ end: isRightAligned }}>
           {typeof children === 'string' ? (

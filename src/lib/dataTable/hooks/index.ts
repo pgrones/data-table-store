@@ -14,3 +14,6 @@ export * from './useUndo';
 export * from './useColumnInitialization';
 export * from './useSorting';
 export * from './useResize';
+export * from './useReorder';
+export * from './useOrdering';
+export * from './useColumnKeys';

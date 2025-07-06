@@ -31,90 +31,94 @@ export const Table = () => {
       </Group>
 
       <ScrollArea offsetScrollbars type="auto" viewportRef={scrollRef}>
-        <DataTable virtualized={{ scrollRef, rowHeight: 70 }}>
-          <DataTable.Column
-            columnKey="selection"
-            sortable={false}
-            resizable={false}
-            defaultWidth="calc(20px + var(--data-table-horizontal-spacing) * 2)"
-            headerProps={{ className: classes.sticky }}
-            header={<DataTable.AllRowsSelector />}
-            cellProps={{ className: classes.sticky }}
-            cell={<DataTable.RowSelector />}
-          />
+        <DataTable.OrderableContext>
+          <DataTable virtualized={{ scrollRef, rowHeight: 70 }}>
+            <DataTable.Column
+              columnKey="selection"
+              sortable={false}
+              resizable={false}
+              orderable={false}
+              defaultWidth="calc(20px + var(--data-table-horizontal-spacing) * 2)"
+              headerProps={{ className: classes.sticky }}
+              header={<DataTable.AllRowsSelector />}
+              cellProps={{ className: classes.sticky }}
+              cell={<DataTable.RowSelector />}
+            />
 
-          <DataTable.Column
-            columnKey="avatarUrl"
-            sortable={false}
-            resizable={false}
-            defaultWidth="calc(38px + var(--data-table-horizontal-spacing) * 2)"
-            cell={({ value }) => <Avatar src={value} />}
-          />
+            <DataTable.Column
+              columnKey="avatarUrl"
+              sortable={false}
+              resizable={false}
+              defaultWidth="calc(38px + var(--data-table-horizontal-spacing) * 2)"
+              cell={({ value }) => <Avatar src={value} />}
+            />
 
-          <DataTable.Column columnKey="firstName" header="First Name" />
+            <DataTable.Column columnKey="firstName" header="First Name" />
 
-          <DataTable.Column columnKey="lastName" header="Last Name" />
+            <DataTable.Column columnKey="lastName" header="Last Name" />
 
-          <DataTable.Column
-            columnKey="birthday"
-            header="Birthday"
-            cell={({ value }) => value?.toLocaleDateString()}
-          />
+            <DataTable.Column
+              columnKey="birthday"
+              header="Birthday"
+              cell={({ value }) => value?.toLocaleDateString()}
+            />
 
-          <DataTable.Column columnKey="gender" header="Gender" />
+            <DataTable.Column columnKey="gender" header="Gender" />
 
-          <DataTable.Column columnKey="job" header="Job Title" />
+            <DataTable.Column columnKey="job" header="Job Title" />
 
-          <DataTable.Column
-            columnKey="revenue"
-            headerProps={{ ta: 'end' }}
-            header="Revenue"
-            cellProps={{ ta: 'end' }}
-            cell={({ value }) => (
-              <NumberFormatter
-                value={value}
-                prefix="$ "
-                thousandSeparator="."
-                decimalSeparator=","
-                fixedDecimalScale
-                decimalScale={2}
-                style={{ width: '100%' }}
-              />
-            )}
-          />
+            <DataTable.Column
+              columnKey="revenue"
+              headerProps={{ ta: 'end' }}
+              header="Revenue"
+              cellProps={{ ta: 'end' }}
+              cell={({ value }) => (
+                <NumberFormatter
+                  value={value}
+                  prefix="$ "
+                  thousandSeparator="."
+                  decimalSeparator=","
+                  fixedDecimalScale
+                  decimalScale={2}
+                  style={{ width: '100%' }}
+                />
+              )}
+            />
 
-          <DataTable.Column
-            columnKey="trend"
-            resizable={false}
-            sortable={false}
-            defaultWidth="calc(150px + var(--data-table-horizontal-spacing) * 2)"
-            header="Trend"
-            cell={({ value }) => (
-              <Sparkline
-                w={150}
-                h={38}
-                data={value ?? []}
-                fillOpacity={0.2}
-                trendColors={{ positive: 'teal.6', negative: 'red.6' }}
-              />
-            )}
-          />
+            <DataTable.Column
+              columnKey="trend"
+              resizable={false}
+              sortable={false}
+              defaultWidth="calc(150px + var(--data-table-horizontal-spacing) * 2)"
+              header="Trend"
+              cell={({ value }) => (
+                <Sparkline
+                  w={150}
+                  h={38}
+                  data={value ?? []}
+                  fillOpacity={0.2}
+                  trendColors={{ positive: 'teal.6', negative: 'red.6' }}
+                />
+              )}
+            />
 
-          <DataTable.Column
-            columnKey="actions"
-            sortable={false}
-            resizable={false}
-            defaultWidth="calc(28px + var(--data-table-horizontal-spacing) * 2)"
-            headerProps={{ className: classes.sticky, mod: 'right' }}
-            cellProps={{ className: classes.sticky, mod: 'right' }}
-            cell={
-              <>
-                <DataTable.RestoreRowButton />
-                <DataTable.DeleteRowButton />
-              </>
-            }
-          />
-        </DataTable>
+            <DataTable.Column
+              columnKey="actions"
+              sortable={false}
+              resizable={false}
+              orderable={false}
+              defaultWidth="calc(28px + var(--data-table-horizontal-spacing) * 2)"
+              headerProps={{ className: classes.sticky, mod: 'right' }}
+              cellProps={{ className: classes.sticky, mod: 'right' }}
+              cell={
+                <>
+                  <DataTable.RestoreRowButton />
+                  <DataTable.DeleteRowButton />
+                </>
+              }
+            />
+          </DataTable>
+        </DataTable.OrderableContext>
 
         <LoadingOverlay />
       </ScrollArea>

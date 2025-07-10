@@ -7,15 +7,16 @@
     );
     width: 100%;
     align-items: center;
+    transition: grid-template-columns 200ms ease;
+  }
 
-    :global(.data-table-cell),
-    :global(.data-table-header) {
-      height: 100%;
+  :global(.data-table-cell),
+  :global(.data-table-header) {
+    height: 100%;
 
-      > * {
-        padding: var(--data-table-vertical-spacing, 12px)
-          var(--data-table-horizontal-spacing, 12px);
-      }
+    > * {
+      padding: var(--data-table-vertical-spacing, 12px)
+        var(--data-table-horizontal-spacing, 12px);
     }
   }
 

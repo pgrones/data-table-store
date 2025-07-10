@@ -6,12 +6,12 @@ import { RestoreRowButton } from './buttons/restoreRowButton';
 import { UndoButton } from './buttons/undoButton';
 import { Cell } from './dataDisplay/cell';
 import { DataState } from './dataDisplay/dataState';
-import { Header, HeaderLabel } from './dataDisplay/header';
+import { Header, HeaderLabel } from './dataDisplay/header/header';
+import { OrderableContext } from './dataDisplay/header/ordering/orderableContext';
 import { AllRowsSelector } from './inputs/allRowsSelector';
 import { Pagination } from './inputs/pagination';
 import { RowSelector } from './inputs/rowSelector';
 import { SearchInput } from './inputs/searchInput';
-import { OrderableContext } from './orderableContext';
 
 export const createMantineThemedDataTable = createDataTableCreator(
   {

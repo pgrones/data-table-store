@@ -1,12 +1,13 @@
 import { useLayoutEffect, useRef } from 'react';
-import { useResize } from '@lib';
-import classes from './header.module.css';
+import { useResize, useTableKey } from '@lib';
+import classes from '../header.module.css';
 
-interface HeaderResizeProps {
+interface ResizeHandleProps {
   columnKey: string;
 }
 
-export const HeaderResize = ({ columnKey }: HeaderResizeProps) => {
+export const ResizeHandle = ({ columnKey }: ResizeHandleProps) => {
+  const tableKey = useTableKey();
   const ref = useRef<HTMLDivElement>(null);
   const cleanupRef = useRef<() => void>(null);
   const resize = useResize(columnKey);
@@ -20,7 +21,9 @@ export const HeaderResize = ({ columnKey }: HeaderResizeProps) => {
 
     if (!ref.current) return;
 
-    const column = ref.current.parentElement;
+    const column = document
+      .getElementById(tableKey)
+      ?.querySelector(`#${columnKey}`);
 
     if (!column) return;
 
@@ -116,6 +119,7 @@ export const HeaderResize = ({ columnKey }: HeaderResizeProps) => {
       onMouseDown={handleDrag}
       onDoubleClick={handleDoubleClick}
       onClick={e => e.stopPropagation()}
+      onPointerDown={e => e.stopPropagation()}
       className={classes.resize}
       role="separator"
       aria-orientation="horizontal"

@@ -11,6 +11,7 @@ export default tseslint.config(
   { ignores: ['dist'] },
   react.configs.flat.recommended,
   jsxA11y.flatConfigs.recommended,
+  youMightNotNeedAnEffect.configs.recommended,
   {
     languageOptions: {
       parserOptions: {
@@ -32,13 +33,11 @@ export default tseslint.config(
     },
     plugins: {
       'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
-      'react-you-might-not-need-an-effect': youMightNotNeedAnEffect
+      'react-refresh': reactRefresh
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
       'react-hooks/exhaustive-deps': 'warn',
-      'react-you-might-not-need-an-effect/you-might-not-need-an-effect': 'warn',
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true }

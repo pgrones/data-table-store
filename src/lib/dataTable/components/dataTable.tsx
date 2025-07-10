@@ -34,6 +34,7 @@ export const DataTable = <TEntity extends object>({
   Cell: React.ComponentType<CellProps>;
   Header: React.ComponentType<React.PropsWithChildren<HeaderProps>>;
 }) => {
+  // TODO: imperatively set gridColumn in css to avoid rerendering the whole tree on reordering
   const isInitialized = useIsInitialized();
   const tableKey = useTableKey();
   const ref = useColumnStyles({ horizontalSpacing, ...styleProps });

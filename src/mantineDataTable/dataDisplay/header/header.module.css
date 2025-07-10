@@ -1,3 +1,14 @@
+@keyframes pop {
+  0% {
+    transform: scale(1);
+    box-shadow: var(--mantine-shadow-xs);
+  }
+  100% {
+    transform: scale(1.05);
+    box-shadow: var(--mantine-shadow-xl);
+  }
+}
+
 button.header {
   cursor: default;
   width: 100%;
@@ -24,7 +35,19 @@ button.header {
     display: none;
   }
 
-  &[data-sortable] {
+  &[data-orderable] {
+    cursor: grab;
+  }
+
+  &[data-dragging] {
+    cursor: grabbing;
+    background-color: var(--mantine-color-default-hover);
+    animation: pop 200ms ease-out;
+    transform: scale(1.05);
+    box-shadow: var(--mantine-shadow-xl);
+  }
+
+  &:has([data-sortable]) {
     &:hover {
       cursor: pointer;
       background-color: var(--mantine-color-default-hover) !important;
@@ -38,16 +61,16 @@ button.header {
       stroke-width: 1.5;
     }
 
-    &[data-sorted] .icon:not([data-default]) {
+    &:has([data-sorted]) .icon:not([data-default]) {
       display: block;
       color: var(--mantine-primary-color-filled);
     }
 
-    &[data-descending] .icon {
+    &:has([data-descending]) .icon {
       rotate: 180deg;
     }
 
-    &[data-sortable]:not([data-sorted]) .icon[data-default] {
+    &:has([data-sortable]:not([data-sorted])) .icon[data-default] {
       display: block;
       color: var(--mantine-color-dimmed);
       opacity: 0.5;

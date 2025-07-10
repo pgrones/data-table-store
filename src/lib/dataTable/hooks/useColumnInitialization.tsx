@@ -51,7 +51,7 @@ export const useColumnInitialization = () => {
       isOrderable: options.isOrderable ?? true,
       isResizable: options.isResizable ?? true,
       isSortable: options.isSortable ?? true,
-      defaultWidth: options.defaultWidth ?? 'minmax(150px, 1fr)',
+      defaultWidth: options.defaultWidth ?? 'minmax(150px, 1fr)', // TODO: better default for smooth resizing
       defaultPosition: index
     });
   };

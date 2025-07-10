@@ -7,8 +7,12 @@ import {
 } from '@mantine/core';
 import { useMergedRef } from '@mantine/hooks';
 import { IconArrowsSort, IconSortAscending } from '@tabler/icons-react';
-import { useColumnOrdering } from '../useColumnOrdering';
-import { HeaderResize } from './header.resize';
+import { HeaderCell } from './headerCell';
+import { Orderable } from './ordering/orderable';
+import { useColumnOrdering } from './ordering/useColumnOrdering';
+import { Resizable } from './resizing/resizable';
+import { ResizeHandle } from './resizing/resizeHandle';
+import { Sortable } from './sorting/sortable';
 import classes from './header.module.css';
 
 export interface HeaderProps
@@ -17,13 +21,27 @@ export interface HeaderProps
   ref?: React.Ref<HTMLButtonElement>;
 }
 
+export const Header = DataTableHeader.as<HeaderProps>(
+  ({ columnKey, children, ...props }) => {
+    return (
+      <Orderable columnKey={columnKey}>
+        <HeaderCell {...props} id={columnKey}>
+          <Sortable columnKey={columnKey}>
+            <Resizable columnKey={columnKey}>{children}</Resizable>
+          </Sortable>
+        </HeaderCell>
+      </Orderable>
+    );
+  }
+);
+
 export const HeaderLabel = ({ children }: { children: string }) => (
   <span data-header-label className={classes.label}>
     {children}
   </span>
 );
 
-export const Header = DataTableHeader.as<HeaderProps>(
+export const Headerx = DataTableHeader.as<HeaderProps>(
   ({ onClick, className = '', mod, children, columnKey, ref, ...props }) => {
     const sorting = useSorting(columnKey);
 
@@ -72,7 +90,7 @@ export const Header = DataTableHeader.as<HeaderProps>(
           <IconArrowsSort data-default className={classes.icon} />
         </Group>
 
-        <HeaderResize columnKey={columnKey} />
+        <ResizeHandle columnKey={columnKey} />
       </UnstyledButton>
     );
   }

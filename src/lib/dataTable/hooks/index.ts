@@ -17,3 +17,4 @@ export * from './useResize';
 export * from './useReorder';
 export * from './useOrdering';
 export * from './useColumnKeys';
+export * from './useTableKey';

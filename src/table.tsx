@@ -30,8 +30,8 @@ export const Table = () => {
         </Group>
       </Group>
 
-      <ScrollArea offsetScrollbars type="auto" viewportRef={scrollRef}>
-        <DataTable.OrderableContext>
+      <DataTable.OrderableContext>
+        <ScrollArea offsetScrollbars type="auto" viewportRef={scrollRef}>
           <DataTable virtualized={{ scrollRef, rowHeight: 70 }}>
             <DataTable.Column
               columnKey="selection"
@@ -49,6 +49,7 @@ export const Table = () => {
               columnKey="avatarUrl"
               sortable={false}
               resizable={false}
+              orderable={false}
               defaultWidth="calc(38px + var(--data-table-horizontal-spacing) * 2)"
               cell={({ value }) => <Avatar src={value} />}
             />
@@ -118,10 +119,10 @@ export const Table = () => {
               }
             />
           </DataTable>
-        </DataTable.OrderableContext>
 
-        <LoadingOverlay />
-      </ScrollArea>
+          <LoadingOverlay />
+        </ScrollArea>
+      </DataTable.OrderableContext>
 
       <DataTable.Pagination ml="auto" hideWithOnePage={false} />
     </div>

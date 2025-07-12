@@ -1,18 +1,15 @@
 .table {
   :global(.data-table-row) {
     display: grid;
-    grid-template-columns: var(
-      --data-table-column-widths,
-      repeat(auto-fit, minmax(150px, 1fr))
-    );
-    width: 100%;
+    grid-auto-flow: column;
+    width: fit-content;
     align-items: center;
-    transition: grid-template-columns 200ms ease;
   }
 
   :global(.data-table-cell),
   :global(.data-table-header) {
     height: 100%;
+    transition: width 200ms ease;
 
     > * {
       padding: var(--data-table-vertical-spacing, 12px)

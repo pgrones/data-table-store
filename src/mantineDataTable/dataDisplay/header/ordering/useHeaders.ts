@@ -1,10 +1,10 @@
 import { Children, isValidElement, useRef } from 'react';
-import { isDataTableColumn, useColumnKeys } from '@lib';
+import { isDataTableColumn, useOrderedColumnKeys } from '@lib';
 import { usePrevious } from '@mantine/hooks';
 import { hasChildren } from '../hasChildren';
 
 export const useHeaders = (children: React.ReactNode) => {
-  const columnKeys = useColumnKeys();
+  const columnKeys = useOrderedColumnKeys();
   const headers = useRef<Map<string, [React.ReactNode, object | null]>>(
     new Map()
   );

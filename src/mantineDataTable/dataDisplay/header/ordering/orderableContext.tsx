@@ -21,14 +21,14 @@ import {
   SortableContext,
   sortableKeyboardCoordinates
 } from '@dnd-kit/sortable';
-import { useColumnKeys, useReorder, useTableKey } from '@lib';
+import { useOrderedColumnKeys, useReorder, useTableKey } from '@lib';
 import { createPortal } from 'react-dom';
 import { HeaderCell, HeaderLabel } from '../headerCell';
 import { useHeaders } from './useHeaders';
 
 export const OrderableContext = ({ children }: React.PropsWithChildren) => {
   const tableKey = useTableKey();
-  const columnKeys = useColumnKeys();
+  const columnKeys = useOrderedColumnKeys();
   const reorderColumn = useReorder();
   const headers = useHeaders(children);
   const [active, setActive] = useState<Active | null>(null);

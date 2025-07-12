@@ -1,28 +1,30 @@
-import { createElement } from 'react';
 import { useIsInitialized } from '../hooks/useIsInitialized';
 import { useTableKey } from '../hooks/useTableKey';
 import {
-  createRows,
-  createVirtualizedRows,
-  type CellProps,
+  RowContext,
+  Rows,
+  VirtualizedRows,
   type ColumnProps,
-  type HeaderProps,
   type VirtualizedRowsProps
 } from './dataDisplay';
-import { useCells, useColumnStyles, type StyleProps } from './dataTable.hooks';
+import { ColumnContext } from './dataDisplay/column.context';
+import {
+  useColumns,
+  useColumnStyles,
+  type StyleProps
+} from './dataTable.hooks';
 import classes from './dataTable.module.css';
 
 export interface DataTableProps<TEntity extends object> extends StyleProps {
   stickyHeader?: boolean;
   stickyHeaderOffset?: number | string;
-  virtualized?: Omit<VirtualizedRowsProps<TEntity>, 'children'>;
+  virtualized?: Omit<VirtualizedRowsProps, 'children'>;
   children: React.ReactElement<
     ColumnProps<TEntity, string, unknown, unknown>
   >[];
 }
 
 export const DataTable = <TEntity extends object>({
-  horizontalSpacing = 12,
   stickyHeader = false,
   stickyHeaderOffset = 0,
   virtualized,
@@ -31,17 +33,15 @@ export const DataTable = <TEntity extends object>({
   Cell,
   ...styleProps
 }: DataTableProps<TEntity> & {
-  Cell: React.ComponentType<CellProps>;
-  Header: React.ComponentType<React.PropsWithChildren<HeaderProps>>;
+  Cell: React.ComponentType<
+    React.PropsWithChildren<{ id?: string; style?: React.CSSProperties }>
+  >;
+  Header: React.ComponentType<React.PropsWithChildren>;
 }) => {
-  // TODO: imperatively set gridColumn in css to avoid rerendering the whole tree on reordering
   const isInitialized = useIsInitialized();
   const tableKey = useTableKey();
-  const ref = useColumnStyles({ horizontalSpacing, ...styleProps });
-  const [columns, renderRow] = useCells(children, Cell);
-
-  const Rows = createRows<TEntity>();
-  const VirtualizedRows = createVirtualizedRows<TEntity>();
+  const ref = useColumnStyles(styleProps);
+  const columns = useColumns(children);
 
   return (
     <div
@@ -61,22 +61,28 @@ export const DataTable = <TEntity extends object>({
       >
         <div role="row" className="data-table-row">
           {columns.map(({ columnKey, header, headerProps }) => (
-            <div
-              role="columnheader"
-              className="data-table-header"
-              key={columnKey}
-            >
-              <Header {...headerProps} columnKey={columnKey}>
-                {header}
-              </Header>
-            </div>
+            <ColumnContext key={columnKey} value={{ columnKey }}>
+              <Header {...headerProps}>{header}</Header>
+            </ColumnContext>
           ))}
         </div>
       </div>
       {virtualized ? (
-        <VirtualizedRows {...virtualized}>{renderRow}</VirtualizedRows>
+        <VirtualizedRows {...virtualized}>
+          {columns.map(({ columnKey, cell, cellProps }) => (
+            <ColumnContext key={columnKey} value={{ columnKey, cell }}>
+              <Cell {...cellProps} />
+            </ColumnContext>
+          ))}
+        </VirtualizedRows>
       ) : (
-        <Rows>{renderRow}</Rows>
+        <Rows>
+          {columns.map(({ columnKey, cell, cellProps }) => (
+            <ColumnContext key={columnKey} value={{ columnKey, cell }}>
+              <Cell {...cellProps} />
+            </ColumnContext>
+          ))}
+        </Rows>
       )}
 
       {!isInitialized && (
@@ -90,14 +96,13 @@ export const DataTable = <TEntity extends object>({
             whiteSpace: 'nowrap'
           }}
         >
-          {children.map(column =>
-            createElement(Cell, {
-              ...(column.props.cellProps as object),
-              key: column.props.columnKey,
-              id: column.props.columnKey,
-              style: { padding: horizontalSpacing }
-            } as never)
-          )}
+          {columns.map(({ columnKey, cell, cellProps }) => (
+            <ColumnContext key={columnKey} value={{ columnKey, cell }}>
+              <RowContext value={{ rowKey: '' }}>
+                <Cell {...cellProps} id={columnKey} />
+              </RowContext>
+            </ColumnContext>
+          ))}
         </div>
       )}
     </div>

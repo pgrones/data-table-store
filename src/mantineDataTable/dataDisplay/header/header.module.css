@@ -47,7 +47,7 @@ button.header {
     box-shadow: var(--mantine-shadow-xl);
   }
 
-  &:has([data-sortable]) {
+  &[data-sortable] {
     &:hover {
       cursor: pointer;
       background-color: var(--mantine-color-default-hover) !important;
@@ -61,16 +61,16 @@ button.header {
       stroke-width: 1.5;
     }
 
-    &:has([data-sorted]) .icon:not([data-default]) {
+    &[data-sorted] .icon:not([data-default]) {
       display: block;
       color: var(--mantine-primary-color-filled);
     }
 
-    &:has([data-descending]) .icon {
+    &[data-descending] .icon {
       rotate: 180deg;
     }
 
-    &:has([data-sortable]:not([data-sorted])) .icon[data-default] {
+    &[data-sortable]:not([data-sorted]) .icon[data-default] {
       display: block;
       color: var(--mantine-color-dimmed);
       opacity: 0.5;

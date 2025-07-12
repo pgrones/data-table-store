@@ -1,41 +1,24 @@
-import { cloneElement, isValidElement } from 'react';
-import { useMergedRef } from '@mantine/hooks';
-import { hasChildren } from '../hasChildren';
+import { cloneElement } from 'react';
 import type { HeaderProps } from '../header';
-import { HeaderLabel } from '../headerCell';
 import { useColumnOrdering } from './useColumnOrdering';
 
-interface OrderableHeaderProps extends Omit<HeaderProps, 'children'> {
+interface OrderableHeaderProps {
   columnKey: string;
-  children: React.ReactElement<HeaderProps> | React.ReactNode;
+  children: React.ReactElement<HeaderProps>;
 }
 
 export const Orderable = ({
   columnKey,
-  ref,
-  children,
-  mod,
-  ...props
-}: OrderableHeaderProps) => {
-  const {
-    ref: orderRef,
-    style,
-    attributes,
-    listeners,
-    isOrderable
-  } = useColumnOrdering(columnKey);
+  children
+}: React.PropsWithChildren<OrderableHeaderProps>) => {
+  const { ref, style, attributes, listeners, isOrderable } =
+    useColumnOrdering(columnKey);
 
-  const mergedRef = useMergedRef(ref, orderRef);
-
-  if (!isValidElement(children) || !hasChildren(children.props))
-    return <HeaderLabel>{children}</HeaderLabel>;
-
-  return cloneElement(children as React.ReactElement<HeaderProps>, {
+  return cloneElement(children, {
     ...children.props,
-    ...props,
-    ref: mergedRef,
-    style: [props.style, style],
-    mod: [mod, { orderable: isOrderable }],
+    ref,
+    style,
+    mod: [{ orderable: isOrderable }],
     ...attributes,
     ...listeners
   });

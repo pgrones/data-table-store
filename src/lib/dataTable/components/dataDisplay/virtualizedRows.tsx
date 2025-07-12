@@ -1,54 +1,57 @@
-import type React from 'react';
+import { memo, useLayoutEffect } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import type { RowKey } from '../../../dataTableStore';
-import { typedMemo } from '../../dataTable.types';
-import { useRowKeys } from '../../hooks';
-import { useSelectedRows } from '../../hooks/useSelectedRows';
+import { useRowKeys, useSelectedRows } from '../../hooks';
 import { Row } from './row';
 
-export interface VirtualizedRowsProps<TEntity extends object> {
-  children: (row: Partial<TEntity>) => React.ReactNode;
+export interface VirtualizedRowsProps {
   scrollRef: React.RefObject<HTMLElement | null>;
   rowHeight: number;
   overscan?: number;
 }
 
-export const createVirtualizedRows = <TEntity extends object>() =>
-  typedMemo(
-    ({
-      scrollRef,
-      rowHeight,
-      overscan,
+export const VirtualizedRows = memo(
+  ({
+    scrollRef,
+    rowHeight,
+    overscan,
+    children
+  }: React.PropsWithChildren<VirtualizedRowsProps>) => {
+    const rowKeys = useRowKeys();
+    const selection = useSelectedRows();
 
-      children
-    }: VirtualizedRowsProps<TEntity>) => {
-      const rowKeys = useRowKeys();
+    const virtualizer = useVirtualizer({
+      count: rowKeys.length,
+      getScrollElement: () => scrollRef.current,
+      estimateSize: () => rowHeight,
+      overscan
+    });
 
-      const virtualizer = useVirtualizer({
-        count: rowKeys.length,
-        getItemKey: index => rowKeys[index]!,
-        getScrollElement: () => scrollRef.current,
-        estimateSize: () => rowHeight,
-        overscan
-      });
+    // For some reason we have to measure again because the virtualizer doesn't seem to notice that the ref updated
+    // This worked before, but broke somewhere along the way, hence this hack
+    useLayoutEffect(() => {
+      virtualizer.measure();
+    }, [virtualizer]);
 
-      const selection = useSelectedRows();
+    return (
+      <div
+        role="rowgroup"
+        className="data-table-row-group"
+        style={{
+          height: `${virtualizer.getTotalSize()}px`,
+          position: 'relative'
+        }}
+      >
+        {virtualizer.getVirtualItems().map(({ index, start, size }) => {
+          const rowKey = rowKeys[index];
 
-      return (
-        <div
-          role="rowgroup"
-          className="data-table-row-group"
-          style={{
-            height: `${virtualizer.getTotalSize()}px`,
-            position: 'relative'
-          }}
-        >
-          {virtualizer.getVirtualItems().map(({ key, start, size }) => (
+          if (!rowKey) return null;
+
+          return (
             <div
-              key={key}
+              key={rowKey}
               role="row"
               className="data-table-row"
-              data-selected={selection.includes(key as string)}
+              data-selected={selection.includes(rowKey)}
               style={{
                 transform: `translateY(${start}px)`,
                 height: size,
@@ -57,10 +60,11 @@ export const createVirtualizedRows = <TEntity extends object>() =>
                 left: 0
               }}
             >
-              <Row rowKey={key as RowKey} renderRow={children} />
+              <Row rowKey={rowKey}>{children}</Row>
             </div>
-          ))}
-        </div>
-      );
-    }
-  );
+          );
+        })}
+      </div>
+    );
+  }
+);

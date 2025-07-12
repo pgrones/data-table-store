@@ -1,7 +1,7 @@
 import { Cell as DataTableCell } from '@lib';
 import { Box, type BoxProps } from '@mantine/core';
 
-export const Cell = DataTableCell.as<BoxProps>(({ value, ...props }) => {
+export const Cell = DataTableCell.as<BoxProps>(({ cellValue, ...props }) => {
   return (
     <Box
       fz="sm"
@@ -18,7 +18,7 @@ export const Cell = DataTableCell.as<BoxProps>(({ value, ...props }) => {
         }
       ]}
     >
-      {value}
+      {cellValue}
     </Box>
   );
 });

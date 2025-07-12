@@ -18,7 +18,7 @@ import classes from './dataTable.module.css';
 export interface DataTableProps<TEntity extends object> extends StyleProps {
   stickyHeader?: boolean;
   stickyHeaderOffset?: number | string;
-  virtualized?: Omit<VirtualizedRowsProps, 'children'>;
+  virtualized?: VirtualizedRowsProps;
   children: React.ReactElement<
     ColumnProps<TEntity, string, unknown, unknown>
   >[];

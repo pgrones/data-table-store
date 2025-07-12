@@ -1,4 +1,4 @@
-import { memo, useLayoutEffect } from 'react';
+import { memo, useCallback } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useRowKeys, useSelectedRows } from '../../hooks';
 import { Row } from './row';
@@ -8,6 +8,14 @@ export interface VirtualizedRowsProps {
   rowHeight: number;
   overscan?: number;
 }
+
+const useVirtual = (options: Parameters<typeof useVirtualizer>[0]) => {
+  'use no memo';
+
+  const { getVirtualItems, getTotalSize } = useVirtualizer(options);
+
+  return { virtualItems: getVirtualItems(), totalSize: getTotalSize() };
+};
 
 export const VirtualizedRows = memo(
   ({
@@ -19,29 +27,29 @@ export const VirtualizedRows = memo(
     const rowKeys = useRowKeys();
     const selection = useSelectedRows();
 
-    const virtualizer = useVirtualizer({
+    const getItemKey = useCallback(
+      (index: number) => rowKeys[index]!,
+      [rowKeys]
+    );
+
+    const { virtualItems, totalSize } = useVirtual({
       count: rowKeys.length,
       getScrollElement: () => scrollRef.current,
       estimateSize: () => rowHeight,
+      getItemKey,
       overscan
     });
-
-    // For some reason we have to measure again because the virtualizer doesn't seem to notice that the ref updated
-    // This worked before, but broke somewhere along the way, hence this hack
-    useLayoutEffect(() => {
-      virtualizer.measure();
-    }, [virtualizer]);
 
     return (
       <div
         role="rowgroup"
         className="data-table-row-group"
         style={{
-          height: `${virtualizer.getTotalSize()}px`,
+          height: `${totalSize}px`,
           position: 'relative'
         }}
       >
-        {virtualizer.getVirtualItems().map(({ index, start, size }) => {
+        {virtualItems.map(({ index, start, size }) => {
           const rowKey = rowKeys[index];
 
           if (!rowKey) return null;

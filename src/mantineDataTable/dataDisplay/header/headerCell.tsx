@@ -4,7 +4,7 @@ import classes from './header.module.css';
 
 export const HeaderLabel = ({ children }: React.PropsWithChildren) =>
   typeof children === 'string' ? (
-    <span data-header-label className={classes.label}>
+    <span data-header-label title={children} className={classes.label}>
       {children}
     </span>
   ) : (

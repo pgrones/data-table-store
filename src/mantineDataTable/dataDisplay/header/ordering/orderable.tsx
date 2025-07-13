@@ -1,10 +1,16 @@
 import { cloneElement } from 'react';
-import type { HeaderProps } from '../header';
+import type { ElementProps, GroupProps } from '@mantine/core';
 import { useColumnOrdering } from './useColumnOrdering';
+
+export interface WrapperProps
+  extends GroupProps,
+    ElementProps<'div', keyof GroupProps> {
+  ref?: React.Ref<HTMLDivElement>;
+}
 
 interface OrderableHeaderProps {
   columnKey: string;
-  children: React.ReactElement<HeaderProps>;
+  children: React.ReactElement<WrapperProps>;
 }
 
 export const Orderable = ({
@@ -18,7 +24,7 @@ export const Orderable = ({
     ...children.props,
     ref,
     style,
-    mod: [{ orderable: isOrderable }],
+    mod: [children.props.mod, { orderable: isOrderable }],
     ...attributes,
     ...listeners
   });

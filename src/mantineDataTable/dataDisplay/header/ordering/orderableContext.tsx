@@ -4,7 +4,6 @@ import {
   DndContext,
   DragOverlay,
   KeyboardSensor,
-  MeasuringStrategy,
   PointerSensor,
   useSensor,
   useSensors,
@@ -60,6 +59,7 @@ export const OrderableContext = ({ children }: React.PropsWithChildren) => {
     : [];
   const container = document.getElementById(tableKey);
 
+  // TODO: prevent vertical scrolling during drag
   return (
     <DndContext
       onDragStart={handleDragStart}
@@ -68,11 +68,6 @@ export const OrderableContext = ({ children }: React.PropsWithChildren) => {
       collisionDetection={closestCenter}
       modifiers={[restrictToHorizontalAxis, restrictToFirstScrollableAncestor]}
       sensors={sensors}
-      measuring={{
-        droppable: {
-          strategy: MeasuringStrategy.Always
-        }
-      }}
     >
       <SortableContext
         items={columnKeys}
@@ -81,7 +76,6 @@ export const OrderableContext = ({ children }: React.PropsWithChildren) => {
         <MemoizedChildren>{children}</MemoizedChildren>
       </SortableContext>
 
-      {/* TODO: smaller columns transition to the left of a larger column instead of to the right */}
       {container &&
         createPortal(
           <DragOverlay className="data-table-header">

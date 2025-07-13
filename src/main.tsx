@@ -1,5 +1,5 @@
 import { StrictMode } from 'react';
-import { MantineProvider } from '@mantine/core';
+import { createTheme, MantineProvider, Tooltip } from '@mantine/core';
 import { NavigationProgress } from '@mantine/nprogress';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRoot } from 'react-dom/client';
@@ -17,9 +17,22 @@ const queryClient = new QueryClient({
   }
 });
 
+const theme = createTheme({
+  cursorType: 'pointer',
+  components: {
+    Tooltip: Tooltip.extend({
+      styles: { tooltip: { fontSize: 'var(--mantine-font-size-xs)' } },
+      defaultProps: {
+        openDelay: 500,
+        withArrow: true
+      }
+    })
+  }
+});
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <MantineProvider forceColorScheme="dark">
+    <MantineProvider forceColorScheme="dark" theme={theme}>
       <NavigationProgress />
       <QueryClientProvider client={queryClient}>
         <App />

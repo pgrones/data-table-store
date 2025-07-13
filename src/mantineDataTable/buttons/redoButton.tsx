@@ -1,5 +1,5 @@
 import { RedoButton as DataTableRedoButton, useRedo } from '@lib';
-import { ActionIcon, type ActionIconProps } from '@mantine/core';
+import { ActionIcon, Tooltip, type ActionIconProps } from '@mantine/core';
 import { useHotkeys } from '@mantine/hooks';
 import { IconArrowForwardUp } from '@tabler/icons-react';
 
@@ -16,14 +16,16 @@ export const RedoButton = DataTableRedoButton.as<
   };
 
   return (
-    <ActionIcon
-      size="lg"
-      variant="subtle"
-      {...props}
-      onClick={handleClick}
-      disabled={!canRedo || disabled}
-    >
-      <IconArrowForwardUp size={22} stroke={1.5} />
-    </ActionIcon>
+    <Tooltip label="Redo" disabled={!canRedo || disabled}>
+      <ActionIcon
+        size="lg"
+        variant="default"
+        {...props}
+        onClick={handleClick}
+        disabled={!canRedo || disabled}
+      >
+        <IconArrowForwardUp size={22} stroke={1.5} />
+      </ActionIcon>
+    </Tooltip>
   );
 });

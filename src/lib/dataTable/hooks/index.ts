@@ -19,5 +19,5 @@ export * from './useOrdering';
 export * from './useColumnKeys';
 export * from './useTableKey';
 export * from './useSelectedRows';
-export * from './usePageSize';
 export * from './useColumnDimensions';
+export * from './useTotals';

@@ -1,8 +1,8 @@
-import React, { cloneElement, useRef } from 'react';
+import React, { cloneElement } from 'react';
 import { useSorting } from '@lib';
 import { Group } from '@mantine/core';
 import { useMergedRef } from '@mantine/hooks';
-import { IconArrowsSort, IconSortAscending } from '@tabler/icons-react';
+import { IconSortAscending, IconSortDescending } from '@tabler/icons-react';
 import { type HeaderProps } from '../header';
 import { HeaderLabel } from '../headerCell';
 import classes from '../header.module.css';
@@ -19,19 +19,14 @@ export const Sortable = ({
   ref,
   ...props
 }: SortableProps) => {
-  const alignRef = useRef<HTMLElement>(null);
   const sorting = useSorting(columnKey);
 
-  const mergedRef = useMergedRef(ref, children.props.ref, alignRef);
+  const mergedRef = useMergedRef(ref, children.props.ref);
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (sorting?.isSortable) sorting.toggleColumnSort();
     children.props.onClick?.(e);
   };
-
-  const rightAligned = alignRef.current
-    ? ['end', 'right'].includes(getComputedStyle(alignRef.current).textAlign)
-    : false;
 
   return cloneElement(
     children,
@@ -50,10 +45,14 @@ export const Sortable = ({
         }
       ]
     },
-    <Group className={classes.wrapper} mod={{ end: rightAligned }}>
+    <Group className={classes.sorting}>
       <HeaderLabel>{children.props.children}</HeaderLabel>
-      <IconSortAscending className={classes.icon} />
-      <IconArrowsSort data-default className={classes.icon} />
+      {sorting?.isSortable && (
+        <>
+          <IconSortAscending data-ascending className={classes.icon} />
+          <IconSortDescending data-descending className={classes.icon} />
+        </>
+      )}
     </Group>
   );
 };

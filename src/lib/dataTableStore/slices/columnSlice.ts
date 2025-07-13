@@ -40,6 +40,12 @@ export interface ColumnSlice {
   setMaxWidths: (entries: Map<string, number>) => void;
   reorderColumn: (key: string, position: number) => void;
   resizeColumn: (key: string, width: number | string) => void;
+  sortColumn: (
+    key: string,
+    descending?: boolean,
+    resetScopedStates?: boolean
+  ) => void;
+  resetColumnSort: (key: string, resetScopedStates?: boolean) => void;
   toggleColumnSort: (key: string, resetScopedStates?: boolean) => void;
   toggleColumnVisibility: (key: string, visible?: boolean) => void;
 }
@@ -164,6 +170,52 @@ export const createColumnSlice =
 
           state.columns.get(key)!.width =
             typeof width === 'number' ? `${width}px` : width;
+        });
+      },
+      sortColumn: (key, descending = false, resetScopedStates = true) => {
+        ensureInitialized(key);
+
+        set(state => {
+          const current = state.columns.get(key)!;
+
+          if (!current.isSortable) return;
+
+          const prev = [...state.columns.entries()].find(
+            ([_, value]) => value.isSorted
+          )?.[0];
+
+          if (prev) {
+            state.columns.get(prev)!.isSorted = false;
+            state.columns.get(prev)!.descending = false;
+          }
+
+          state.columns.get(key)!.isSorted = true;
+          state.columns.get(key)!.descending = descending;
+
+          if (resetScopedStates) get().resetScopedStates();
+        });
+      },
+      resetColumnSort: (key, resetScopedStates = true) => {
+        ensureInitialized(key);
+
+        set(state => {
+          const current = state.columns.get(key)!;
+
+          if (!current.isSortable) return;
+
+          const prev = [...state.columns.entries()].find(
+            ([_, value]) => value.isSorted
+          )?.[0];
+
+          if (prev) {
+            state.columns.get(prev)!.isSorted = false;
+            state.columns.get(prev)!.descending = false;
+          }
+
+          state.columns.get(key)!.isSorted = false;
+          state.columns.get(key)!.descending = false;
+
+          if (resetScopedStates) get().resetScopedStates();
         });
       },
       toggleColumnSort: (key, resetScopedStates = true) => {

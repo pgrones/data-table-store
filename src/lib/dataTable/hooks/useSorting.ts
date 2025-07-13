@@ -1,6 +1,6 @@
 import { useDataTable } from '../dataTable.context';
 
-export const useSorting = (columnKey: string) => {
+export const useSorting = (columnKey: string, resetScopedStates = true) => {
   const sorting = useDataTable(state => {
     const column = state.columns.get(columnKey);
 
@@ -10,7 +10,9 @@ export const useSorting = (columnKey: string) => {
       isSortable: column.isSortable,
       isSorted: column.isSorted,
       descending: column.descending,
-      toggleColumnSort: state.toggleColumnSort
+      toggleColumnSort: state.toggleColumnSort,
+      sortColumn: state.sortColumn,
+      resetColumnSort: state.resetColumnSort
     };
   });
 
@@ -18,6 +20,10 @@ export const useSorting = (columnKey: string) => {
 
   return {
     ...sorting,
-    toggleColumnSort: () => sorting.toggleColumnSort(columnKey)
+    toggleColumnSort: () =>
+      sorting.toggleColumnSort(columnKey, resetScopedStates),
+    sortColumn: (descending = false) =>
+      sorting.sortColumn(columnKey, descending, resetScopedStates),
+    resetColumnSort: () => sorting.resetColumnSort(columnKey, resetScopedStates)
   };
 };

@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { Sparkline } from '@mantine/charts';
 import {
   Avatar,
+  Divider,
   Group,
   NumberFormatter,
   ScrollArea,
@@ -20,13 +21,14 @@ export const Table = () => {
   return (
     <div className={classes.layout}>
       <Group justify="space-between">
-        <Title size="h2">Customers</Title>
+        <Title size="h2">Data Table Example</Title>
 
         <Group>
           <DataTable.UndoButton />
           <DataTable.RedoButton />
           <DataTable.AddRowButton />
-          <DataTable.SearchInput w={300} placeholder="Search Customers..." />
+          <Divider orientation="vertical" />
+          <DataTable.SearchInput w={300} />
         </Group>
       </Group>
 
@@ -124,7 +126,11 @@ export const Table = () => {
         </ScrollArea>
       </DataTable.OrderableContext>
 
-      <DataTable.Pagination ml="auto" hideWithOnePage={false} />
+      <Group justify="space-between">
+        <DataTable.Totals />
+
+        <DataTable.Pagination hideWithOnePage={false} />
+      </Group>
     </div>
   );
 };

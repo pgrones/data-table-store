@@ -1,5 +1,5 @@
 import { AddRowButton as DataTableAddRowButton, useRowCreation } from '@lib';
-import { ActionIcon, type ActionIconProps } from '@mantine/core';
+import { ActionIcon, Tooltip, type ActionIconProps } from '@mantine/core';
 import { useHotkeys } from '@mantine/hooks';
 import { IconTablePlus } from '@tabler/icons-react';
 
@@ -8,7 +8,7 @@ export const AddRowButton = DataTableAddRowButton.as<
 >(({ onClick, ...props }) => {
   const addRow = useRowCreation();
 
-  useHotkeys([['mod+N', addRow]]);
+  useHotkeys([['mod+alt+N', addRow]]);
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     addRow();
@@ -16,8 +16,10 @@ export const AddRowButton = DataTableAddRowButton.as<
   };
 
   return (
-    <ActionIcon size="lg" variant="subtle" {...props} onClick={handleClick}>
-      <IconTablePlus size={22} stroke={1.5} />
-    </ActionIcon>
+    <Tooltip label="Add Row">
+      <ActionIcon size="lg" variant="default" {...props} onClick={handleClick}>
+        <IconTablePlus size={22} stroke={1.5} />
+      </ActionIcon>
+    </Tooltip>
   );
 });

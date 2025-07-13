@@ -34,9 +34,9 @@ export const SearchInput = ({
   defaultValue,
   value,
   onChange,
-  placeholder = 'Suchen...',
+  placeholder = 'Search...',
   hotkeys: hotkeys = 'mod+J',
-  hotKeyLabel = 'STRG+J',
+  hotKeyLabel = 'CTRL+J',
   children: _,
   ref,
   ...props

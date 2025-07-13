@@ -2,7 +2,7 @@ import {
   RestoreRowButton as DataTableRestoreRowButton,
   useRowRestoration
 } from '@lib';
-import { ActionIcon, type ActionIconProps } from '@mantine/core';
+import { ActionIcon, Tooltip, type ActionIconProps } from '@mantine/core';
 import { IconArrowBackUp } from '@tabler/icons-react';
 
 export const RestoreRowButton = DataTableRestoreRowButton.as<
@@ -18,8 +18,10 @@ export const RestoreRowButton = DataTableRestoreRowButton.as<
   };
 
   return (
-    <ActionIcon variant="subtle" {...props} onClick={handleClick}>
-      <IconArrowBackUp size={18} stroke={1.5} />
-    </ActionIcon>
+    <Tooltip label="Restore Row">
+      <ActionIcon variant="subtle" {...props} onClick={handleClick}>
+        <IconArrowBackUp size={18} stroke={1.5} />
+      </ActionIcon>
+    </Tooltip>
   );
 });

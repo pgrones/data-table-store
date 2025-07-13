@@ -13,6 +13,7 @@ import { AllRowsSelector } from './inputs/allRowsSelector';
 import { Pagination } from './inputs/pagination';
 import { RowSelector } from './inputs/rowSelector';
 import { SearchInput } from './inputs/searchInput';
+import { Totals } from './inputs/totals';
 
 export const createMantineThemedDataTable = createDataTableCreator(
   {
@@ -41,7 +42,8 @@ export const createMantineThemedDataTable = createDataTableCreator(
     additionalCompoundComponents: {
       DataState,
       HeaderLabel,
-      OrderableContext
+      OrderableContext,
+      Totals
     }
   }
 );

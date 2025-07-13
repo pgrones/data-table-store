@@ -26,7 +26,7 @@ export const useColumnOrdering = (columnKey: string) => {
   const style = {
     transition,
     transform: CSS.Transform.toString(transform),
-    opacity: isDragging ? 0.5 : 1
+    filter: isDragging ? 'brightness(0.8)' : undefined
   };
 
   return {

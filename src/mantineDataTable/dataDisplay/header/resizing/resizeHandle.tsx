@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from 'react';
 import { useResize, useTableKey } from '@lib';
+import { minWidth, useAutoResize } from './useAutoResize';
 import classes from '../header.module.css';
 
 interface ResizeHandleProps {
@@ -11,6 +12,7 @@ export const ResizeHandle = ({ columnKey }: ResizeHandleProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const cleanupRef = useRef<() => void>(null);
   const resize = useResize(columnKey);
+  const autoResize = useAutoResize(columnKey);
 
   useLayoutEffect(() => cleanupRef.current?.(), []);
 
@@ -29,7 +31,7 @@ export const ResizeHandle = ({ columnKey }: ResizeHandleProps) => {
 
     let isDragging = false;
     const rect = column.getBoundingClientRect();
-    const minDistanceToLeftEdge = Math.min(100, rect.width);
+    const minDistanceToLeftEdge = Math.min(minWidth, rect.width);
 
     const blocker = document.createElement('div');
     blocker.className = classes.blocker!;
@@ -40,6 +42,7 @@ export const ResizeHandle = ({ columnKey }: ResizeHandleProps) => {
       if (!isDragging && initialX !== x) {
         isDragging = true;
         document.body.appendChild(blocker);
+        document.body.style.userSelect = 'none';
       }
 
       if (!isDragging) return;
@@ -57,6 +60,7 @@ export const ResizeHandle = ({ columnKey }: ResizeHandleProps) => {
       window.removeEventListener('mousemove', handleMove);
       window.removeEventListener('mouseup', handleMouseup);
       if (isDragging) document.body.removeChild(blocker);
+      if (isDragging) document.body.style.userSelect = '';
       if (ref.current) ref.current.style.transform = '';
     };
 
@@ -79,45 +83,12 @@ export const ResizeHandle = ({ columnKey }: ResizeHandleProps) => {
     window.addEventListener('mouseup', handleMouseup);
   };
 
-  const handleDoubleClick = () => {
-    if (!resize.maxWidth || !ref.current) return;
-
-    const label = ref.current.parentElement?.querySelector(
-      '[data-header-label]'
-    );
-
-    if (!label) {
-      resize.resizeColumn(Math.max(resize.maxWidth, 100));
-      return;
-    }
-
-    const wrapper = label.parentElement!;
-    const gap = parseFloat(getComputedStyle(wrapper).gap || '0');
-
-    const header = wrapper.parentElement!;
-    const padding = parseFloat(getComputedStyle(header).padding || '0') * 2;
-
-    const columnHeader = header.parentElement!;
-    const border = parseFloat(
-      getComputedStyle(columnHeader).borderRightWidth || '0'
-    );
-
-    const icon = [...wrapper.children].find(x => x.tagName === 'svg');
-    const iconWidth = icon ? parseFloat(getComputedStyle(icon).width) : 0;
-
-    const headerWidth = Math.ceil(
-      label.scrollWidth + gap + iconWidth + padding + border + 1
-    );
-
-    resize.resizeColumn(Math.max(resize.maxWidth, headerWidth, 100));
-  };
-
   return (
     // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/click-events-have-key-events
     <div
       ref={ref}
       onMouseDown={handleDrag}
-      onDoubleClick={handleDoubleClick}
+      onDoubleClick={autoResize}
       onClick={e => e.stopPropagation()}
       onPointerDown={e => e.stopPropagation()}
       className={classes.resize}

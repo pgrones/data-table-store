@@ -17,6 +17,8 @@ export class DeleteCommand<TEntity extends object> extends Command<TEntity> {
   public execute = () => {
     super.createSnapshot();
 
+    let isDeleted = true;
+
     if (isAddedRowKey(this.rowKey)) {
       this.set(state => {
         const index = state.added.findIndex(
@@ -27,12 +29,17 @@ export class DeleteCommand<TEntity extends object> extends Command<TEntity> {
 
         void state.added.splice(index, 1);
       });
-    } else {
-      this.set(state => {
-        state.deleted.push(this.rowKey);
-      });
     }
 
-    return true;
+    this.set(state => {
+      if (this.rowKey in state.edited) {
+        isDeleted = false;
+        return;
+      }
+
+      state.deleted.push(this.rowKey);
+    });
+
+    return isDeleted;
   };
 }

@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useState } from 'react';
 import { Header as DataTableHeader } from '@lib';
 import {
   Group,
@@ -21,12 +21,12 @@ export interface HeaderProps
 
 export const Header = DataTableHeader.as<HeaderProps>(
   ({ columnKey, children, ref, ...props }) => {
-    const alignRef = useRef<HTMLElement>(null);
+    const [alignRef, setAlignRef] = useState<HTMLElement | null>(null);
 
-    const mergedRef = useMergedRef(ref, alignRef);
+    const mergedRef = useMergedRef(ref, setAlignRef);
 
-    const reverse = alignRef.current
-      ? ['end', 'right'].includes(getComputedStyle(alignRef.current).textAlign)
+    const reverse = alignRef
+      ? ['end', 'right'].includes(getComputedStyle(alignRef).textAlign)
       : false;
 
     return (
@@ -38,7 +38,7 @@ export const Header = DataTableHeader.as<HeaderProps>(
             </HeaderCell>
           </Sortable>
 
-          <HeaderMenu columnKey={columnKey} />
+          <HeaderMenu columnKey={columnKey} reverse={reverse} />
           <ResizeHandle columnKey={columnKey} />
         </Group>
       </Orderable>

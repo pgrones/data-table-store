@@ -1,5 +1,7 @@
 import type { SliceCreator } from '../dataTableStore.types';
 
+export type DataType = 'string' | 'number' | 'date';
+
 export interface FontStyles {
   fontFamily: string;
   fontSize: string;
@@ -14,6 +16,7 @@ export interface ColumnOptions {
   isOrderable: boolean;
   isHidable: boolean;
   isSortable: boolean;
+  isEditable: boolean;
   defaultWidth: number | string;
   defaultPosition: number;
 }
@@ -27,6 +30,7 @@ export interface Column
   visible: boolean;
   maxWidth: number | null;
   fontStyles: FontStyles | null;
+  inferredType: DataType | null;
 }
 
 export interface ColumnSlice {
@@ -37,6 +41,7 @@ export interface ColumnSlice {
     fontStyles: FontStyles,
     renderCell?: FontStyles['renderCell']
   ) => void;
+  setTypes: (entries: Map<string, DataType>) => void;
   setMaxWidths: (entries: Map<string, number>) => void;
   reorderColumn: (key: string, position: number) => void;
   resizeColumn: (key: string, width: number | string) => void;
@@ -53,13 +58,15 @@ export interface ColumnSlice {
 const createDefaultEntry = (): Column => ({
   isOrderable: true,
   isResizable: true,
-  isHidable: true,
+  isHidable: false,
+  isEditable: true,
   isSortable: true,
   isSorted: false,
   descending: false,
   width: '150px',
   maxWidth: null,
   fontStyles: null,
+  inferredType: null,
   position: 0,
   visible: true
 });
@@ -138,6 +145,15 @@ export const createColumnSlice =
             if (!state.columns.has(key)) continue;
 
             state.columns.get(key)!.maxWidth = value;
+          }
+        });
+      },
+      setTypes: entries => {
+        set(state => {
+          for (const [key, value] of entries.entries()) {
+            if (!state.columns.has(key)) continue;
+
+            state.columns.get(key)!.inferredType = value;
           }
         });
       },

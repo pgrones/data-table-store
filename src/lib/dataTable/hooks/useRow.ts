@@ -9,7 +9,8 @@ export const useCellValue = (rowKey: RowKey, columnKey: string) =>
 
     if (!row || !(columnKey in row)) return undefined;
 
-    const value = row[columnKey as keyof typeof row];
+    const value =
+      state.edited[rowKey]?.[columnKey] ?? row[columnKey as keyof typeof row];
 
     return value as unknown;
   });

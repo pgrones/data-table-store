@@ -24,8 +24,7 @@ export const Table = () => {
         <Title size="h2">Data Table Example</Title>
 
         <Group>
-          <DataTable.UndoButton />
-          <DataTable.RedoButton />
+          <DataTable.HistoryButtons />
           <DataTable.AddRowButton />
           <Divider orientation="vertical" />
           <DataTable.SearchInput w={300} />
@@ -40,6 +39,7 @@ export const Table = () => {
               sortable={false}
               resizable={false}
               orderable={false}
+              editable={false}
               defaultWidth="calc(20px + var(--data-table-horizontal-spacing) * 2)"
               headerProps={{ className: classes.sticky }}
               header={<DataTable.AllRowsSelector />}
@@ -52,6 +52,7 @@ export const Table = () => {
               sortable={false}
               resizable={false}
               orderable={false}
+              editable={false}
               defaultWidth="calc(38px + var(--data-table-horizontal-spacing) * 2)"
               cell={({ value }) => <Avatar src={value} />}
             />
@@ -92,6 +93,7 @@ export const Table = () => {
               columnKey="trend"
               resizable={false}
               sortable={false}
+              editable={false}
               defaultWidth="calc(150px + var(--data-table-horizontal-spacing) * 2)"
               header="Trend"
               cell={({ value }) => (
@@ -110,14 +112,15 @@ export const Table = () => {
               sortable={false}
               resizable={false}
               orderable={false}
+              editable={false}
               defaultWidth="calc(28px + var(--data-table-horizontal-spacing) * 2)"
               headerProps={{ className: classes.sticky, mod: 'right' }}
               cellProps={{ className: classes.sticky, mod: 'right' }}
               cell={
-                <>
+                <Group wrap="nowrap">
                   <DataTable.RestoreRowButton />
                   <DataTable.DeleteRowButton />
-                </>
+                </Group>
               }
             />
           </DataTable>

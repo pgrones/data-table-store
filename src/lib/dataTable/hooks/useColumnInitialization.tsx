@@ -40,19 +40,19 @@ export const useColumnInitialization = () => {
 
   return (
     columnKey: string,
-    index: number,
     renderCell: ((value: unknown) => unknown) | undefined,
-    options: Partial<ColumnOptions>
+    options: Partial<ColumnOptions> & { defaultPosition: number }
   ) => {
     columnKeyRef.current.set(columnKey, renderCell);
 
     initializeColumn(columnKey, {
-      isHidable: options.isHidable ?? true,
+      isHidable: options.isHidable ?? false,
       isOrderable: options.isOrderable ?? true,
       isResizable: options.isResizable ?? true,
       isSortable: options.isSortable ?? true,
+      isEditable: options.isEditable ?? true,
       defaultWidth: options.defaultWidth ?? 250,
-      defaultPosition: index
+      defaultPosition: options.defaultPosition
     });
   };
 };

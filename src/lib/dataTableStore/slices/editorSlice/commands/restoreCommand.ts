@@ -19,7 +19,8 @@ export class RestoreCommand<TEntity extends object> extends Command<TEntity> {
     this.set(state => {
       const index = state.deleted.indexOf(this.rowKey);
 
-      state.deleted.splice(index, 1);
+      if (index !== -1) state.deleted.splice(index, 1);
+
       delete state.edited[this.rowKey];
     });
 

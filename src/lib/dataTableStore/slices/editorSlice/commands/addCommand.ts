@@ -8,6 +8,7 @@ export class AddCommand<
   TRowKey extends readonly Key<TEntity>[]
 > extends Command<TEntity> {
   private defaultEntity;
+  private timeStamp: number | undefined;
 
   constructor(
     defaultEntity: Omit<TEntity, TRowKey[number]>,
@@ -34,6 +35,7 @@ export class AddCommand<
   };
 
   private get getTimestamp() {
-    return Date.now();
+    this.timeStamp ??= Date.now();
+    return this.timeStamp;
   }
 }

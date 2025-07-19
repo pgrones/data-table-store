@@ -1,10 +1,11 @@
 import { createDataTableCreator } from '@lib';
 import { AddRowButton } from './buttons/addRowButton';
 import { DeleteRowButton } from './buttons/deleteRowButton';
+import { HistoryButtons } from './buttons/historyButtons';
 import { RedoButton } from './buttons/redoButton';
 import { RestoreRowButton } from './buttons/restoreRowButton';
 import { UndoButton } from './buttons/undoButton';
-import { Cell } from './dataDisplay/cell';
+import { Cell } from './dataDisplay/cell/cell';
 import { DataState } from './dataDisplay/dataState';
 import { Header } from './dataDisplay/header/header';
 import { HeaderLabel } from './dataDisplay/header/headerCell';
@@ -25,7 +26,10 @@ export const createMantineThemedDataTable = createDataTableCreator(
     borderColor: 'var(--mantine-color-default-border)',
     stripedColor: 'var(--mantine-color-default)',
     hoverColor: 'var(--mantine-primary-color-light-hover)',
-    selectedColor: 'var(--mantine-primary-color-light)'
+    selectedColor: 'var(--mantine-primary-color-light)',
+    addedColor: 'var(--mantine-color-teal-light-color)',
+    editedColor: 'var(--mantine-color-blue-light-color)',
+    deletedColor: 'var(--mantine-color-red-light-color)'
   },
   {
     header: Header,
@@ -43,6 +47,7 @@ export const createMantineThemedDataTable = createDataTableCreator(
       DataState,
       HeaderLabel,
       OrderableContext,
+      HistoryButtons,
       Totals
     }
   }

@@ -1,6 +1,6 @@
 import { memo, useCallback } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { useRowKeys, useSelectedRows } from '../../hooks';
+import { useRowKeys } from '../../hooks';
 import { Row } from './row';
 
 export interface VirtualizedRowsProps {
@@ -25,7 +25,6 @@ export const VirtualizedRows = memo(
     children
   }: React.PropsWithChildren<VirtualizedRowsProps>) => {
     const rowKeys = useRowKeys();
-    const selection = useSelectedRows();
 
     const getItemKey = useCallback(
       (index: number) => rowKeys[index]!,
@@ -55,11 +54,9 @@ export const VirtualizedRows = memo(
           if (!rowKey) return null;
 
           return (
-            <div
+            <Row
               key={rowKey}
-              role="row"
-              className="data-table-row"
-              data-selected={selection.includes(rowKey)}
+              rowKey={rowKey}
               style={{
                 transform: `translateY(${start}px)`,
                 height: size,
@@ -68,8 +65,8 @@ export const VirtualizedRows = memo(
                 left: 0
               }}
             >
-              <Row rowKey={rowKey}>{children}</Row>
-            </div>
+              {children}
+            </Row>
           );
         })}
       </div>

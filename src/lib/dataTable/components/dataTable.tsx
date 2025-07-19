@@ -69,6 +69,7 @@ export const DataTable = <TEntity extends object>({
       </div>
       {virtualized ? (
         <VirtualizedRows {...virtualized}>
+          <div className="data-table-state-marker" />
           {columns.map(({ columnKey, cell, cellProps }) => (
             <ColumnContext key={columnKey} value={{ columnKey, cell }}>
               <Cell {...cellProps} />
@@ -77,6 +78,7 @@ export const DataTable = <TEntity extends object>({
         </VirtualizedRows>
       ) : (
         <Rows>
+          <div className="data-table-state-marker" />
           {columns.map(({ columnKey, cell, cellProps }) => (
             <ColumnContext key={columnKey} value={{ columnKey, cell }}>
               <Cell {...cellProps} />

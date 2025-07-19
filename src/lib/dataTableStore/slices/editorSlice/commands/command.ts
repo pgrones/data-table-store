@@ -1,5 +1,6 @@
 import type { WritableDraft } from 'immer';
-import type { EditorSlice } from '../editorSlice';
+import type { DataSlice } from '../../dataSlice';
+import { addedRowSymbol, type EditorSlice } from '../editorSlice';
 
 export abstract class Command<TEntity extends object> {
   private state;
@@ -14,7 +15,9 @@ export abstract class Command<TEntity extends object> {
     set: (
       updater:
         | Partial<EditorSlice<TEntity>>
-        | ((state: WritableDraft<EditorSlice<TEntity>>) => void)
+        | ((
+            state: WritableDraft<EditorSlice<TEntity> & DataSlice<TEntity>>
+          ) => void)
     ) => void
   ) {
     this.snapshot = null;
@@ -32,9 +35,12 @@ export abstract class Command<TEntity extends object> {
 
   protected createSnapshot() {
     this.snapshot = {
-      added: this.state.added,
-      deleted: this.state.deleted,
-      edited: this.state.edited
+      added: this.state.added.map(x => ({
+        ...structuredClone(x),
+        [addedRowSymbol]: x[addedRowSymbol]
+      })),
+      deleted: structuredClone(this.state.deleted),
+      edited: structuredClone(this.state.edited)
     };
   }
 }

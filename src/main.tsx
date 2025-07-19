@@ -7,6 +7,7 @@ import { App } from './app.tsx';
 import '@mantine/core/styles.css';
 import '@mantine/charts/styles.css';
 import '@mantine/nprogress/styles.css';
+import '@mantine/dates/styles.css';
 import './main.css';
 
 const queryClient = new QueryClient({

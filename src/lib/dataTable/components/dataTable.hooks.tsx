@@ -15,6 +15,9 @@ export interface StyleProps {
   withRowBorders?: boolean;
   withColumnBorders?: boolean;
   borderColor?: string;
+  editedColor?: string;
+  addedColor?: string;
+  deletedColor?: string;
 }
 
 export const useColumnStyles = ({
@@ -28,7 +31,10 @@ export const useColumnStyles = ({
   stripedColor = 'gray',
   withRowBorders = false,
   withColumnBorders = false,
-  borderColor = 'gray'
+  borderColor = 'gray',
+  addedColor = 'green',
+  editedColor = 'blue',
+  deletedColor = 'red'
 }: StyleProps) => {
   const [ref, setRef] = useState<HTMLDivElement | null>(null);
 
@@ -43,6 +49,9 @@ export const useColumnStyles = ({
   ref.style.setProperty('--data-table-hover-color', hoverColor);
   ref.style.setProperty('--data-table-selected-color', selectedColor);
   ref.style.setProperty('--data-table-striped-color', stripedColor);
+  ref.style.setProperty('--data-table-added-color', addedColor);
+  ref.style.setProperty('--data-table-edited-color', editedColor);
+  ref.style.setProperty('--data-table-deleted-color', deletedColor);
   ref.style.setProperty('--data-table-border-color', borderColor);
   ref.style.setProperty('--data-table-border', `1px solid ${borderColor}`);
 
@@ -84,7 +93,7 @@ export const useColumns = <TEntity extends object>(
       isDataTableColumn<TEntity>(x)
     );
 
-    let index = 0;
+    let index = 1;
     for (const column of columnComponents) {
       const columnKey = column.props.columnKey;
 
@@ -97,12 +106,14 @@ export const useColumns = <TEntity extends object>(
           ? (value: unknown) => cell({ value })
           : undefined;
 
-      initializeColumn(columnKey, index, renderCell, {
+      initializeColumn(columnKey, renderCell, {
         isHidable: column.props.hidable,
         isOrderable: column.props.orderable,
         isResizable: column.props.resizable,
         isSortable: column.props.sortable,
-        defaultWidth: column.props.defaultWidth
+        isEditable: column.props.editable,
+        defaultWidth: column.props.defaultWidth,
+        defaultPosition: index
       });
 
       columns[columnKeys.indexOf(columnKey)] = {

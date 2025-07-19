@@ -27,6 +27,8 @@ export class UpdateCommand<
   public execute = () => {
     super.createSnapshot();
 
+    let hasChanged = true;
+
     if (isAddedRowKey(this.rowKey)) {
       this.set(state => {
         const index = state.added.findIndex(
@@ -35,22 +37,51 @@ export class UpdateCommand<
             this.rowKey
         );
 
-        (state.added[index] as Draft<Partial<TEntity>>)[this.key] = this.value;
-      });
-    } else {
-      this.set(state => {
-        const row = state.edited[this.rowKey];
+        const row = state.added[index] as Draft<Partial<TEntity>>;
 
-        if (row) {
-          state.edited[this.rowKey]![this.key] = this.value;
-        } else {
-          state.edited[this.rowKey] = castDraft({
-            [this.key]: this.value
-          } as unknown as Partial<TEntity>);
+        if (row[this.key] === this.value) {
+          hasChanged = false;
+          return;
         }
+
+        row[this.key] = this.value;
       });
+
+      return hasChanged;
     }
 
-    return true;
+    this.set(state => {
+      if (state.deleted.includes(this.rowKey)) {
+        hasChanged = false;
+        return;
+      }
+
+      let row = state.edited[this.rowKey];
+
+      if (row) {
+        if (row[this.key] === this.value) {
+          hasChanged = false;
+          return;
+        }
+
+        row[this.key] = this.value;
+        return;
+      }
+
+      row = state.data.find(
+        x => state.getKey(x as Partial<TEntity>) === this.rowKey
+      );
+
+      if (row && row[this.key] === this.value) {
+        hasChanged = false;
+        return;
+      }
+
+      state.edited[this.rowKey] = castDraft({
+        [this.key]: this.value
+      } as unknown as Partial<TEntity>);
+    });
+
+    return hasChanged;
   };
 }

@@ -12,9 +12,10 @@ import classes from '../header.module.css';
 
 interface HeaderMenuProps {
   columnKey: string;
+  reverse: boolean;
 }
 
-export const HeaderMenu = ({ columnKey }: HeaderMenuProps) => {
+export const HeaderMenu = ({ columnKey, reverse }: HeaderMenuProps) => {
   const resize = useResize(columnKey);
   const sorting = useSorting(columnKey);
   const autoResize = useAutoResize(columnKey);
@@ -57,7 +58,10 @@ export const HeaderMenu = ({ columnKey }: HeaderMenuProps) => {
 
   return (
     <Menu
+      position={reverse ? 'top-start' : 'top-end'}
+      offset={{ crossAxis: reverse ? 8 : -8, mainAxis: 8 }}
       withArrow
+      arrowOffset={0}
       styles={{
         itemSection: { color: 'var(--mantine-primary-color-light-color)' }
       }}

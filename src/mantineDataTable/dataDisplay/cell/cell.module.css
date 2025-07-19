@@ -1,0 +1,24 @@
+.cell {
+  position: relative;
+  font-size: var(--mantine-font-size-sm);
+  height: 100%;
+  width: 100%;
+  align-items: center;
+
+  &[data-edited]::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    height: 6px;
+    width: 6px;
+    background-color: var(--mantine-color-blue-light-color);
+    border-radius: 50%;
+  }
+
+  &:focus,
+  &:focus-visible {
+    outline: 1px solid var(--mantine-primary-color-filled);
+    outline-offset: -2px;
+    border-radius: var(--mantine-radius-default);
+  }
+}

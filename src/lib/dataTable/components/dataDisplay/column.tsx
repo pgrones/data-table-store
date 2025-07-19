@@ -23,6 +23,7 @@ export interface ColumnProps<
   resizable?: boolean;
   orderable?: boolean;
   hidable?: boolean;
+  editable?: boolean;
 }
 
 export const createColumn = <

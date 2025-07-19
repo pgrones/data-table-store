@@ -4,5 +4,6 @@ export * from './rows';
 export * from './virtualizedRows';
 export * from './header';
 export * from './cell';
+export * from './cell.context';
 export * from './column';
 export * from './column.extensions';

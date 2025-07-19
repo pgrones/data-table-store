@@ -21,3 +21,4 @@ export * from './useTableKey';
 export * from './useSelectedRows';
 export * from './useColumnDimensions';
 export * from './useTotals';
+export * from './useEditing';

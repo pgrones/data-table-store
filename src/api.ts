@@ -8,6 +8,7 @@ export interface Customer {
   birthday: Date | null;
   gender: string | null;
   job: string;
+  alive: boolean;
   avatarUrl: string | null;
   revenue: number;
   trend: number[];
@@ -25,6 +26,7 @@ const data = Array(103)
       avatarUrl: faker.image.avatar(),
       job: faker.person.jobTitle(),
       revenue: faker.number.float({ min: 0, max: 10000, fractionDigits: 2 }),
+      alive: faker.datatype.boolean(),
       trend: [
         faker.number.float({ min: 0, max: 10000, fractionDigits: 2 }),
         faker.number.float({ min: 0, max: 10000, fractionDigits: 2 }),
@@ -34,6 +36,10 @@ const data = Array(103)
       ]
     })
   );
+
+export const genders = [
+  ...data.reduce((acc, curr) => acc.add(curr.gender!), new Set<string>())
+];
 
 function getRndInteger(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;

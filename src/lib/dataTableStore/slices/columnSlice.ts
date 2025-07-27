@@ -1,6 +1,6 @@
 import type { SliceCreator } from '../dataTableStore.types';
 
-export type DataType = 'string' | 'number' | 'date';
+export type DataType = 'string' | 'number' | 'boolean' | 'date';
 
 export interface FontStyles {
   fontFamily: string;

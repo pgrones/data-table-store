@@ -8,6 +8,7 @@ import {
   ScrollArea,
   Title
 } from '@mantine/core';
+import { IconCheck, IconX } from '@tabler/icons-react';
 import { useIsFetching } from '@tanstack/react-query';
 import type { Customer } from './api';
 import { createMantineThemedDataTable } from './mantineDataTable';
@@ -35,12 +36,9 @@ export const Table = () => {
         <ScrollArea offsetScrollbars type="auto" viewportRef={scrollRef}>
           <DataTable virtualized={{ scrollRef, rowHeight: 70 }}>
             <DataTable.Column
+              static
+              defaultWidth={20}
               columnKey="selection"
-              sortable={false}
-              resizable={false}
-              orderable={false}
-              editable={false}
-              defaultWidth="calc(20px + var(--data-table-horizontal-spacing) * 2)"
               headerProps={{ className: classes.sticky }}
               header={<DataTable.AllRowsSelector />}
               cellProps={{ className: classes.sticky }}
@@ -48,12 +46,9 @@ export const Table = () => {
             />
 
             <DataTable.Column
+              static
+              defaultWidth={38}
               columnKey="avatarUrl"
-              sortable={false}
-              resizable={false}
-              orderable={false}
-              editable={false}
-              defaultWidth="calc(38px + var(--data-table-horizontal-spacing) * 2)"
               cell={({ value }) => <Avatar src={value} />}
             />
 
@@ -94,7 +89,7 @@ export const Table = () => {
               resizable={false}
               sortable={false}
               editable={false}
-              defaultWidth="calc(150px + var(--data-table-horizontal-spacing) * 2)"
+              defaultWidth={150}
               header="Trend"
               cell={({ value }) => (
                 <Sparkline
@@ -108,12 +103,23 @@ export const Table = () => {
             />
 
             <DataTable.Column
-              columnKey="actions"
-              sortable={false}
+              columnKey="alive"
+              header="Alive"
               resizable={false}
-              orderable={false}
-              editable={false}
-              defaultWidth="calc(28px + var(--data-table-horizontal-spacing) * 2)"
+              defaultWidth={70}
+              cell={({ value }) =>
+                value ? (
+                  <IconCheck className={classes.icon} />
+                ) : (
+                  <IconX className={classes.icon} />
+                )
+              }
+            />
+
+            <DataTable.Column
+              static
+              defaultWidth={28}
+              columnKey="actions"
               headerProps={{ className: classes.sticky, mod: 'right' }}
               cellProps={{ className: classes.sticky, mod: 'right' }}
               cell={

@@ -49,8 +49,8 @@ export interface DataTableStoreOptions<
    *  Default: `data-table`
    * */
   tableKey?: string;
-  /** Amount of entities present in a single page. Default: `20`*/
-  pageSize?: number;
+  /** Amount of entities present on a single page. Default: `20`*/
+  initialPageSize?: number;
   /** Page to start on. Default: `1` */
   initialPage?: number;
   /** Sorting to start on. Default: `null` */

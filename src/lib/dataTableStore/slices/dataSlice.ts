@@ -121,6 +121,11 @@ const inferDataType = <TEntity extends object>(data: TEntity[]) => {
       continue;
     }
 
+    if (values.every(v => typeof v === 'boolean')) {
+      types.set(key, 'boolean');
+      continue;
+    }
+
     if (values.every(v => v instanceof Date && !isNaN(v.getTime()))) {
       types.set(key, 'date');
       continue;

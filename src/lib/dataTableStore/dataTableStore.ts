@@ -35,7 +35,7 @@ const createDataTableStoreFactory =
     createEntity,
     tableKey = 'data-table',
     initialPage = 1,
-    pageSize = 20,
+    initialPageSize: pageSize = 20,
     initialSearchValue = '',
     initialSorting = null
   }: DataTableStoreOptions<TEntity, TRowKey>) =>

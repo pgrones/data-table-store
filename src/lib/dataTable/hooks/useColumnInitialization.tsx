@@ -41,17 +41,25 @@ export const useColumnInitialization = () => {
   return (
     columnKey: string,
     renderCell: ((value: unknown) => unknown) | undefined,
-    options: Partial<ColumnOptions> & { defaultPosition: number }
+    options: Partial<ColumnOptions> & {
+      defaultPosition: number;
+      isStatic?: boolean;
+    }
   ) => {
     columnKeyRef.current.set(columnKey, renderCell);
 
+    let defaultWidth = options.defaultWidth ?? 250;
+
+    defaultWidth =
+      typeof defaultWidth === 'number' ? `${defaultWidth}px` : defaultWidth;
+
     initializeColumn(columnKey, {
-      isHidable: options.isHidable ?? false,
-      isOrderable: options.isOrderable ?? true,
-      isResizable: options.isResizable ?? true,
-      isSortable: options.isSortable ?? true,
-      isEditable: options.isEditable ?? true,
-      defaultWidth: options.defaultWidth ?? 250,
+      isHidable: !options.isStatic && (options.isHidable ?? false),
+      isOrderable: !options.isStatic && (options.isOrderable ?? true),
+      isResizable: !options.isStatic && (options.isResizable ?? true),
+      isSortable: !options.isStatic && (options.isSortable ?? true),
+      isEditable: !options.isStatic && (options.isEditable ?? true),
+      defaultWidth: `calc(${defaultWidth} + var(--data-table-horizontal-spacing) * 2)`,
       defaultPosition: options.defaultPosition
     });
   };

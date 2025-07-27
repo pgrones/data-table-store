@@ -1,4 +1,4 @@
-import { NumberInput, TextInput } from '@mantine/core';
+import { Checkbox, NumberInput, Select, TextInput } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import {
   sharedProps,
@@ -26,6 +26,18 @@ export const Editor = ({ type, props }: EditorProps) => {
           onChange={e => props.onChange(e === null ? e : new Date(e))}
         />
       );
+    case 'boolean':
+      return (
+        <Checkbox
+          {...{ ...props }}
+          checked={props.value}
+          onChange={e => props.onChange(e.currentTarget.checked)}
+        />
+      );
+    case 'select':
+      return <Select {...{ ...sharedProps, ...props }} />;
+    case 'custom':
+      throw new Error('not implemented');
     default:
       return (
         <TextInput

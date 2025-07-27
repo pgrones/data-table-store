@@ -19,7 +19,7 @@ const store = createDataTableStore<Customer>({
     revenue: 0,
     trend: []
   }),
-  pageSize: 50,
+  initialPageSize: 50,
   initialSorting: { sortBy: 'firstName', descending: false }
 });
 

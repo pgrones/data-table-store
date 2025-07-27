@@ -112,6 +112,7 @@ export const useColumns = <TEntity extends object>(
         isResizable: column.props.resizable,
         isSortable: column.props.sortable,
         isEditable: column.props.editable,
+        isStatic: column.props.static,
         defaultWidth: column.props.defaultWidth,
         defaultPosition: index
       });

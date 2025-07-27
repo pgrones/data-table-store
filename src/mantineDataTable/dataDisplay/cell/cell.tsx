@@ -40,7 +40,7 @@ export const Cell = DataTableCell.as<CellProps>(
         tabIndex={0}
       >
         {isEditing ? (
-          <Editor type={editorType!} props={editorProps} />
+          <Editor type={editorType!} props={editorProps as never} />
         ) : typeof value === 'string' || typeof value === 'number' ? (
           <Text inherit truncate>
             {value}

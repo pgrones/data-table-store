@@ -24,6 +24,7 @@ export interface ColumnProps<
   orderable?: boolean;
   hidable?: boolean;
   editable?: boolean;
+  static?: boolean;
 }
 
 export const createColumn = <
